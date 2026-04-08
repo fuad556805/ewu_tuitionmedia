@@ -12,7 +12,7 @@
   {% if not tutors %}
   <div class="glass" style="padding:40px;text-align:center">
     <div style="font-size:36px;margin-bottom:10px">👥</div>
-    <div style="color:var(--muted)">No tutors registered yet.</div>
+    <div style="color:var(--muted)">No approved tutors available yet.</div>
   </div>
   {% endif %}
 
@@ -22,8 +22,11 @@
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div class="avatar avatar-md">{{ tutor.first_name|first }}</div>
         <div style="flex:1">
-          <div style="font-family:var(--font-head);font-weight:700">{{ tutor.get_full_name }}</div>
-          <div style="color:var(--muted);font-size:12px">{{ tutor.education|default:"Tutor" }}</div>
+          <a href="{% url 'public_profile' tutor.pk %}"
+             style="font-family:var(--font-head);font-weight:700;color:var(--text);text-decoration:none">
+            {{ tutor.get_full_name }}
+          </a>
+          <div style="color:var(--muted);font-size:12px">{{ tutor.university|default:tutor.college|default:"Tutor" }}</div>
         </div>
       </div>
       {% if tutor.get_subjects_list %}
@@ -36,11 +39,7 @@
       {% if tutor.location %}
       <div style="color:var(--muted);font-size:13px;margin-bottom:12px">📍 {{ tutor.location }}</div>
       {% endif %}
-      <form method="post" action="{% url 'send_request' tutor.pk %}">
-        {% csrf_token %}
-        <input type="hidden" name="subject" value="{{ tutor.subjects|default:'General Tuition' }}">
-        <button class="btn btn-primary" style="width:100%">Send Request</button>
-      </form>
+      <a href="{% url 'public_profile' tutor.pk %}" class="btn btn-primary" style="width:100%;display:block;text-align:center;text-decoration:none">View Profile →</a>
     </div>
     {% endfor %}
   </div>

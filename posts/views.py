@@ -68,5 +68,5 @@ def browse_posts(request):
 @login_required
 def browse_tutors(request):
     """For students to browse tutors"""
-    tutors = User.objects.filter(role='tutor', banned=False)
+    tutors = User.objects.filter(role='tutor', banned=False, profile_approved=True)
     return render(request, 'posts/browse_tutors.html', {'tutors': tutors})

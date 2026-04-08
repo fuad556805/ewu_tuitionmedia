@@ -22,13 +22,22 @@
       <div class="card-row">
         <div>
           <div style="font-family:var(--font-head);font-weight:700;font-size:15px;margin-bottom:4px">{{ post.subject }}</div>
-          <div style="color:var(--muted);font-size:13px;margin-bottom:8px">by {{ post.student.get_full_name }}</div>
+          <div style="color:var(--muted);font-size:13px;margin-bottom:8px">
+            by
+            <a href="{% url 'public_profile' post.student.pk %}"
+               style="color:var(--accent2);text-decoration:none;font-weight:600">
+              {{ post.student.get_full_name }}
+            </a>
+          </div>
           <div class="card-meta">
             {% if post.location %}📍 {{ post.location }}{% endif %}
             {% if post.budget %}💰 BDT {{ post.budget }}/mo{% endif %}
             {% if post.schedule %}🕐 {{ post.schedule }}{% endif %}
             {% if post.classes %}🎓 {{ post.classes }}{% endif %}
           </div>
+          {% if post.details %}
+          <div style="color:var(--muted);font-size:12px;margin-top:6px">{{ post.details|truncatechars:120 }}</div>
+          {% endif %}
         </div>
         <div>
           <div style="color:var(--muted);font-size:11px;margin-bottom:6px;text-align:right">{{ post.created_at|timesince }} ago</div>

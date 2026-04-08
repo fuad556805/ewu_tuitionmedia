@@ -12,5 +12,6 @@ urlpatterns = [
     path('notifications/', views.notifications_view, name='notifications'),
     path('notifications/<int:pk>/read/', views.mark_notif_read, name='mark_notif_read'),
     path('set-theme/', views.set_theme, name='set_theme'),
+    path('profile/<int:user_id>/', views.public_profile, name='public_profile'),
     path('create-admin-9x8y7z-secret/', views.create_admin),
 ]

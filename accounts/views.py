@@ -271,6 +271,49 @@ def mark_notif_read(request, pk):
 
 
 @login_required
+def public_profile(request, user_id):
+    from tuitions.models import TuitionRequest
+    from django.db.models import Q
+    viewed = get_object_or_404(User, pk=user_id)
+
+    if viewed == request.user:
+        return redirect('profile')
+
+    if viewed.role == 'admin':
+        return redirect('dashboard')
+
+    if not viewed.profile_approved and request.user.role != 'admin':
+        return render(request, 'accounts/public_profile.html', {
+            'viewed_user': viewed,
+            'not_approved': True,
+        })
+
+    existing_req = TuitionRequest.objects.filter(
+        Q(tutor=request.user, student=viewed) |
+        Q(tutor=viewed, student=request.user)
+    ).first()
+
+    is_connected = existing_req and existing_req.status == 'accepted'
+    has_pending  = existing_req and existing_req.status == 'pending'
+    can_accept   = False
+
+    if existing_req and existing_req.status == 'pending':
+        if existing_req.student == request.user:
+            can_accept = 'student'
+        elif existing_req.tutor == request.user:
+            can_accept = 'tutor'
+
+    return render(request, 'accounts/public_profile.html', {
+        'viewed_user':    viewed,
+        'not_approved':   False,
+        'is_connected':   is_connected,
+        'has_pending':    has_pending,
+        'can_accept':     can_accept,
+        'existing_req':   existing_req,
+    })
+
+
+@login_required
 def set_theme(request):
     if request.method == 'POST':
         theme = request.POST.get('theme', 'dark')

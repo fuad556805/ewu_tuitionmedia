@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}{{ viewed_user.get_full_name }} — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease;max-width:680px;margin:0 auto">
+
+  {% if not_approved %}
+  <div class="glass" style="padding:48px;text-align:center">
+    <div style="font-size:48px;margin-bottom:14px">🔒</div>
+    <div style="font-family:var(--font-head);font-size:20px;font-weight:700;margin-bottom:8px">Profile Not Available</div>
+    <div style="color:var(--muted);font-size:14px">This profile is pending admin approval and is not yet publicly visible.</div>
+    <a href="javascript:history.back()" class="btn btn-secondary" style="margin-top:20px">← Go Back</a>
+  </div>
+
+  {% else %}
+
+  <!-- Header Card -->
+  <div class="glass" style="padding:28px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      {% if viewed_user.profile_image %}
+        <img src="{{ viewed_user.profile_image.url }}" alt="Profile"
+             style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)">
+      {% else %}
+        <div class="avatar avatar-lg" style="width:72px;height:72px;font-size:28px">{{ viewed_user.first_name|first }}</div>
+      {% endif %}
+      <div style="flex:1;min-width:0">
+        <div style="font-family:var(--font-head);font-size:22px;font-weight:700">{{ viewed_user.get_full_name }}</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:2px">
+          {% if viewed_user.role == 'tutor' %}🎓 Tutor{% else %}📚 Student{% endif %}
+          {% if viewed_user.gender %} · {{ viewed_user.gender }}{% endif %}
+        </div>
+        <div style="margin-top:8px">
+          <span class="badge badge-success">✓ Verified Profile</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        {% if is_connected %}
+          <a href="{% url 'inbox' %}" class="btn btn-primary">💬 Message</a>
+          <span class="badge badge-success" style="font-size:12px">✓ Connected</span>
+        {% elif can_accept == 'student' %}
+          <form method="post" action="{% url 'accept_request' existing_req.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-success">✓ Accept Request</button>
+          </form>
+          <form method="post" action="{% url 'reject_request' existing_req.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-danger btn-sm">✗ Reject</button>
+          </form>
+        {% elif can_accept == 'tutor' %}
+          <form method="post" action="{% url 'tutor_accept_request' existing_req.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-success">✓ Accept Request</button>
+          </form>
+          <form method="post" action="{% url 'tutor_reject_request' existing_req.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-danger btn-sm">✗ Reject</button>
+          </form>
+        {% elif has_pending %}
+          <span class="badge badge-warn">⏳ Request Pending</span>
+        {% else %}
+          {% if viewed_user.role == 'tutor' and request.user.role == 'student' %}
+            <form method="post" action="{% url 'send_request' viewed_user.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="subject" value="{{ viewed_user.subjects|default:'General Tuition' }}">
+              <button class="btn btn-primary">Send Request</button>
+            </form>
+          {% elif viewed_user.role == 'student' and request.user.role == 'tutor' %}
+            <span class="badge badge-muted" style="font-size:12px">Apply via their post</span>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Grid -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+
+    <!-- Contact / Basic -->
+    <div class="glass" style="padding:20px">
+      <div style="font-weight:700;font-family:var(--font-head);margin-bottom:12px;color:var(--accent)">Contact Info</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+        {% if is_connected %}
+          <div><span style="color:var(--muted)">📞 Phone:</span> <strong>{{ viewed_user.phone }}</strong></div>
+        {% else %}
+          <div style="color:var(--muted)">
+            📞 Phone: <span style="font-style:italic;opacity:0.6">Hidden until connected</span>
+          </div>
+        {% endif %}
+        {% if viewed_user.location %}
+          <div><span style="color:var(--muted)">📍 Location:</span> {{ viewed_user.location }}</div>
+        {% endif %}
+        {% if viewed_user.gender %}
+          <div><span style="color:var(--muted)">👤 Gender:</span> {{ viewed_user.gender }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="glass" style="padding:20px">
+      <div style="font-weight:700;font-family:var(--font-head);margin-bottom:12px;color:var(--accent2)">Education</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted)">
+        {% if viewed_user.school %}<div>🏫 {{ viewed_user.school }}</div>{% endif %}
+        {% if viewed_user.college %}<div>🎒 {{ viewed_user.college }}</div>{% endif %}
+        {% if viewed_user.university %}<div>🎓 {{ viewed_user.university }}</div>{% endif %}
+        {% if viewed_user.department %}<div>📘 {{ viewed_user.department }}</div>{% endif %}
+        {% if not viewed_user.school and not viewed_user.college and not viewed_user.university %}
+          <div style="opacity:0.5;font-style:italic">No education info added yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Subjects (tutor) -->
+  {% if viewed_user.role == 'tutor' and viewed_user.subjects %}
+  <div class="glass" style="padding:20px;margin-bottom:16px">
+    <div style="font-weight:700;font-family:var(--font-head);margin-bottom:12px;color:var(--accent3)">Subjects Taught</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      {% for s in viewed_user.get_subjects_list %}
+        <span class="badge badge-accent">{{ s }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ID Document — always hidden from non-admin -->
+  <div class="glass" style="padding:20px;margin-bottom:16px">
+    <div style="font-weight:700;font-family:var(--font-head);margin-bottom:8px">Identity Document</div>
+    <div style="color:var(--muted);font-size:13px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:18px">🔒</span>
+      ID document is kept private and is only reviewed by admins.
+    </div>
+  </div>
+
+  {% if not is_connected %}
+  <div class="glass" style="padding:16px;text-align:center;border:1px dashed rgba(255,255,255,0.1)">
+    <div style="color:var(--muted);font-size:13px">
+      🔓 Phone number and full contact details will be visible once your tuition request is accepted.
+    </div>
+  </div>
+  {% endif %}
+
+  {% endif %}
+</div>
+{% endblock %}

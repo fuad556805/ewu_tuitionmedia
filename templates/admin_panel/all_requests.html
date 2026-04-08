@@ -24,20 +24,38 @@
           <tr>
             <td style="font-weight:600">
               <a href="{% url 'admin_panel:user_profile' r.tutor.id %}"
-                 style="color:var(--accent);text-decoration:none"
-                 title="View Tutor Profile">
+                 style="color:var(--accent);text-decoration:none" title="View Tutor Profile">
                 👤 {{ r.tutor.get_full_name }}
               </a>
             </td>
             <td>
               <a href="{% url 'admin_panel:user_profile' r.student.id %}"
-                 style="color:var(--pink);text-decoration:none"
-                 title="View Student Profile">
+                 style="color:var(--pink);text-decoration:none" title="View Student Profile">
                 👤 {{ r.student.get_full_name }}
               </a>
             </td>
             <td style="color:var(--muted)">{{ r.subject }}</td>
-            <td style="color:var(--muted)">{% if r.post %}📋{% else %}Direct{% endif %}</td>
+            <td>
+              {% if r.post %}
+                <button class="btn btn-secondary btn-sm"
+                        onclick="showPostDetail(
+                          '{{ r.post.subject|escapejs }}',
+                          '{{ r.post.student.get_full_name|escapejs }}',
+                          '{{ r.post.location|escapejs }}',
+                          '{{ r.post.budget }}',
+                          '{{ r.post.classes|escapejs }}',
+                          '{{ r.post.schedule|escapejs }}',
+                          '{{ r.post.details|escapejs }}',
+                          '{{ r.post.status }}',
+                          '{{ r.post.created_at|date:"M d, Y" }}'
+                        )"
+                        style="font-size:16px;padding:4px 10px">
+                  📋
+                </button>
+              {% else %}
+                <span style="color:var(--muted);font-size:12px">Direct</span>
+              {% endif %}
+            </td>
             <td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
             <td>
               <span class="badge badge-{% if r.status == 'accepted' %}success{% elif r.status == 'pending' %}warn{% else %}danger{% endif %}">
@@ -53,4 +71,46 @@
     </div>
   </div>
 </div>
+
+<!-- Post Detail Modal -->
+<div id="postModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center">
+  <div class="glass" style="max-width:500px;width:90%;padding:28px;position:relative;animation:slideIn 0.2s ease">
+    <button onclick="closePostModal()"
+            style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>
+    <div style="font-family:var(--font-head);font-weight:700;font-size:18px;margin-bottom:16px">📋 Post Details</div>
+    <div id="postModalBody" style="display:flex;flex-direction:column;gap:10px;font-size:14px"></div>
+  </div>
+</div>
+
+<script>
+function showPostDetail(subject, student, location, budget, classes, schedule, details, status, created) {
+  var rows = [
+    ['📚 Subject', subject],
+    ['👤 Student', student],
+    ['📍 Location', location || '—'],
+    ['💰 Budget', budget ? 'BDT ' + budget + '/mo' : '—'],
+    ['🎓 Classes', classes || '—'],
+    ['🕐 Schedule', schedule || '—'],
+    ['📝 Details', details || '—'],
+    ['📌 Status', status],
+    ['📅 Posted', created],
+  ];
+  var html = '';
+  rows.forEach(function(r) {
+    html += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">'
+          + '<span style="color:var(--muted);min-width:110px;flex-shrink:0">' + r[0] + '</span>'
+          + '<span style="font-weight:500;word-break:break-word">' + r[1] + '</span>'
+          + '</div>';
+  });
+  document.getElementById('postModalBody').innerHTML = html;
+  var modal = document.getElementById('postModal');
+  modal.style.display = 'flex';
+}
+function closePostModal() {
+  document.getElementById('postModal').style.display = 'none';
+}
+document.getElementById('postModal').addEventListener('click', function(e) {
+  if (e.target === this) closePostModal();
+});
+</script>
 {% endblock %}

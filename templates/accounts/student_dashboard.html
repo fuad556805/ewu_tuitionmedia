@@ -39,11 +39,15 @@
         <div class="item-row">
           <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#7c6bff,#a06bff)">{{ req.tutor.first_name|first }}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-weight:600;font-size:13px">{{ req.tutor.get_full_name }}</div>
+            <a href="{% url 'public_profile' req.tutor.pk %}"
+               style="font-weight:600;font-size:13px;color:var(--text);text-decoration:none">
+              {{ req.tutor.get_full_name }}
+            </a>
             <div style="color:var(--muted);font-size:12px">{{ req.subject }}</div>
           </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <form method="post" action="{% url 'accept_request' req.pk %}">{% csrf_token %}<button class="btn btn-success btn-sm">Accept</button></form>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <a href="{% url 'public_profile' req.tutor.pk %}" class="btn btn-secondary btn-sm">View Profile</a>
+            <form method="post" action="{% url 'accept_request' req.pk %}">{% csrf_token %}<button class="btn btn-success btn-sm">✓</button></form>
             <form method="post" action="{% url 'reject_request' req.pk %}">{% csrf_token %}<button class="btn btn-danger btn-sm">✗</button></form>
           </div>
         </div>
