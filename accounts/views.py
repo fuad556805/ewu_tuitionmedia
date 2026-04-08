@@ -34,11 +34,31 @@ def create_admin(request):
 def landing(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
+
+    from tuitions.models import Tuition as TuitionModel
+
+    active_tutors    = User.objects.filter(role='tutor',   banned=False).count()
+    students_matched = User.objects.filter(role='student', banned=False).count()
+    monthly_tuitions = TuitionModel.objects.filter(status='active').count()
+    cities_covered   = (
+        User.objects
+        .filter(role='tutor', banned=False)
+        .exclude(location='')
+        .values_list('location', flat=True)
+        .distinct()
+        .count()
+    )
+
+    def _fmt(n):
+        if n >= 1000:
+            return f"{n // 1000},{n % 1000:03d}+"
+        return f"{n}+" if n > 0 else "0"
+
     stats = [
-        {'val': '1,240+', 'label': 'Active Tutors'},
-        {'val': '8,900+', 'label': 'Students Matched'},
-        {'val': '3,200+', 'label': 'Monthly Tuitions'},
-        {'val': '12+',    'label': 'Cities Covered'},
+        {'val': _fmt(active_tutors),    'label': 'Active Tutors'},
+        {'val': _fmt(students_matched), 'label': 'Students Matched'},
+        {'val': _fmt(monthly_tuitions), 'label': 'Monthly Tuitions'},
+        {'val': _fmt(cities_covered),   'label': 'Cities Covered'},
     ]
     return render(request, 'accounts/landing.html', {'stats': stats})
 
