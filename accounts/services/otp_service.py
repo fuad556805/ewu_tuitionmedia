@@ -108,7 +108,7 @@ class OTPError(Exception):
         super().__init__(message)
 
 
-def send_otp(phone: str, sms_sender) -> OTPVerification:
+def send_otp(phone: str, sms_sender) -> tuple:
     """
     Generate and send an OTP for the given phone number.
     Creates or updates an OTPVerification record.
@@ -159,7 +159,8 @@ def send_otp(phone: str, sms_sender) -> OTPVerification:
     increment_resend_count(phone)
     set_cooldown(phone)
     reset_verify_attempts(phone)
-    return record
+    # Returns (record, raw_otp) — caller may expose raw_otp in dev/console mode only
+    return record, otp
 
 
 def verify_otp(phone: str, otp: str) -> OTPVerification:

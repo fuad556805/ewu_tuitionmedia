@@ -44,14 +44,19 @@ class SendOTPView(APIView):
             )
 
         try:
-            send_otp(phone, send_otp_sms)
+            _, raw_otp = send_otp(phone, send_otp_sms)
         except OTPError as exc:
             return Response({'error': exc.message, 'code': exc.code}, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-        return Response({
+        from django.conf import settings as dj_settings
+        resp = {
             'message': f"OTP sent to {phone}. Valid for 2 minutes.",
             'phone':   phone,
-        }, status=status.HTTP_200_OK)
+        }
+        if dj_settings.DEBUG and getattr(dj_settings, 'SMS_BACKEND', '') == 'console':
+            resp['dev_otp'] = raw_otp
+
+        return Response(resp, status=status.HTTP_200_OK)
 
 
 class VerifyOTPView(APIView):
@@ -135,15 +140,20 @@ class ResendOTPView(APIView):
             )
 
         try:
-            send_otp(phone, send_otp_sms)
+            _, raw_otp = send_otp(phone, send_otp_sms)
         except OTPError as exc:
             http_status = status.HTTP_429_TOO_MANY_REQUESTS if exc.code in ('cooldown', 'rate_limit') else status.HTTP_502_BAD_GATEWAY
             return Response({'error': exc.message, 'code': exc.code}, status=http_status)
 
-        return Response({
+        from django.conf import settings as dj_settings
+        resp = {
             'message': f"OTP resent to {phone}. Valid for 2 minutes.",
             'phone':   phone,
-        }, status=status.HTTP_200_OK)
+        }
+        if dj_settings.DEBUG and getattr(dj_settings, 'SMS_BACKEND', '') == 'console':
+            resp['dev_otp'] = raw_otp
+
+        return Response(resp, status=status.HTTP_200_OK)
 
 
 class OTPStatusView(APIView):

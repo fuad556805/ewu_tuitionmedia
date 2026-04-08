@@ -103,6 +103,10 @@ def logout_view(request):
 
 
 def forgot_password(request):
+    from accounts.services.otp_service import send_otp as svc_send_otp, verify_otp as svc_verify_otp, OTPError
+    from accounts.utils.sms_sender import send_otp_sms
+    from django.conf import settings as dj_settings
+
     step = request.session.get('reset_step', 1)
     ctx  = {'step': step}
     if request.method == 'POST':
@@ -112,20 +116,24 @@ def forgot_password(request):
             if not User.objects.filter(phone=phone).exists():
                 ctx.update({'step': 1, 'error': 'Phone number not registered.'})
                 return render(request, 'accounts/forgot_password.html', ctx)
-            import random
-            otp = str(random.randint(100000, 999999))
+            try:
+                _, raw_otp = svc_send_otp(phone, send_otp_sms)
+            except OTPError as e:
+                ctx.update({'step': 1, 'error': e.message})
+                return render(request, 'accounts/forgot_password.html', ctx)
             request.session['reset_phone'] = phone
-            request.session['reset_otp']   = otp
             request.session['reset_step']  = 2
-            ctx.update({'step': 2, 'otp_demo': otp})
+            dev_otp = raw_otp if (dj_settings.DEBUG and getattr(dj_settings, 'SMS_BACKEND', '') == 'console') else None
+            ctx.update({'step': 2, 'otp_demo': dev_otp})
         elif action == 'verify_otp':
+            phone   = request.session.get('reset_phone', '')
             entered = request.POST.get('otp', '').strip()
-            saved   = request.session.get('reset_otp', '')
-            if entered == saved:
+            try:
+                svc_verify_otp(phone, entered)
                 request.session['reset_step'] = 3
                 ctx['step'] = 3
-            else:
-                ctx.update({'step': 2, 'error': 'Wrong OTP.', 'otp_demo': saved})
+            except OTPError as e:
+                ctx.update({'step': 2, 'error': e.message})
         elif action == 'reset_password':
             new_pass = request.POST.get('new_password', '')
             confirm  = request.POST.get('confirm_password', '')

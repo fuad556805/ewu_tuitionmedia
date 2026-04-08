@@ -7,20 +7,28 @@ BD_PHONE_REGEX = re.compile(r'^\+?8801[3-9]\d{8}$')
 
 def validate_bd_phone(phone: str) -> str:
     """
-    Normalise and validate a Bangladesh phone number.
+    Validate a Bangladesh phone number and normalise to 01XXXXXXXXX format.
     Accepts: 01XXXXXXXXX, 8801XXXXXXXXX, +8801XXXXXXXXX
-    Returns: +8801XXXXXXXXX
+    Returns: 01XXXXXXXXX  (consistent with how the existing User model stores phones)
     """
     phone = phone.strip().replace(' ', '').replace('-', '')
+    # Normalise to +8801 for validation
     if phone.startswith('01') and len(phone) == 11:
-        phone = '+880' + phone[1:]
+        normalised = '+880' + phone[1:]
     elif phone.startswith('8801') and len(phone) == 13:
-        phone = '+' + phone
-    if not BD_PHONE_REGEX.match(phone):
+        normalised = '+' + phone
+    elif phone.startswith('+8801') and len(phone) == 14:
+        normalised = phone
+    else:
+        normalised = phone
+
+    if not BD_PHONE_REGEX.match(normalised):
         raise serializers.ValidationError(
             "Enter a valid Bangladesh phone number (e.g. 01XXXXXXXXX)."
         )
-    return phone
+    # Always return as 01XXXXXXXXX — matches existing User.phone storage format
+    # +8801XXXXXXXXX → replace '+880' with '0'
+    return normalised.replace('+880', '0', 1) if normalised.startswith('+880') else phone
 
 
 class SendOTPSerializer(serializers.Serializer):

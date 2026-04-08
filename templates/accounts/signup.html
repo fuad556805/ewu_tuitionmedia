@@ -80,6 +80,9 @@
         </div>
       </div>
 
+      <div id="devOtpBox" style="display:none;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);color:#fde68a;padding:10px 14px;border-radius:10px;text-align:center;margin-bottom:14px;font-size:13px">
+        ⚠️ Dev Mode OTP: <strong id="devOtpCode" style="font-size:22px;font-family:monospace;letter-spacing:4px"></strong>
+      </div>
       <div class="form-group">
         <label style="text-align:center;display:block">Enter 6-Digit OTP</label>
         <input class="form-control otp-input" id="otpInput" placeholder="------" maxlength="6" inputmode="numeric" pattern="[0-9]*">
@@ -206,6 +209,10 @@
         return;
       }
       document.getElementById('phoneDisplay').textContent = data.phone;
+      if (data.dev_otp) {
+        document.getElementById('devOtpBox').style.display = 'block';
+        document.getElementById('devOtpCode').textContent = data.dev_otp;
+      }
       showStep(2);
       startCountdown(120);
       startResendCooldown(60);
@@ -213,6 +220,31 @@
     } catch (e) {
       setError(errEl, 'Network error. Please try again.');
       btn.textContent = 'Send OTP →'; btn.disabled = false;
+    }
+  });
+
+  // ─── Resend: also show dev OTP ───
+  document.getElementById('resendLink').addEventListener('click', async () => {
+    const phone = document.getElementById('phone').value.trim();
+    const errEl = document.getElementById('step2Error');
+    setError(errEl, '');
+    try {
+      const resp = await fetch('/api/auth/resend-otp/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) { setError(errEl, data.error || 'Could not resend OTP.'); return; }
+      document.getElementById('otpInput').value = '';
+      if (data.dev_otp) {
+        document.getElementById('devOtpBox').style.display = 'block';
+        document.getElementById('devOtpCode').textContent = data.dev_otp;
+      }
+      startCountdown(120);
+      startResendCooldown(60);
+    } catch (e) {
+      setError(errEl, 'Network error. Please try again.');
     }
   });
 
@@ -258,26 +290,6 @@
     }
   });
 
-  // ─── Resend OTP ───
-  document.getElementById('resendLink').addEventListener('click', async () => {
-    const phone = document.getElementById('phone').value.trim();
-    const errEl = document.getElementById('step2Error');
-    setError(errEl, '');
-    try {
-      const resp = await fetch('/api/auth/resend-otp/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
-        body: JSON.stringify({ phone }),
-      });
-      const data = await resp.json();
-      if (!resp.ok) { setError(errEl, data.error || 'Could not resend OTP.'); return; }
-      document.getElementById('otpInput').value = '';
-      startCountdown(120);
-      startResendCooldown(60);
-    } catch (e) {
-      setError(errEl, 'Network error. Please try again.');
-    }
-  });
 
   // ─── Back button ───
   document.getElementById('backBtn').addEventListener('click', () => {
