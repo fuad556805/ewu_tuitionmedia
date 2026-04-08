@@ -4,8 +4,11 @@ from django.http import JsonResponse
 from django.conf import settings
 from accounts.models import User
 from posts.models import Post
+import logging
 import requests
 import json
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -68,7 +71,9 @@ def guru_ask(request):
     contents.append({'role': 'user', 'parts': [{'text': user_message}]})
 
     api_key = settings.GEMINI_API_KEY
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+
+    # Try models in order — fallback if one hits quota or errors
+    models = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-001']
 
     payload = {
         'system_instruction': {'parts': [{'text': system_prompt}]},
@@ -79,10 +84,24 @@ def guru_ask(request):
         },
     }
 
-    try:
-        response = requests.post(url, json=payload, timeout=30)
-        result = response.json()
-        reply = result['candidates'][0]['content']['parts'][0]['text']
-        return JsonResponse({'reply': reply})
-    except Exception as e:
-        return JsonResponse({'reply': 'দুঃখিত, এই মুহূর্তে সংযোগ সমস্যা হচ্ছে। Please try again.'})
+    last_error = None
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        try:
+            response = requests.post(url, json=payload, timeout=30)
+            result = response.json()
+
+            if response.status_code == 200 and 'candidates' in result:
+                reply = result['candidates'][0]['content']['parts'][0]['text']
+                return JsonResponse({'reply': reply})
+
+            error_msg = result.get('error', {}).get('message', 'Unknown error')
+            logger.warning("Gemini model %s failed (%s): %s", model, response.status_code, error_msg)
+            last_error = error_msg
+
+        except Exception as exc:
+            logger.error("Gemini model %s exception: %s", model, exc)
+            last_error = str(exc)
+
+    logger.error("All Gemini models failed. Last error: %s", last_error)
+    return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে। Please try again later.'})
