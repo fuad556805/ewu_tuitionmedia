@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: tuitionmedia
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn tuitionmedia.wsgi:application --bind 0.0.0.0:8000"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: RENDER
+        value: "TRUE"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SMS_BACKEND
+        value: "console"

@@ -41,7 +41,27 @@ Uses Replit's built-in PostgreSQL database via the `DATABASE_URL` environment va
 - `ANTHROPIC_API_KEY` - API key for the Guru AI assistant
 - `DATABASE_URL` - Replit PostgreSQL connection string (auto-set)
 
+## Default Admin Account
+
+A permanent admin account is guaranteed by data migration `accounts/0004_create_default_admin.py`.
+Every time `migrate` runs (on any deploy), this account is created or restored:
+
+- **Phone:** 01609227183
+- **Password:** fuad1234@
+- **Username:** fuad_admin
+- **Role:** admin / superuser
+
 ## Deployment
 
+### Replit
 Configured for autoscale deployment using Gunicorn on port 5000.
 Build step runs `collectstatic` and `migrate` automatically.
+
+### Render
+Use `build.sh` as the build command and the following start command:
+```
+gunicorn tuitionmedia.wsgi:application --bind 0.0.0.0:8000
+```
+A `render.yaml` is included for reference. Set `DATABASE_URL` in Render's environment
+variables to use a persistent PostgreSQL database (recommended). Without `DATABASE_URL`,
+the app falls back to SQLite which is wiped on each deploy.
