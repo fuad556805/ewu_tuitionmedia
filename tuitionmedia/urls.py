@@ -14,4 +14,5 @@ urlpatterns = [
     path('guru/', include('guru.urls')),
     path('admin-panel/', include('admin_panel.urls')),
     path('api/payment/', include('payments.urls', namespace='payments')),
+    path('api/auth/',    include('accounts.api_urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

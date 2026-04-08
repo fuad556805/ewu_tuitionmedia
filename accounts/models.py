@@ -44,6 +44,29 @@ class User(AbstractUser):
         return f"{self.get_full_name()} ({self.role})"
 
 
+class OTPVerification(models.Model):
+    """
+    Stores a hashed OTP for phone-based signup verification.
+    One record per phone number; overwritten on each new OTP send.
+    The actual user account is created only after OTP is verified.
+    """
+    phone       = models.CharField(max_length=20, unique=True, db_index=True)
+    otp_hash    = models.CharField(max_length=128)
+    expires_at  = models.DateTimeField()
+    attempts    = models.PositiveSmallIntegerField(default=0)
+    is_verified = models.BooleanField(default=False)
+    created_at  = models.DateTimeField(auto_now_add=True)
+    updated_at  = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name        = 'OTP Verification'
+        verbose_name_plural = 'OTP Verifications'
+
+    def __str__(self):
+        status = 'verified' if self.is_verified else 'pending'
+        return f"OTP({self.phone}) — {status}"
+
+
 class Notification(models.Model):
     TYPE_CHOICES = [
         ('success', 'success'), ('danger', 'danger'),

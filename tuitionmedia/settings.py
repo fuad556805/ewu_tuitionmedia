@@ -155,6 +155,23 @@ NAGAD_MERCHANT_ID   = os.getenv('NAGAD_MERCHANT_ID',  '')
 NAGAD_MERCHANT_KEY  = os.getenv('NAGAD_MERCHANT_KEY', '')
 NAGAD_PUBLIC_KEY    = os.getenv('NAGAD_PUBLIC_KEY',   '')
 
+# ================= SMS =================
+SMS_BACKEND = os.getenv('SMS_BACKEND', 'console')   # console | twilio | bulksmsbd | sslwireless
+
+# Twilio
+TWILIO_ACCOUNT_SID  = os.getenv('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN   = os.getenv('TWILIO_AUTH_TOKEN', '')
+TWILIO_FROM_NUMBER  = os.getenv('TWILIO_FROM_NUMBER', '')
+
+# BulkSMSBD (local BD)
+BULKSMSBD_API_KEY   = os.getenv('BULKSMSBD_API_KEY', '')
+BULKSMSBD_SENDER_ID = os.getenv('BULKSMSBD_SENDER_ID', 'TuitionMD')
+
+# SSL Wireless (local BD)
+SSLWIRELESS_USERNAME = os.getenv('SSLWIRELESS_USERNAME', '')
+SSLWIRELESS_PASSWORD = os.getenv('SSLWIRELESS_PASSWORD', '')
+SSLWIRELESS_SID      = os.getenv('SSLWIRELESS_SID', '')
+
 # ================= DRF =================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
