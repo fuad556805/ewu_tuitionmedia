@@ -1,17 +1,24 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
+# Load .env file
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY
+# ================= SECURITY =================
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-tuitionmedia-secret-key-change-in-production')
 DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = ['*']
 
-# APPS
+# ALLOWED HOSTS
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # e.g. 'example.com,www.example.com'
+
+# ================= APPS =================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,10 +36,10 @@ INSTALLED_APPS = [
     'admin_panel',
 ]
 
-# MIDDLEWARE
+# ================= MIDDLEWARE =================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,9 +49,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tuitionmedia.urls'
+
 AUTH_USER_MODEL = 'accounts.User'
 
-# TEMPLATES
+# ================= TEMPLATES =================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -61,9 +69,17 @@ TEMPLATES = [
     },
 ]
 
-# ✅ DATABASE (AUTO SWITCH)
-if os.getenv("RENDER") == "TRUE":
-    # Render (Live)
+# ================= DATABASE =================
+RENDER = os.getenv("RENDER") == "TRUE"
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+
+if RENDER and DATABASE_URL:
+    # Use Render PostgreSQL
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+    }
+elif RENDER:
+    # Render + SQLite (quick deploy)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -71,38 +87,44 @@ if os.getenv("RENDER") == "TRUE":
         }
     }
 else:
-    # Local PC
+    # Local development PostgreSQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'mediaDB',
-            'USER': 'postgres',
-            'PASSWORD': 'fuad1234@',
-            'HOST': 'localhost',
-            'PORT': '5432',
+            'NAME': os.getenv('POSTGRES_DB', 'mediaDB'),
+            'USER': os.getenv('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'fuad1234@'),
+            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
         }
     }
 
-# STATIC FILES
+# ================= STATIC & MEDIA =================
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# MEDIA FILES
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH
+# ================= AUTH =================
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
-# API KEY
+# ================= API KEYS =================
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
 
-# MESSAGE STORAGE
+# ================= MESSAGE STORAGE =================
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# ================= SECURITY HEADERS =================
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_SSL_REDIRECT = True
