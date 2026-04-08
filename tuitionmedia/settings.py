@@ -216,4 +216,7 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_SSL_REDIRECT = True
+    # Tell Django to trust the X-Forwarded-Proto header from Render's proxy
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Do NOT redirect to HTTPS here — Render/Cloudflare handles SSL termination
+    SECURE_SSL_REDIRECT = False
