@@ -2,11 +2,22 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import HttpResponse
 
 from accounts.api_views import HomeStatsView
 from payments.views import AdminBroadcastView
 
+
+def serve_sw(request):
+    import os
+    sw_path = os.path.join(settings.BASE_DIR, 'static', 'js', 'sw.js')
+    with open(sw_path, 'r') as f:
+        content = f.read()
+    return HttpResponse(content, content_type='application/javascript')
+
+
 urlpatterns = [
+    path('sw.js', serve_sw, name='service_worker'),
     path('django-admin/', admin.site.urls),
 
     # ── Template-based views (existing frontend) ──

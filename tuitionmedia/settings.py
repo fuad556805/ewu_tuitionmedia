@@ -82,6 +82,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'tuitionmedia.context_processors.vapid_key',
             ],
         },
     },
@@ -203,6 +204,11 @@ SIMPLE_JWT = {
 
 # ================= MESSAGE STORAGE =================
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# ================= WEB PUSH (VAPID) =================
+VAPID_PUBLIC_KEY      = os.getenv('VAPID_PUBLIC_KEY', '')
+VAPID_PRIVATE_KEY_B64 = os.getenv('VAPID_PRIVATE_KEY_B64', '')
+VAPID_CLAIMS_EMAIL    = os.getenv('VAPID_CLAIMS_EMAIL', 'admin@tuitionmedia.com')
 
 # ================= SECURITY HEADERS =================
 if not DEBUG:

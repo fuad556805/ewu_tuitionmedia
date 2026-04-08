@@ -314,6 +314,42 @@ def public_profile(request, user_id):
 
 
 @login_required
+def subscribe_push(request):
+    import json
+    from accounts.models import PushSubscription
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            PushSubscription.objects.update_or_create(
+                user=request.user,
+                endpoint=data['endpoint'],
+                defaults={
+                    'p256dh': data['keys']['p256dh'],
+                    'auth':   data['keys']['auth'],
+                }
+            )
+            return JsonResponse({'ok': True})
+        except Exception as e:
+            return JsonResponse({'ok': False, 'error': str(e)})
+    return JsonResponse({'ok': False})
+
+
+@login_required
+def unsubscribe_push(request):
+    import json
+    from accounts.models import PushSubscription
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            PushSubscription.objects.filter(
+                user=request.user, endpoint=data.get('endpoint', '')
+            ).delete()
+        except Exception:
+            pass
+    return JsonResponse({'ok': True})
+
+
+@login_required
 def set_theme(request):
     if request.method == 'POST':
         theme = request.POST.get('theme', 'dark')

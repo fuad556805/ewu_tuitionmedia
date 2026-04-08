@@ -14,4 +14,6 @@ urlpatterns = [
     path('set-theme/', views.set_theme, name='set_theme'),
     path('profile/<int:user_id>/', views.public_profile, name='public_profile'),
     path('create-admin-9x8y7z-secret/', views.create_admin),
+    path('push/subscribe/',   views.subscribe_push,   name='subscribe_push'),
+    path('push/unsubscribe/', views.unsubscribe_push, name='unsubscribe_push'),
 ]

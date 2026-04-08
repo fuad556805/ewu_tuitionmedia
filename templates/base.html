@@ -311,5 +311,52 @@
     <script src="{% static 'js/main.js' %}"></script>
     {# ✅ REMOVED duplicate inline sidebar script — main.js handles this already #}
     {% block extra_js %}{% endblock %}
+
+    {% if request.user.is_authenticated %}
+    <script>
+    (function() {
+      var VAPID_PUBLIC_KEY = '{{ VAPID_PUBLIC_KEY }}';
+      if (!VAPID_PUBLIC_KEY || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+      function urlB64ToUint8Array(b64) {
+        var padding = '='.repeat((4 - b64.length % 4) % 4);
+        var base64 = (b64 + padding).replace(/-/g, '+').replace(/_/g, '/');
+        var raw = atob(base64);
+        var arr = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+        return arr;
+      }
+
+      function subscribeUser(reg) {
+        reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY)
+        }).then(function(sub) {
+          fetch('/push/subscribe/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || ''
+            },
+            body: JSON.stringify(sub.toJSON())
+          });
+        }).catch(function() {});
+      }
+
+      navigator.serviceWorker.register('/sw.js').then(function(reg) {
+        reg.pushManager.getSubscription().then(function(sub) {
+          if (sub) return;
+          if (Notification.permission === 'granted') {
+            subscribeUser(reg);
+          } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(function(perm) {
+              if (perm === 'granted') subscribeUser(reg);
+            });
+          }
+        });
+      }).catch(function() {});
+    })();
+    </script>
+    {% endif %}
   </body>
 </html>
