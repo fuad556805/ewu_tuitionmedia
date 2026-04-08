@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Messages — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div style="font-family:var(--font-head);font-size:22px;font-weight:700;margin-bottom:18px">Messages</div>
+
+  {% if active_user %}
+  <input type="hidden" id="chatOtherUserId" value="{{ active_user.pk }}">
+  {% endif %}
+  <input type="hidden" id="myUserId" value="{{ request.user.pk }}">
+
+  <!-- Mobile: back button when in chat view -->
+  <button id="chatBackBtn"
+          onclick="showChatContacts()"
+          style="display:none;margin-bottom:12px"
+          class="btn btn-secondary btn-sm">
+    ← Back to Contacts
+  </button>
+
+  <div class="chat-layout glass" style="border-radius:var(--radius)" id="chatLayout">
+    <!-- Contacts sidebar -->
+    <div class="chat-sidebar glass" id="chatContactsPanel"
+         style="border-radius:var(--radius) 0 0 var(--radius);border-right:1px solid var(--glass-border)">
+      <div style="padding:10px 12px 8px;border-bottom:1px solid var(--glass-border);font-size:11px;font-weight:600;color:var(--muted)">USERS</div>
+      <div style="overflow-y:auto;flex:1">
+        {% for u in all_users %}
+          {% if u.is_accepted %}
+            <a href="?with={{ u.pk }}"
+               class="chat-contact {% if active_user.pk == u.pk %}active{% endif %}"
+               style="text-decoration:none;color:var(--text)"
+               onclick="onContactClick(event)">
+              <div class="avatar avatar-sm" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">{{ u.first_name|first }}</div>
+              <div>
+                <div style="font-weight:600;font-size:12px">{{ u.get_full_name|truncatechars:14 }}</div>
+                <div style="color:var(--muted);font-size:10px;text-transform:capitalize">{{ u.role }}</div>
+              </div>
+            </a>
+          {% endif %}
+        {% empty %}
+          <div style="padding:14px;color:var(--muted);font-size:13px">No users yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Chat area -->
+    <div class="chat-main" id="chatMainPanel">
+      {% if active_user %}
+        <!-- Header -->
+        <div style="padding:13px 16px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;gap:10px">
+          <div class="avatar avatar-sm" style="background:linear-gradient(135deg,{% if active_user.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">{{ active_user.first_name|first }}</div>
+          <div>
+            <div style="font-weight:600">{{ active_user.get_full_name }}</div>
+            <div style="color:var(--muted);font-size:12px;text-transform:capitalize">{{ active_user.role }}</div>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+          {% for msg in messages_list %}
+            <div class="msg-bubble {% if msg.sender == request.user %}mine{% else %}theirs{% endif %}" data-msg-id="{{ msg.pk }}">
+              {{ msg.text }}
+              <div class="msg-time">{{ msg.created_at|date:"H:i" }}</div>
+            </div>
+          {% empty %}
+            <div style="text-align:center;color:var(--muted);padding:30px 0;font-size:13px">Say hello! 👋</div>
+          {% endfor %}
+        </div>
+
+        {% if active_user.is_accepted %}
+          <div class="chat-input-row">
+            <form id="chatForm" style="display:flex;gap:8px;width:100%">
+              {% csrf_token %}
+              <input class="form-control" id="chatInput" placeholder="Type a message..." style="border-radius:99px" autocomplete="off">
+              <button type="submit" class="btn btn-primary" style="border-radius:99px;padding:9px 18px">Send</button>
+            </form>
+          </div>
+        {% else %}
+          <div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">
+            You can only message accepted users.
+          </div>
+        {% endif %}
+
+      {% else %}
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted)">
+          <div style="font-size:32px">💬</div>
+          <div>Select a user to start chatting</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+// Mobile chat: show main panel when contact selected
+function onContactClick(e) {
+  if (window.innerWidth <= 768) {
+    // Let the link navigate — the page will reload with active_user set
+    // After reload, show main panel on mobile
+  }
+}
+
+function showChatContacts() {
+  const layout = document.getElementById('chatLayout');
+  const backBtn = document.getElementById('chatBackBtn');
+  layout.classList.remove('chat-mobile-show-main');
+  layout.classList.add('chat-mobile-show-contacts');
+  if (backBtn) backBtn.style.display = 'none';
+}
+
+function initChatMobile() {
+  if (window.innerWidth > 768) return;
+  const layout = document.getElementById('chatLayout');
+  const backBtn = document.getElementById('chatBackBtn');
+  const hasActiveUser = document.getElementById('chatOtherUserId');
+
+  if (hasActiveUser) {
+    // Show main chat panel on mobile when a user is selected
+    layout.classList.add('chat-mobile-show-main');
+    layout.classList.remove('chat-mobile-show-contacts');
+    if (backBtn) backBtn.style.display = 'inline-flex';
+  } else {
+    layout.classList.add('chat-mobile-show-contacts');
+    layout.classList.remove('chat-mobile-show-main');
+    if (backBtn) backBtn.style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initChatMobile);
+window.addEventListener('resize', function() {
+  if (window.innerWidth > 768) {
+    const layout = document.getElementById('chatLayout');
+    layout.classList.remove('chat-mobile-show-main', 'chat-mobile-show-contacts');
+    const backBtn = document.getElementById('chatBackBtn');
+    if (backBtn) backBtn.style.display = 'none';
+  }
+});
+</script>
+{% endblock %}

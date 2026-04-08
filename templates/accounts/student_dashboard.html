@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div style="margin-bottom:24px">
+    <h1 style="font-family:var(--font-head);font-size:26px;font-weight:700">Good morning, {{ request.user.first_name }} 👋</h1>
+    <p style="color:var(--muted);margin-top:4px">Here's what's happening with your tuitions today.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-grid">
+    <div class="glass stat-card">
+      <div class="label">Active Posts</div>
+      <div class="value" style="color:var(--accent)">{{ active_posts }}</div>
+    </div>
+    <div class="glass stat-card">
+      <div class="label">Pending Requests</div>
+      <div class="value" style="color:var(--accent2)">{{ pending_requests }}</div>
+    </div>
+    <div class="glass stat-card">
+      <div class="label">Active Tuitions</div>
+      <div class="value" style="color:var(--accent3)">{{ active_tuitions }}</div>
+    </div>
+    <div class="glass stat-card">
+      <div class="label">Account</div>
+      <div class="value" style="color:var(--success);font-size:18px">Active ✓</div>
+    </div>
+  </div>
+
+  <div class="dashboard-two-col">
+    <!-- Pending tutor requests -->
+    <div class="glass" style="padding:22px">
+      <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <span>Tutor Requests on Your Posts</span>
+        {% if pending_requests %}<span class="badge badge-accent">{{ pending_requests }} new</span>{% endif %}
+      </div>
+      {% for req in request.user.received_requests.all %}
+        {% if req.status == 'pending' %}
+        <div class="item-row">
+          <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#7c6bff,#a06bff)">{{ req.tutor.first_name|first }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:13px">{{ req.tutor.get_full_name }}</div>
+            <div style="color:var(--muted);font-size:12px">{{ req.subject }}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <form method="post" action="{% url 'accept_request' req.pk %}">{% csrf_token %}<button class="btn btn-success btn-sm">Accept</button></form>
+            <form method="post" action="{% url 'reject_request' req.pk %}">{% csrf_token %}<button class="btn btn-danger btn-sm">✗</button></form>
+          </div>
+        </div>
+        {% endif %}
+      {% empty %}
+        <div style="color:var(--muted);font-size:13px;padding:14px 0;text-align:center">No pending requests yet.</div>
+      {% endfor %}
+    </div>
+
+    <!-- Quick actions -->
+    <div class="glass" style="padding:22px">
+      <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px">Quick Actions</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="{% url 'my_posts' %}" class="btn btn-primary btn-block">+ Create New Post</a>
+        <a href="{% url 'browse_tutors' %}" class="btn btn-secondary btn-block">Browse Tutors</a>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:rgba(168,85,247,0.08);border-radius:var(--radius-sm);border:1px solid rgba(168,85,247,0.2)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span>🦉</span><span style="font-weight:600;color:#c084fc;font-size:13px">Guru AI Tip</span>
+        </div>
+        <div style="color:var(--muted);font-size:12px">Click the 🦉 button to ask Guru for smart tutor recommendations!</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

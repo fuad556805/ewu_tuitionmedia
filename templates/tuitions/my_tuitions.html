@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}My Tuitions — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div class="section-title">My Tuitions</div>
+  </div>
+
+  {% if not tuitions %}
+  <div class="glass" style="padding:40px;text-align:center">
+    <div style="font-size:36px;margin-bottom:10px">🎓</div>
+    <div style="color:var(--muted)">No confirmed tuitions yet. Browse posts and apply!</div>
+    <a href="{% url 'browse_posts' %}" class="btn btn-primary" style="margin-top:16px">Browse Posts</a>
+  </div>
+  {% endif %}
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    {% for t in tuitions %}
+    <div class="glass" style="padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div style="min-width:0;flex:1">
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px">{{ t.student.get_full_name }}</div>
+          <div style="color:var(--muted);font-size:13px;margin-bottom:8px">{{ t.subject }} · {{ t.month }}</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <span class="badge badge-{% if t.status == 'active' %}success{% else %}muted{% endif %}">{{ t.status }}</span>
+            {% if t.salary > 0 %}
+              <span style="color:var(--muted);font-size:13px">Salary: <strong style="color:var(--text)">BDT {{ t.salary }}/mo</strong></span>
+              <span style="color:var(--muted);font-size:13px">Commission:
+                <strong style="color:{% if t.commission_status == 'pending' %}var(--warn){% else %}var(--success){% endif %}">
+                  BDT {{ t.commission }} ({{ t.commission_status }})
+                </strong>
+              </span>
+            {% else %}
+              <span class="badge badge-warn">Admin setting salary...</span>
+            {% endif %}
+          </div>
+        </div>
+        {% if t.commission_status == 'pending' and t.salary > 0 %}
+        <a href="{% url 'payments' %}" class="btn btn-gold btn-sm" style="flex-shrink:0">Pay Commission</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

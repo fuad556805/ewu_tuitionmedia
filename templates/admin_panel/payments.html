@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}Payments — Admin{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div class="section-title">Payment Management</div>
+  </div>
+
+  <!-- Payment Summary -->
+  {% if all_payments %}
+  <div style="margin-bottom:24px">
+    <div style="color:var(--muted);font-size:13px;font-weight:600;letter-spacing:0.04em;margin-bottom:10px">PAYMENT SUMMARY</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px">
+      <div class="glass" style="padding:14px 16px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Total commission</div>
+        <div style="font-size:20px;font-weight:700">BDT {{ total_commission }}</div>
+      </div>
+      <div class="glass" style="padding:14px 16px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Confirmed</div>
+        <div style="font-size:20px;font-weight:700;color:var(--success)">BDT {{ confirmed_total }}</div>
+      </div>
+      <div class="glass" style="padding:14px 16px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Pending</div>
+        <div style="font-size:20px;font-weight:700;color:var(--warn)">BDT {{ pending_total }}</div>
+      </div>
+      <div class="glass" style="padding:14px 16px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Active tuitions</div>
+        <div style="font-size:20px;font-weight:700">{{ active_count }}</div>
+      </div>
+    </div>
+
+    <div style="color:var(--muted);font-size:13px;font-weight:600;letter-spacing:0.04em;margin-bottom:10px">PER TUTOR BREAKDOWN</div>
+
+    {% for t in all_payments %}
+    <div class="glass" style="padding:14px 18px;margin-bottom:8px">
+      <div class="payment-row" style="display:flex;justify-content:space-between;align-items:center">
+        <div style="min-width:0">
+          <a href="{% url 'admin_panel:user_profile' t.tutor.id %}"
+             style="font-weight:600;color:var(--accent);text-decoration:none;font-size:14px">
+            {{ t.tutor.get_full_name }}
+          </a>
+          <span style="font-size:12px;color:var(--muted);margin-left:6px">→
+            <a href="{% url 'admin_panel:user_profile' t.student.id %}"
+               style="color:var(--accent2);text-decoration:none">
+              {{ t.student.get_full_name }}
+            </a>
+          </span>
+        </div>
+        {% if t.commission_status == 'paid' %}
+          <span class="badge badge-success">✓ Confirmed</span>
+        {% elif t.commission_status == 'proof_uploaded' %}
+          <span class="badge badge-warn">Proof uploaded</span>
+        {% else %}
+          <span class="badge badge-danger">Awaiting proof</span>
+        {% endif %}
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--muted)">
+        <span>{{ t.subject }} · BDT {{ t.commission }}</span>
+        <span>{% if t.month %}{{ t.month }}{% endif %}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Set Salary -->
+  {% if no_salary %}
+  <div class="glass" style="padding:22px;margin-bottom:18px">
+    <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px">Set Tuition Salary</div>
+    <form method="post" action="{% url 'admin_panel:set_salary' %}">
+      {% csrf_token %}
+      <div class="form-row col-3" style="align-items:end">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Select Tuition</label>
+          <select class="form-control" name="tuition_id" required>
+            <option value="">-- Select --</option>
+            {% for t in no_salary %}
+            <option value="{{ t.pk }}">
+              {{ t.tutor.get_full_name }} + {{ t.student.get_full_name }} ({{ t.subject }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Monthly Salary (BDT)</label>
+          <input class="form-control" type="number" name="amount" placeholder="e.g. 5000" required min="1">
+        </div>
+        <button type="submit" class="btn btn-gold">Set Amount</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- Proof uploaded -->
+  {% if proof_uploaded %}
+  <div style="margin-bottom:18px">
+    <div style="font-family:var(--font-head);font-weight:700;margin-bottom:10px;color:var(--warn)">Proof Uploaded — Action Required</div>
+    {% for t in proof_uploaded %}
+    <div class="glass" style="padding:18px;margin-bottom:10px;border:1px solid rgba(255,203,71,0.2)">
+      <div class="payment-row" style="display:flex;justify-content:space-between;align-items:center">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <a href="{% url 'admin_panel:user_profile' t.tutor.id %}" style="font-weight:700;color:var(--accent);text-decoration:none">
+              {{ t.tutor.get_full_name }}
+            </a>
+          </div>
+          <div style="color:var(--muted);font-size:13px">
+            {{ t.student.get_full_name }} · {{ t.month }} · BDT {{ t.commission }}
+          </div>
+          {% if t.proof_image %}
+          <a href="{{ t.proof_image.url }}" target="_blank" class="btn btn-secondary btn-sm" style="margin-top:8px">
+            View Proof 🖼️
+          </a>
+          {% endif %}
+        </div>
+        <form method="post" action="{% url 'admin_panel:confirm_payment' t.pk %}">
+          {% csrf_token %}
+          <button class="btn btn-success">✓ Payment Received</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Paid -->
+  {% if paid %}
+  <div>
+    <div style="color:var(--success);font-size:13px;font-weight:600;margin-bottom:10px">CONFIRMED PAYMENTS</div>
+    {% for t in paid %}
+    <div class="glass" style="padding:14px;margin-bottom:8px">
+      <div class="payment-row" style="display:flex;justify-content:space-between;align-items:center">
+        <div style="min-width:0">
+          <div style="font-weight:600;color:var(--accent)">{{ t.tutor.get_full_name }}</div>
+          <div style="font-size:12px;color:var(--muted)">
+            {{ t.student.get_full_name }} · BDT {{ t.commission }} · {{ t.month }}
+          </div>
+          {% if t.proof_image %}
+          <a href="{{ t.proof_image.url }}" target="_blank" class="btn btn-secondary btn-sm" style="margin-top:6px">
+            View Payment Proof 🖼️
+          </a>
+          {% endif %}
+        </div>
+        <span class="badge badge-success">✓ Confirmed</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

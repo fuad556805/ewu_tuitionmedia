@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">My Profile</div>
+      <div class="section-sub">Profile changes need admin approval before going live</div>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="profile-grid">
+
+      <!-- ── LEFT: Photo + ID doc ── -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- Profile photo card -->
+        <div class="glass" style="padding:22px;text-align:center">
+          {% if request.user.profile_image %}
+            <img src="{{ request.user.profile_image.url }}"
+                 id="profilePreview"
+                 style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);margin:0 auto 12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
+          {% else %}
+            <div id="profilePreviewFallback"
+                 class="avatar avatar-lg"
+                 style="margin:0 auto 12px;font-size:32px;width:90px;height:90px;
+                        background:linear-gradient(135deg,{% if request.user.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">
+              {{ request.user.first_name|first|upper }}
+            </div>
+            <img id="profilePreview" src="" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);margin:0 auto 12px;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
+          {% endif %}
+
+          <div style="font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:4px">
+            {{ request.user.get_full_name }}
+          </div>
+          <div style="margin-bottom:14px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap">
+            <span class="badge badge-{% if request.user.role == 'tutor' %}accent{% else %}pink{% endif %}">
+              {{ request.user.role|capfirst }}
+            </span>
+            {% if request.user.profile_approved %}
+              <span class="badge badge-success">✅ Approved</span>
+            {% else %}
+              <span class="badge badge-warn">⏳ Pending</span>
+            {% endif %}
+          </div>
+
+          <label style="cursor:pointer;display:block">
+            <div class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;margin-bottom:6px">
+              📷 Change Photo
+            </div>
+            <input type="file" name="profile_image" accept="image/*" style="display:none"
+                   onchange="previewImage(this,'profilePreview','profilePreviewFallback')">
+          </label>
+          <div style="color:var(--muted);font-size:11px">JPG, PNG · Max 5MB</div>
+        </div>
+
+        <!-- NID / Student ID card -->
+        <div class="glass" style="padding:20px">
+          <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:12px">
+            🪪 {% if request.user.role == 'tutor' %}Student ID / NID{% else %}NID{% endif %}
+          </div>
+          {% if request.user.id_image %}
+            <img src="{{ request.user.id_image.url }}"
+                 style="width:100%;border-radius:var(--radius-sm);object-fit:cover;max-height:120px;margin-bottom:10px;border:1px solid var(--glass-border)">
+            <div style="color:var(--success);font-size:12px;margin-bottom:10px">✅ Document uploaded</div>
+          {% else %}
+            <div style="color:var(--muted);font-size:12px;margin-bottom:10px">No document uploaded yet</div>
+          {% endif %}
+          <label style="cursor:pointer;display:block">
+            <div class="upload-area" id="idDropArea">
+              <div style="font-size:24px;margin-bottom:6px">📄</div>
+              <div style="color:var(--muted);font-size:12px" id="idFileName">
+                Click to upload ID image
+              </div>
+            </div>
+            <input type="file" name="id_image" accept="image/*" style="display:none"
+                   onchange="showFileName(this,'idFileName')">
+          </label>
+        </div>
+
+        <!-- Approval notice -->
+        <div class="alert alert-warn">
+          <span>⚠️</span>
+          <span style="font-size:13px">Profile changes will be reviewed by admin before going live.</span>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Fields ── -->
+      <div class="glass" style="padding:26px">
+
+        <div style="font-family:var(--font-head);font-weight:700;font-size:15px;margin-bottom:16px;
+                    padding-bottom:10px;border-bottom:1px solid var(--glass-border)">
+          👤 Basic Information
+        </div>
+
+        <div class="form-row" style="margin-bottom:0">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input class="form-control" name="first_name" value="{{ request.user.first_name }}" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input class="form-control" name="last_name" value="{{ request.user.last_name }}">
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:0">
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input class="form-control" name="phone" value="{{ request.user.phone }}" required>
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select class="form-control" name="gender">
+              <option value="">-- Select --</option>
+              <option value="male"   {% if request.user.gender == 'male'   %}selected{% endif %}>Male</option>
+              <option value="female" {% if request.user.gender == 'female' %}selected{% endif %}>Female</option>
+              <option value="other"  {% if request.user.gender == 'other'  %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+        </div>
+
+        {% if request.user.role == 'tutor' %}
+        <div style="font-family:var(--font-head);font-weight:700;font-size:15px;
+                    margin:22px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--glass-border)">
+          🎓 Academic Information
+        </div>
+
+        <div class="form-row" style="margin-bottom:0">
+          <div class="form-group">
+            <label>School</label>
+            <input class="form-control" name="school" value="{{ request.user.school }}" placeholder="School name">
+          </div>
+          <div class="form-group">
+            <label>College</label>
+            <input class="form-control" name="college" value="{{ request.user.college }}" placeholder="College name">
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:0">
+          <div class="form-group">
+            <label>University</label>
+            <input class="form-control" name="university" value="{{ request.user.university }}" placeholder="e.g. BUET, DU, KUET">
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <input class="form-control" name="department" value="{{ request.user.department }}" placeholder="e.g. EEE, CSE, English">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Subjects (comma-separated)</label>
+          <input class="form-control" name="subjects" value="{{ request.user.subjects }}"
+                 placeholder="e.g. Physics, Math, Chemistry, ICT">
+        </div>
+
+        <div class="form-group">
+          <label>Location / Area</label>
+          <input class="form-control" name="location" value="{{ request.user.location }}"
+                 placeholder="e.g. Dhanmondi, Dhaka">
+        </div>
+        {% endif %}
+
+        <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+          <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {% if tuitions %}
+  <div class="glass" style="padding:22px;margin-top:18px">
+    <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px">🎓 Tuition History</div>
+    {% for t in tuitions %}
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--glass-border);flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-weight:600;font-size:14px">{{ t.subject }}</div>
+        <div style="color:var(--muted);font-size:12px">
+          {% if request.user.role == 'student' %}Tutor: {{ t.tutor.get_full_name }}{% else %}Student: {{ t.student.get_full_name }}{% endif %}
+          · {{ t.month }}
+        </div>
+      </div>
+      <span class="badge badge-{% if t.status == 'active' %}success{% else %}muted{% endif %}">{{ t.status }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<script>
+function previewImage(input, previewId, fallbackId) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview  = document.getElementById(previewId);
+    const fallback = fallbackId ? document.getElementById(fallbackId) : null;
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    if (fallback) fallback.style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function showFileName(input, labelId) {
+  if (input.files && input.files[0]) {
+    document.getElementById(labelId).textContent = '✅ ' + input.files[0].name;
+  }
+}
+</script>
+{% endblock %}

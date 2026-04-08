@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}My Posts — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">My Tuition Posts</div>
+      <div class="section-sub">Posts need admin approval before going live</div>
+    </div>
+    <button class="btn btn-primary" onclick="toggleCreate()">+ New Post</button>
+  </div>
+
+  <!-- Create post form -->
+  <div class="glass" id="createForm" style="padding:24px;margin-bottom:20px;display:none;animation:slideIn 0.3s ease">
+    <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px">Create New Post</div>
+    <form method="post" action="{% url 'create_post' %}">
+      {% csrf_token %}
+      <!-- Subject + Location -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject(s)</label>
+          <input class="form-control" name="subject" placeholder="e.g. HSC Physics & Chemistry" required>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input class="form-control" name="location" placeholder="e.g. Dhanmondi, Dhaka" required>
+        </div>
+      </div>
+      <!-- Budget + Class -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Budget (BDT/month)</label>
+          <input class="form-control" name="budget" type="number" placeholder="e.g. 4000" required>
+        </div>
+        <div class="form-group">
+          <label>Class / Level</label>
+          <input class="form-control" name="classes" placeholder="e.g. Class 11-12">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Schedule</label>
+        <input class="form-control" name="schedule" placeholder="e.g. Weekends 3-6 PM">
+      </div>
+      <div class="form-group">
+        <label>Additional Details</label>
+        <textarea class="form-control" name="details" rows="2" placeholder="Any extra info..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button type="submit" class="btn btn-primary">Submit for Approval</button>
+        <button type="button" class="btn btn-secondary" onclick="toggleCreate()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  {% if not posts %}
+  <div class="glass" style="padding:40px;text-align:center">
+    <div style="font-size:36px;margin-bottom:10px">📋</div>
+    <div style="font-family:var(--font-head);font-weight:700;margin-bottom:6px">No posts yet</div>
+    <div style="color:var(--muted);font-size:14px">Create your first tuition post to get matched with tutors.</div>
+  </div>
+  {% endif %}
+
+  {% for post in posts %}
+  <div class="glass card">
+    <div class="card-row">
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+          <div style="font-family:var(--font-head);font-weight:700;font-size:15px">{{ post.subject }}</div>
+          <span class="badge badge-{% if post.status == 'active' %}success{% elif post.status == 'pending_approval' %}warn{% else %}danger{% endif %}">
+            {% if post.status == 'active' %}Active{% elif post.status == 'pending_approval' %}Awaiting Approval{% else %}{{ post.status }}{% endif %}
+          </span>
+        </div>
+        <div class="card-meta">
+          {% if post.location %}📍 {{ post.location }}{% endif %}
+          {% if post.budget %}💰 BDT {{ post.budget }}/mo{% endif %}
+          {% if post.schedule %}🕐 {{ post.schedule }}{% endif %}
+          {% if post.classes %}🎓 {{ post.classes }}{% endif %}
+        </div>
+      </div>
+      <div class="card-actions">
+        <a href="{% url 'edit_post' post.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+        <form method="post" action="{% url 'delete_post' post.pk %}" style="display:inline" onsubmit="return confirm('Delete this post?')">
+          {% csrf_token %}
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </form>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--glass-border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
+      <span style="color:var(--muted);font-size:13px"><strong style="color:var(--text)">{{ post.request_count }}</strong> tutor(s) applied</span>
+      <span style="color:var(--muted);font-size:12px">{{ post.created_at|date:"M d, Y" }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+function toggleCreate() {
+  const f = document.getElementById('createForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

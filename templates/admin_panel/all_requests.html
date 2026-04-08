@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}All Requests — Admin{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div class="section-title">All Match Requests</div>
+  </div>
+
+  <div class="glass" style="padding:22px">
+    <div class="table-wrap">
+      <table class="tm-table">
+        <thead>
+          <tr>
+            <th>TUTOR</th>
+            <th>STUDENT</th>
+            <th>SUBJECT</th>
+            <th>POST</th>
+            <th>DATE</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reqs %}
+          <tr>
+            <td style="font-weight:600">
+              <a href="{% url 'admin_panel:user_profile' r.tutor.id %}"
+                 style="color:var(--accent);text-decoration:none"
+                 title="View Tutor Profile">
+                👤 {{ r.tutor.get_full_name }}
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'admin_panel:user_profile' r.student.id %}"
+                 style="color:var(--pink);text-decoration:none"
+                 title="View Student Profile">
+                👤 {{ r.student.get_full_name }}
+              </a>
+            </td>
+            <td style="color:var(--muted)">{{ r.subject }}</td>
+            <td style="color:var(--muted)">{% if r.post %}📋{% else %}Direct{% endif %}</td>
+            <td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+            <td>
+              <span class="badge badge-{% if r.status == 'accepted' %}success{% elif r.status == 'pending' %}warn{% else %}danger{% endif %}">
+                {{ r.status }}
+              </span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px 0">No requests yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

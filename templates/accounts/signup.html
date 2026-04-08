@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — TuitionMedia</title>
+  {% load static %}<link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body data-user-theme="dark">
+<div class="orb orb-1"></div><div class="orb orb-2"></div>
+
+<div class="auth-page">
+  <div class="glass auth-card">
+    <a href="{% url 'landing' %}" style="color:var(--muted);font-size:13px;text-decoration:none;display:block;margin-bottom:20px">← Back</a>
+    <div class="auth-title">Join TuitionMedia</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:22px">Create your free account — login works instantly!</p>
+
+    <!-- Role picker -->
+    <div class="role-picker">
+      <label class="role-option selected" id="roleStudent">
+        <input type="radio" name="_role_pick" value="student" checked style="display:none">
+        <div style="font-size:22px;margin-bottom:4px">🎓</div>
+        <div style="font-weight:600;font-size:14px">Student</div>
+      </label>
+      <label class="role-option" id="roleTutor">
+        <input type="radio" name="_role_pick" value="tutor" style="display:none">
+        <div style="font-size:22px;margin-bottom:4px">📚</div>
+        <div style="font-weight:600;font-size:14px">Tutor</div>
+      </label>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input class="form-control" name="first_name" placeholder="First name" required>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input class="form-control" name="last_name" placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input class="form-control" name="phone" placeholder="01XXXXXXXXX" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input class="form-control" name="password" type="password" placeholder="Min 6 characters" required>
+          <button type="button" class="pw-toggle">👁️</button>
+        </div>
+      </div>
+      <input type="hidden" name="role" id="roleInput" value="student">
+
+      {% if form.errors %}
+      <div class="alert alert-danger">
+        {% for field, errors in form.errors.items %}
+          {% for error in errors %}{{ error }}{% endfor %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;font-size:15px;padding:13px">Create Account →</button>
+    </form>
+
+    <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:16px">
+      Already have an account? <a href="{% url 'login' %}" style="color:var(--accent);font-weight:600">Log In</a>
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--glass-border);text-align:center">
+      <a href="{% url 'login' %}" style="color:var(--muted);font-size:12px">Admin? Log in here →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Role picker sync
+  document.querySelectorAll('.role-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      const radio = opt.querySelector('input');
+      if (radio) {
+        radio.checked = true;
+        document.getElementById('roleInput').value = radio.value;
+      }
+    });
+  });
+</script>
+{% load static %}<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

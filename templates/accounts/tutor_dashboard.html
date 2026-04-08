@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div style="margin-bottom:24px">
+    <h1 style="font-family:var(--font-head);font-size:26px;font-weight:700">Hello, {{ request.user.first_name }} 👋</h1>
+    <p style="color:var(--muted);margin-top:4px">Your tuition dashboard</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-grid">
+    <div class="glass stat-card">
+      <div class="label">Active Tuitions</div>
+      <div class="value" style="color:var(--accent)">{{ active_tuitions }}</div>
+    </div>
+    <div class="glass stat-card">
+      <div class="label">Commission Pending</div>
+      <div class="value" style="color:var(--warn);font-size:18px">BDT {{ pending_commission }}</div>
+    </div>
+    <div class="glass stat-card">
+      <div class="label">Student Requests</div>
+      <div class="value" style="color:var(--accent2)">{{ student_reqs.count }}</div>
+    </div>
+    <div class="glass stat-card">
+      <div class="label">Status</div>
+      <div class="value" style="color:var(--success);font-size:18px">Active ✓</div>
+    </div>
+  </div>
+
+  {% if pending_commission > 0 %}
+  <div class="alert alert-warn" style="margin-bottom:16px">
+    <span style="font-size:20px">⚠️</span>
+    <div style="flex:1">
+      <div style="font-weight:700;color:var(--warn);font-size:14px">Commission Due</div>
+      <div style="color:var(--muted);font-size:13px">BDT {{ pending_commission }} pending. Go to Payments to submit proof.</div>
+    </div>
+    <a href="{% url 'payments' %}" class="btn btn-gold btn-sm">Pay Now</a>
+  </div>
+  {% endif %}
+
+  {% if student_reqs %}
+  <div class="glass" style="padding:22px">
+    <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px">Direct Student Requests</div>
+    {% for req in student_reqs %}
+    <div class="item-row">
+      <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#ff6b9d,#ff3a5c)">{{ req.student.first_name|first }}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px">{{ req.student.get_full_name }}</div>
+        <div style="color:var(--muted);font-size:12px">{{ req.subject }}</div>
+      </div>
+      <form method="post" action="{% url 'accept_request' req.pk %}">
+        {% csrf_token %}<button class="btn btn-success btn-sm">Accept</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="glass" style="padding:22px">
+    <div style="font-family:var(--font-head);font-weight:700;margin-bottom:10px">Quick Actions</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a href="{% url 'browse_posts' %}" class="btn btn-primary">Browse Tuition Posts</a>
+      <a href="{% url 'my_tuitions' %}" class="btn btn-secondary">My Tuitions</a>
+      <a href="{% url 'payments' %}" class="btn btn-gold">Payments</a>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:rgba(168,85,247,0.08);border-radius:var(--radius-sm);border:1px solid rgba(168,85,247,0.2)">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <span>🦉</span><span style="font-weight:600;color:#c084fc;font-size:13px">Guru AI</span>
+      </div>
+      <div style="color:var(--muted);font-size:12px">Use Guru to find the best matching tuition posts for your subjects!</div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

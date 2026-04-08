@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Browse Tutors — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Browse Tutors</div>
+      <div class="section-sub">{{ tutors.count }} tutor(s) available · Ask 🦉 Guru for smart matching</div>
+    </div>
+  </div>
+
+  {% if not tutors %}
+  <div class="glass" style="padding:40px;text-align:center">
+    <div style="font-size:36px;margin-bottom:10px">👥</div>
+    <div style="color:var(--muted)">No tutors registered yet.</div>
+  </div>
+  {% endif %}
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">
+    {% for tutor in tutors %}
+    <div class="glass" style="padding:20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="avatar avatar-md">{{ tutor.first_name|first }}</div>
+        <div style="flex:1">
+          <div style="font-family:var(--font-head);font-weight:700">{{ tutor.get_full_name }}</div>
+          <div style="color:var(--muted);font-size:12px">{{ tutor.education|default:"Tutor" }}</div>
+        </div>
+      </div>
+      {% if tutor.get_subjects_list %}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        {% for s in tutor.get_subjects_list %}
+        <span class="badge badge-muted">{{ s }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% if tutor.location %}
+      <div style="color:var(--muted);font-size:13px;margin-bottom:12px">📍 {{ tutor.location }}</div>
+      {% endif %}
+      <form method="post" action="{% url 'send_request' tutor.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="subject" value="{{ tutor.subjects|default:'General Tuition' }}">
+        <button class="btn btn-primary" style="width:100%">Send Request</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

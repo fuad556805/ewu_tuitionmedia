@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+{% block title %}All Users — Admin{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">All Users</div>
+      <div class="section-sub">{{ users.count }} registered user(s)</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    {% for u in users %}
+    <div class="glass" style="padding:14px;opacity:{% if u.banned %}0.55{% else %}1{% endif %}">
+      <div style="display:flex;align-items:center;gap:12px">
+
+        <!-- Avatar / Photo -->
+        {% if u.profile_image %}
+          <img src="{{ u.profile_image.url }}"
+               style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0">
+        {% else %}
+          <div class="avatar avatar-sm"
+               style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">
+            {{ u.first_name|first }}
+          </div>
+        {% endif %}
+
+        <!-- Info -->
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:3px;flex-wrap:wrap">
+            <div style="font-weight:600;font-size:14px">{{ u.get_full_name }}</div>
+            <span class="badge badge-{% if u.role == 'tutor' %}accent{% else %}pink{% endif %}">{{ u.role }}</span>
+            {% if u.banned %}<span class="badge badge-danger">Banned</span>{% endif %}
+            {% if not u.profile_approved %}<span class="badge badge-warn">Profile Pending</span>{% endif %}
+          </div>
+          <div class="all-users-info" style="color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            📞 {{ u.phone }}
+            {% if u.gender %} · {{ u.gender|capfirst }}{% endif %}
+            {% if u.location %} · 📍 {{ u.location }}{% endif %}
+            {% if u.university %} · 🎓 {{ u.university }}{% endif %}
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="all-users-actions" style="display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="openModal({{ u.pk }})">👤 View</button>
+          {% if u.banned %}
+            <span class="badge badge-danger" style="padding:5px 12px">🔴 Banned</span>
+          {% else %}
+            <span class="badge badge-success" style="padding:5px 12px">🟢 Active</span>
+          {% endif %}
+          <form method="post" action="{% url 'admin_panel:toggle_ban' u.pk %}" style="display:inline">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-{% if u.banned %}success{% else %}danger{% endif %} btn-sm"
+                    {% if not u.banned %}onclick="return confirm('Ban {{ u.get_full_name|escapejs }}?')"{% endif %}>
+              {% if u.banned %}✓ Unban{% else %}🚫 Ban{% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="glass" style="padding:40px;text-align:center">
+      <div style="font-size:32px;margin-bottom:10px">👥</div>
+      <div style="color:var(--muted)">No users registered yet.</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ══════════════════════════ PROFILE MODAL ══════════════════════════ -->
+<div id="profileModal"
+     style="display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;padding:16px">
+  <div onclick="closeModal()"
+       style="position:absolute;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px)"></div>
+
+  <div class="glass" style="position:relative;z-index:1;width:100%;max-width:520px;border-radius:var(--radius);overflow:hidden;animation:popIn 0.3s ease;max-height:90vh;overflow-y:auto">
+
+    <!-- Header -->
+    <div id="mHeader" style="padding:20px 22px 16px;border-bottom:1px solid var(--glass-border);position:sticky;top:0;z-index:2;backdrop-filter:blur(20px)">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div id="mAvatarWrap">
+          <div id="mAvatar" class="avatar" style="width:64px;height:64px;font-size:24px"></div>
+        </div>
+        <div style="flex:1">
+          <div id="mName" style="font-family:var(--font-head);font-size:19px;font-weight:700;margin-bottom:7px"></div>
+          <div id="mBadges" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+        <button onclick="closeModal()"
+                style="background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1;align-self:flex-start;padding:0">×</button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:20px 22px">
+      <div id="mIdDoc" style="display:none;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px">🪪 ID DOCUMENT</div>
+        <img id="mIdImg" src="" style="width:100%;border-radius:var(--radius-sm);border:1px solid var(--glass-border);max-height:140px;object-fit:cover">
+      </div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px">👤 BASIC INFO</div>
+      <div id="mDetails" style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px"></div>
+
+      <div id="mAcadSection" style="display:none">
+        <div style="border-top:1px solid var(--glass-border);padding-top:16px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px">🎓 ACADEMIC INFO</div>
+          <div id="mAcad" style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px"></div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--glass-border);padding-top:16px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px">ACCOUNT STATUS</div>
+        <div id="mStatus" style="display:flex;gap:10px;flex-wrap:wrap"></div>
+      </div>
+
+      <div id="mActions" style="display:flex;gap:10px;flex-wrap:wrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- User data for JS -->
+<script>
+const USERS = {
+  {% for u in users %}
+  {{ u.pk }}: {
+    pk:          {{ u.pk }},
+    name:        "{{ u.get_full_name|escapejs }}",
+    role:        "{{ u.role }}",
+    phone:       "{{ u.phone|escapejs }}",
+    gender:      "{{ u.gender|default:''|capfirst|escapejs }}",
+    email:       "{{ u.email|default:''|escapejs }}",
+    school:      "{{ u.school|default:''|escapejs }}",
+    college:     "{{ u.college|default:''|escapejs }}",
+    university:  "{{ u.university|default:''|escapejs }}",
+    department:  "{{ u.department|default:''|escapejs }}",
+    subjects:    "{{ u.subjects|default:''|escapejs }}",
+    location:    "{{ u.location|default:''|escapejs }}",
+    joined:      "{{ u.date_joined|date:'M d, Y' }}",
+    banned:      {% if u.banned %}true{% else %}false{% endif %},
+    profileOk:   {% if u.profile_approved %}true{% else %}false{% endif %},
+    profileImg:  "{% if u.profile_image %}{{ u.profile_image.url }}{% endif %}",
+    idImg:       "{% if u.id_image %}{{ u.id_image.url }}{% endif %}",
+    banUrl:      "{% url 'admin_panel:toggle_ban' u.pk %}",
+  },
+  {% endfor %}
+};
+
+function getCsrf() {
+  const m = document.cookie.match(/csrftoken=([^;]+)/);
+  return m ? m[1] : '';
+}
+
+function row(icon, label, val) {
+  if (!val) return '';
+  return `<div style="display:flex;gap:12px;align-items:flex-start">
+    <span style="font-size:15px;width:22px;text-align:center;flex-shrink:0">${icon}</span>
+    <div>
+      <div style="color:var(--muted);font-size:11px;font-weight:600;margin-bottom:1px">${label}</div>
+      <div style="font-size:14px">${val}</div>
+    </div>
+  </div>`;
+}
+
+function pill(ok, trueLabel, falseLabel, trueColor, falseColor) {
+  const c = ok ? trueColor : falseColor;
+  const l = ok ? trueLabel : falseLabel;
+  return `<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--radius-sm);
+       background:${c}18;border:1px solid ${c}33">
+    <span style="width:8px;height:8px;border-radius:50%;background:${c};display:inline-block"></span>
+    <span style="font-weight:600;font-size:13px;color:${c}">${l}</span>
+  </div>`;
+}
+
+function openModal(pk) {
+  const u = USERS[pk];
+  if (!u) return;
+
+  const wrap = document.getElementById('mAvatarWrap');
+  if (u.profileImg) {
+    wrap.innerHTML = `<img src="${u.profileImg}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);box-shadow:0 4px 16px rgba(0,0,0,0.3)">`;
+  } else {
+    const av = document.createElement('div');
+    av.id = 'mAvatar';
+    av.className = 'avatar';
+    av.style.cssText = `width:64px;height:64px;font-size:24px;background:linear-gradient(135deg,${u.role==='tutor'?'#7c6bff,#a06bff':'#ff6b9d,#ff3a5c'})`;
+    av.textContent = u.name[0].toUpperCase();
+    wrap.innerHTML = '';
+    wrap.appendChild(av);
+  }
+
+  document.getElementById('mHeader').style.background =
+    u.role === 'tutor'
+      ? 'linear-gradient(135deg,rgba(124,107,255,0.2),rgba(10,10,18,0.9))'
+      : 'linear-gradient(135deg,rgba(255,107,157,0.2),rgba(10,10,18,0.9))';
+
+  document.getElementById('mName').textContent = u.name;
+  document.getElementById('mBadges').innerHTML =
+    `<span class="badge badge-${u.role==='tutor'?'accent':'pink'}">${u.role.charAt(0).toUpperCase()+u.role.slice(1)}</span>` +
+    (u.banned   ? '<span class="badge badge-danger">🔴 Banned</span>'  : '<span class="badge badge-success">🟢 Active</span>') +
+    (!u.profileOk ? '<span class="badge badge-warn">⏳ Pending</span>' : '<span class="badge badge-success">✅ Approved</span>');
+
+  if (u.idImg) {
+    document.getElementById('mIdDoc').style.display = 'block';
+    document.getElementById('mIdImg').src = u.idImg;
+  } else {
+    document.getElementById('mIdDoc').style.display = 'none';
+  }
+
+  document.getElementById('mDetails').innerHTML =
+    row('📞','PHONE',    u.phone)  +
+    row('⚧️','GENDER',   u.gender) +
+    row('✉️','EMAIL',    u.email)  +
+    row('📅','JOINED',   u.joined);
+
+  const acadSec = document.getElementById('mAcadSection');
+  if (u.role === 'tutor') {
+    acadSec.style.display = 'block';
+    document.getElementById('mAcad').innerHTML =
+      row('🏫','SCHOOL',     u.school)     +
+      row('🏛️','COLLEGE',    u.college)    +
+      row('🎓','UNIVERSITY', u.university) +
+      row('📖','DEPARTMENT', u.department) +
+      row('📚','SUBJECTS',   u.subjects)   +
+      row('📍','LOCATION',   u.location);
+  } else {
+    acadSec.style.display = 'none';
+  }
+
+  document.getElementById('mStatus').innerHTML =
+    pill(!u.banned,   '🟢 Active',           '🔴 Banned',            '#4dffa6', '#ff5f7e') +
+    pill(u.profileOk, '✅ Profile Approved', '⏳ Awaiting Approval', '#4dffa6', '#ffcb47');
+
+  const actDiv = document.getElementById('mActions');
+  actDiv.innerHTML = '';
+
+  const banForm = document.createElement('form');
+  banForm.method = 'POST';
+  banForm.action = u.banUrl;
+  banForm.innerHTML = `
+    <input type="hidden" name="csrfmiddlewaretoken" value="${getCsrf()}">
+    <button type="submit" class="btn btn-${u.banned?'success':'danger'}"
+      ${!u.banned?`onclick="return confirm('Ban ${u.name}?')"`:''}>
+      ${u.banned ? '✓ Unban User' : '🚫 Ban User'}
+    </button>`;
+  actDiv.appendChild(banForm);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'btn btn-secondary';
+  closeBtn.textContent = '✕ Close';
+  closeBtn.onclick = closeModal;
+  actDiv.appendChild(closeBtn);
+
+  document.getElementById('profileModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('profileModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+{% endblock %}

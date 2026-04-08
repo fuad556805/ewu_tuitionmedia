@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Tuition Posts — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Tuition Posts</div>
+      <div class="section-sub">{{ posts.count }} active post(s) · Use 🦉 Guru for smart matching</div>
+    </div>
+  </div>
+
+  {% if not posts %}
+  <div class="glass" style="padding:40px;text-align:center">
+    <div style="font-size:36px;margin-bottom:10px">📄</div>
+    <div style="color:var(--muted)">No active posts right now.</div>
+  </div>
+  {% endif %}
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    {% for post in posts %}
+    <div class="glass card">
+      <div class="card-row">
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:15px;margin-bottom:4px">{{ post.subject }}</div>
+          <div style="color:var(--muted);font-size:13px;margin-bottom:8px">by {{ post.student.get_full_name }}</div>
+          <div class="card-meta">
+            {% if post.location %}📍 {{ post.location }}{% endif %}
+            {% if post.budget %}💰 BDT {{ post.budget }}/mo{% endif %}
+            {% if post.schedule %}🕐 {{ post.schedule }}{% endif %}
+            {% if post.classes %}🎓 {{ post.classes }}{% endif %}
+          </div>
+        </div>
+        <div>
+          <div style="color:var(--muted);font-size:11px;margin-bottom:6px;text-align:right">{{ post.created_at|timesince }} ago</div>
+          <form method="post" action="{% url 'apply_to_post' post.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-primary">Apply →</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

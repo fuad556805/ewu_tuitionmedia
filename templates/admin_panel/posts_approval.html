@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Posts Approval — Admin{% endblock %}
+
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Posts Approval</div>
+      <div class="section-sub">{{ pending.count }} post(s) awaiting approval</div>
+    </div>
+  </div>
+
+  {% if not pending %}
+  <div class="glass" style="padding:30px;text-align:center;margin-bottom:16px">
+    <div style="color:var(--muted)">No posts pending approval.</div>
+  </div>
+  {% endif %}
+
+  {% for post in pending %}
+  <div class="glass card" style="border:1px solid rgba(255,203,71,0.2)">
+    <div class="card-row">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="font-family:var(--font-head);font-weight:700">{{ post.subject }}</div>
+          <span class="badge badge-warn">Pending</span>
+        </div>
+        <div class="card-meta" style="font-size:13px;color:var(--muted)">
+          <span>by 
+            <a href="{% url 'admin_panel:user_profile' post.student.pk %}" style="color:var(--primary); text-decoration:none;">
+              {{ post.student.get_full_name }}
+            </a>
+          </span>
+          {% if post.location %} · 📍 {{ post.location }}{% endif %}
+          {% if post.budget %} · 💰 BDT {{ post.budget }}/mo{% endif %}
+          {% if post.classes %} · 🎓 {{ post.classes }}{% endif %}
+          {% if post.schedule %} · 🕐 {{ post.schedule }}{% endif %}
+        </div>
+        {% if post.details %}<div style="color:var(--muted);font-size:13px;margin-top:8px">{{ post.details }}</div>{% endif %}
+      </div>
+      <div class="card-actions">
+        <form method="post" action="{% url 'admin_panel:approve_post' post.pk %}">
+          {% csrf_token %}<input type="hidden" name="action" value="approve">
+          <button class="btn btn-success btn-sm">✓ Approve</button>
+        </form>
+        <form method="post" action="{% url 'admin_panel:approve_post' post.pk %}">
+          {% csrf_token %}<input type="hidden" name="action" value="reject">
+          <button class="btn btn-danger btn-sm">✗ Reject</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  {% if approved %}
+  <div style="margin-top:16px">
+    <div style="color:var(--muted);font-size:13px;margin-bottom:10px;font-weight:600">APPROVED & LIVE ({{ approved.count }})</div>
+    {% for post in approved %}
+    <div class="glass" style="padding:14px;margin-bottom:8px;opacity:0.75">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600">{{ post.subject }}</div>
+          <div style="color:var(--muted);font-size:12px">
+            by 
+            <a href="{% url 'admin_panel:user_profile' post.student.pk %}" style="color:var(--primary); text-decoration:none;">
+              {{ post.student.get_full_name }}
+            </a>
+            {% if post.location %} · {{ post.location }}{% endif %}
+          </div>
+        </div>
+        <span class="badge badge-success">Live</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

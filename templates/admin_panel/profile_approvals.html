@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Profile Approvals — Admin{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Profile Approvals</div>
+      <div class="section-sub">Login works without approval — only profile edits need review</div>
+    </div>
+  </div>
+
+  {% if not pending %}
+  <div class="glass" style="padding:40px;text-align:center">
+    <div style="font-size:28px;margin-bottom:8px">✅</div>
+    <div style="font-family:var(--font-head);font-weight:700">All profiles approved!</div>
+    <div style="color:var(--muted);font-size:14px;margin-top:4px">No pending profile approvals.</div>
+  </div>
+  {% endif %}
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    {% for u in pending %}
+    <div class="glass" style="padding:18px">
+      <div class="approval-row" style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;gap:14px;align-items:center;flex:1;min-width:0">
+          <div class="avatar avatar-md" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %});flex-shrink:0">{{ u.first_name|first }}</div>
+          <div style="min-width:0">
+            <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px">{{ u.get_full_name }}</div>
+            <div style="display:flex;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+              <span class="badge badge-{% if u.role == 'tutor' %}accent{% else %}pink{% endif %}">{{ u.role }}</span>
+              <span class="badge badge-warn">Profile Edit Pending</span>
+            </div>
+            <div style="color:var(--muted);font-size:13px">📞 {{ u.phone }} · Joined {{ u.date_joined|date:"M d, Y" }}</div>
+            {% if u.education %}<div style="color:var(--muted);font-size:13px">🎓 {{ u.education }}</div>{% endif %}
+            {% if u.location %}<div style="color:var(--muted);font-size:13px">📍 {{ u.location }}</div>{% endif %}
+            {% if u.subjects %}<div style="color:var(--muted);font-size:13px">📚 {{ u.subjects }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="approval-actions" style="display:flex;gap:8px;flex-shrink:0">
+          <form method="post" action="{% url 'admin_panel:approve_profile' u.pk %}">
+            {% csrf_token %}<input type="hidden" name="action" value="approve">
+            <button class="btn btn-success btn-sm">✓ Approve</button>
+          </form>
+          <form method="post" action="{% url 'admin_panel:approve_profile' u.pk %}">
+            {% csrf_token %}<input type="hidden" name="action" value="reject">
+            <button class="btn btn-danger btn-sm">✗ Reject</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TuitionMedia — Bangladesh's Trusted Tuition Platform</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body data-user-theme="dark">
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Nav -->
+<nav class="landing-nav glass" style="border-radius:0">
+  <span style="font-family:var(--font-head);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">TuitionMedia</span>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center">
+    <button class="theme-btn active" data-theme="dark" title="Dark">🌌</button>
+    <button class="theme-btn" data-theme="ocean" title="Ocean">🌊</button>
+    <button class="theme-btn" data-theme="sunset" title="Sunset">🌅</button>
+    <a href="{% url 'login' %}" class="btn btn-ghost">Log In</a>
+    <a href="{% url 'signup' %}" class="btn btn-primary">Get Started</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="landing-hero">
+  <div class="hero-pill">
+    <span class="pulse-dot"></span>
+    <span style="font-size:13px;color:var(--accent);font-weight:500">Bangladesh's Most Trusted Tuition Platform</span>
+  </div>
+  <h1 class="hero-title">
+    Connect. Verify.<br>
+    <span class="hero-grad">Learn Together.</span>
+  </h1>
+  <p style="color:var(--muted);font-size:clamp(15px,2.5vw,18px);max-width:500px;margin:0 auto 32px;line-height:1.7">
+    A secure platform connecting students with expert tutors — with Guru AI matching, real-time chat, and payment tracking.
+  </p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:18px">
+    <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Join as Student →</a>
+    <a href="{% url 'signup' %}" class="btn btn-secondary btn-lg">Join as Tutor</a>
+  </div>
+  <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);border-radius:99px;padding:6px 16px">
+    <span>🦉</span>
+    <span style="font-size:13px;color:#c084fc">Powered by Guru AI — Smart Tutor Matching</span>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stat-row">
+  {% for stat in stats %}
+  <div class="glass stat-box">
+    <div class="stat-num">{{ stat.val }}</div>
+    <div style="color:var(--muted);font-size:13px;margin-top:4px">{{ stat.label }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Features -->
+<div class="landing-section">
+  <h2 style="font-family:var(--font-head);font-size:clamp(24px,4vw,32px);font-weight:700;text-align:center;margin-bottom:32px">Why <span style="color:var(--accent)">TuitionMedia?</span></h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px">
+    <div class="glass" style="padding:26px">
+      <div style="font-size:32px;margin-bottom:12px">🔐</div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:8px">Instant Login</div>
+      <div style="color:var(--muted);font-size:13px;line-height:1.65">Sign up and log in instantly — no waiting. Profile edits need admin review for quality control.</div>
+    </div>
+    <div class="glass" style="padding:26px">
+      <div style="font-size:32px;margin-bottom:12px">🦉</div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:8px">Guru AI Matching</div>
+      <div style="color:var(--muted);font-size:13px;line-height:1.65">Smart AI assistant helps match students with the right tutors based on subject, location, and budget.</div>
+    </div>
+    <div class="glass" style="padding:26px">
+      <div style="font-size:32px;margin-bottom:12px">💬</div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:8px">Real-time Chat</div>
+      <div style="color:var(--muted);font-size:13px;line-height:1.65">Message tutors or students directly. Instant notifications for every update.</div>
+    </div>
+    <div class="glass" style="padding:26px">
+      <div style="font-size:32px;margin-bottom:12px">💰</div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:8px">Transparent Payments</div>
+      <div style="color:var(--muted);font-size:13px;line-height:1.65">Admin-set salaries, bKash/Nagad commission tracking, and payment proof uploads.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="landing-cta">
+  <div class="glass" style="padding:clamp(24px,5vw,44px);text-align:center">
+    <h3 style="font-family:var(--font-head);font-size:clamp(20px,4vw,28px);font-weight:700;margin-bottom:10px">Ready to start?</h3>
+    <p style="color:var(--muted);margin-bottom:24px">Sign up instantly. No waiting, just learning.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Create Free Account</a>
+      <a href="{% url 'login' %}" class="btn btn-gold btn-lg">Admin Panel →</a>
+    </div>
+  </div>
+</div>
+
+{% load static %}
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

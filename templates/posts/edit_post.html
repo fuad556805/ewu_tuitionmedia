@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Edit Post — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Edit Post</div>
+      <div class="section-sub">Changes will require admin approval</div>
+    </div>
+    <a href="{% url 'my_posts' %}" class="btn btn-secondary">← Back</a>
+  </div>
+
+  <div class="glass" style="padding:28px;max-width:700px">
+    <div class="alert alert-warn" style="margin-bottom:18px">⚠️ Edited posts will be re-submitted for admin approval.</div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject(s)</label>
+          <input class="form-control" name="subject" value="{{ post.subject }}" required>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input class="form-control" name="location" value="{{ post.location }}" required>
+        </div>
+        <div class="form-group">
+          <label>Budget (BDT/month)</label>
+          <input class="form-control" name="budget" type="number" value="{{ post.budget }}" required>
+        </div>
+        <div class="form-group">
+          <label>Class / Level</label>
+          <input class="form-control" name="classes" value="{{ post.classes }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Schedule</label>
+        <input class="form-control" name="schedule" value="{{ post.schedule }}">
+      </div>
+      <div class="form-group">
+        <label>Details</label>
+        <textarea class="form-control" name="details" rows="3">{{ post.details }}</textarea>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="submit" class="btn btn-primary">Update Post</button>
+        <a href="{% url 'my_posts' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

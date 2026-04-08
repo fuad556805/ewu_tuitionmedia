@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Admin Overview — TuitionMedia{% endblock %}
+{% block content %}
+<div style="animation:slideIn 0.4s ease">
+  <div style="margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-family:var(--font-head);font-size:24px;font-weight:700">Admin Dashboard 🛡️</h1>
+      <p style="color:var(--muted);margin-top:4px">Live system overview</p>
+    </div>
+    {% if request.user.is_staff %}
+    <a href="{% url 'admin:index' %}" target="_blank" class="btn btn-warning" style="align-self:flex-start">⚙️ Django Admin Control</a>
+    {% endif %}
+  </div>
+
+  <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+    <div class="glass stat-card"><div class="label">Total Users</div><div class="value" style="color:var(--accent)">{{ total_users }}</div></div>
+    <div class="glass stat-card"><div class="label">Profile Approvals</div><div class="value" style="color:var(--warn)">{{ pending_profiles }}</div></div>
+    <div class="glass stat-card"><div class="label">Posts Pending</div><div class="value" style="color:var(--accent2)">{{ pending_posts }}</div></div>
+    <div class="glass stat-card"><div class="label">Active Tuitions</div><div class="value" style="color:var(--success)">{{ active_tuitions }}</div></div>
+    <div class="glass stat-card"><div class="label">Pending Commission</div><div class="value" style="color:var(--accent2);font-size:18px">BDT {{ pending_commission }}</div></div>
+    <div class="glass stat-card"><div class="label">Total Posts</div><div class="value" style="color:var(--accent3)">{{ total_posts }}</div></div>
+  </div>
+
+  <div class="dashboard-two-col">
+    <div class="glass" style="padding:22px">
+      <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px">Admin Notifications</div>
+      {% for n in admin_notifs %}
+      <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--glass-border);align-items:center">
+        <span class="pulse-dot" style="{% if n.read %}background:var(--muted);animation:none{% endif %}"></span>
+        <div style="flex:1;font-size:13px">{{ n.text }}</div>
+        <span style="color:var(--muted);font-size:11px;white-space:nowrap">{{ n.created_at|timesince }} ago</span>
+      </div>
+      {% empty %}
+      <div style="color:var(--muted);font-size:14px">No notifications yet.</div>
+      {% endfor %}
+    </div>
+
+    <div class="glass" style="padding:22px">
+      <div style="font-family:var(--font-head);font-weight:700;margin-bottom:14px">Quick Actions</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="{% url 'admin_panel:profile_approvals' %}" class="btn btn-primary">✅ Profile Approvals ({{ pending_profiles }})</a>
+        <a href="{% url 'admin_panel:posts_approval' %}" class="btn btn-secondary">📋 Posts Approval ({{ pending_posts }})</a>
+        <a href="{% url 'admin_panel:payments' %}" class="btn btn-gold">💰 Pending Payments</a>
+        <a href="{% url 'admin_panel:all_users' %}" class="btn btn-secondary">👥 Manage Users</a>
+        <a href="{% url 'admin_panel:admin_inbox' %}" class="btn btn-accent">💬 Message Users</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

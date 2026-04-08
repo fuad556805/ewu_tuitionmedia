@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en" data-theme="{{ request.user.theme|default:'dark' }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>{% block title %}TuitionMedia{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body data-user-theme="{{ request.user.theme|default:'dark' }}">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    {% if request.user.is_authenticated %}
+    <button
+      class="mobile-menu-toggle"
+      id="mobileMenuToggle"
+      aria-label="Toggle menu"
+    >
+      ☰
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    {% endif %} {% if messages %}
+    <div class="messages-list">
+      {% for message in messages %}
+      <div class="msg-toast {{ message.tags }}">
+        {% if message.tags == 'success' %}✅{% elif message.tags == 'error'
+        %}❌{% elif message.tags == 'warning' %}⚠️{% else %}ℹ️{% endif %} {{
+        message }}
+        <button class="close-btn">×</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="page-wrapper">
+      {% if request.user.is_authenticated %}
+      <aside class="sidebar" id="mainSidebar">
+        <div class="sidebar-brand">
+          <a href="{% url 'landing' %}" class="sidebar-logo">TuitionMedia</a>
+          <div class="sidebar-user">
+            <div class="avatar avatar-sm">
+              {{ request.user.first_name|first|upper }}
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 13px">
+                {{ request.user.get_full_name|truncatechars:16 }}
+              </div>
+              <span
+                class="badge badge-{% if request.user.role == 'tutor' %}accent{% elif request.user.role == 'admin' %}warn{% else %}pink{% endif %}"
+                >{{ request.user.role }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          {% if request.user.role == 'student' %}
+          <a
+            href="{% url 'dashboard' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+            >🏠 Dashboard</a
+          >
+          <a
+            href="{% url 'my_posts' %}"
+            class="nav-link {% if 'posts' in request.path %}active{% endif %}"
+            >📋 My Posts</a
+          >
+          <a
+            href="{% url 'browse_tutors' %}"
+            class="nav-link {% if 'tutors' in request.path %}active{% endif %}"
+            >👥 Browse Tutors</a
+          >
+          <a
+            href="{% url 'inbox' %}"
+            class="nav-link {% if 'chat' in request.path %}active{% endif %}"
+            >💬 Messages</a
+          >
+          <a
+            href="{% url 'notifications' %}"
+            class="nav-link {% if 'notifications' in request.path %}active{% endif %}"
+            >🔔 Notifications</a
+          >
+          <a
+            href="{% url 'profile' %}"
+            class="nav-link {% if 'profile' in request.path %}active{% endif %}"
+            >👤 My Profile</a
+          >
+
+          {% elif request.user.role == 'tutor' %}
+          <a
+            href="{% url 'dashboard' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+            >🏠 Dashboard</a
+          >
+          <a
+            href="{% url 'browse_posts' %}"
+            class="nav-link {% if 'browse' in request.path %}active{% endif %}"
+            >📄 Tuition Posts</a
+          >
+          <a
+            href="{% url 'my_tuitions' %}"
+            class="nav-link {% if 'my' in request.path and 'tuitions' in request.path %}active{% endif %}"
+            >🎓 My Tuitions</a
+          >
+          <a
+            href="{% url 'payments' %}"
+            class="nav-link {% if 'payments' in request.path %}active{% endif %}"
+            >💰 Payments</a
+          >
+          <a
+            href="{% url 'inbox' %}"
+            class="nav-link {% if 'chat' in request.path %}active{% endif %}"
+            >💬 Messages</a
+          >
+          <a
+            href="{% url 'notifications' %}"
+            class="nav-link {% if 'notifications' in request.path %}active{% endif %}"
+            >🔔 Notifications</a
+          >
+          <a
+            href="{% url 'profile' %}"
+            class="nav-link {% if 'profile' in request.path %}active{% endif %}"
+            >👤 My Profile</a
+          >
+
+          {% elif request.user.role == 'admin' %}
+          <a
+            href="{% url 'admin_panel:overview' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'overview' %}active{% endif %}"
+            >🛡️ Overview</a
+          >
+          <a
+            href="{% url 'admin_panel:profile_approvals' %}"
+            class="nav-link {% if 'profile-approvals' in request.path %}active{% endif %}"
+            >✅ Profile Approvals</a
+          >
+          <a
+            href="{% url 'admin_panel:posts_approval' %}"
+            class="nav-link {% if 'posts-approval' in request.path %}active{% endif %}"
+            >📋 Posts Approval</a
+          >
+          <a
+            href="{% url 'admin_panel:all_requests' %}"
+            class="nav-link {% if 'requests' in request.path %}active{% endif %}"
+            >🔗 All Requests</a
+          >
+          <a
+            href="{% url 'admin_panel:payments' %}"
+            class="nav-link {% if 'payments' in request.path %}active{% endif %}"
+            >💰 Payments</a
+          >
+          <a
+            href="{% url 'admin_panel:all_users' %}"
+            class="nav-link {% if 'users' in request.path %}active{% endif %}"
+            >👥 All Users</a
+          >
+          <a
+            href="{% url 'admin_panel:admin_inbox' %}"
+            class="nav-link {% if 'inbox' in request.path %}active{% endif %}"
+            >💬 Message Users</a
+          >
+          {% endif %}
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-theme">
+            <label>THEME</label>
+            <button
+              class="theme-btn {% if request.user.theme == 'dark' or not request.user.theme %}active{% endif %}"
+              data-theme="dark"
+              title="Dark Purple"
+            >
+              🌌
+            </button>
+            <button
+              class="theme-btn {% if request.user.theme == 'ocean' %}active{% endif %}"
+              data-theme="ocean"
+              title="Ocean Blue"
+            >
+              🌊
+            </button>
+            <button
+              class="theme-btn {% if request.user.theme == 'sunset' %}active{% endif %}"
+              data-theme="sunset"
+              title="Sunset Gold"
+            >
+              🌅
+            </button>
+          </div>
+          <a
+            href="{% url 'logout' %}"
+            class="btn btn-danger btn-sm"
+            style="width: 100%; justify-content: center"
+            >🚪 Logout</a
+          >
+        </div>
+      </aside>
+      {% endif %}
+
+      <main class="main-content">{% block content %}{% endblock %}</main>
+    </div>
+
+    {% if request.user.is_authenticated and request.user.role != 'admin' %}
+    <button class="guru-fab" id="guruFab" title="Ask Guru AI">🦉</button>
+    <div class="guru-panel glass" id="guruPanel">
+      <div class="guru-header">
+        <div
+          style="
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+          "
+        >
+          🦉
+        </div>
+        <div style="flex: 1">
+          <div
+            style="
+              font-family: var(--font-head);
+              font-weight: 700;
+              font-size: 15px;
+            "
+          >
+            Guru AI
+          </div>
+          <div
+            style="
+              color: #c084fc;
+              font-size: 12px;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+            "
+          >
+            <span class="pulse-dot" style="background: #4dffa6"></span> Matching
+            Engine Active
+          </div>
+        </div>
+        <button
+          id="guruClose"
+          style="
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 20px;
+          "
+        >
+          ×
+        </button>
+      </div>
+      <div class="guru-messages" id="guruMessages">
+        <div class="guru-msg">
+          <div
+            style="
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #a855f7, #6366f1);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 14px;
+              flex-shrink: 0;
+            "
+          >
+            🦉
+          </div>
+          <div class="guru-bubble bot">
+            আমি Guru — আপনার TuitionMedia AI সহায়ক! 🎓&#10;&#10;আমি সাহায্য
+            করতে পারি:&#10;• টিউটর খুঁজে পেতে&#10;• পোস্ট তৈরিতে পরামর্শ&#10;•
+            যেকোনো প্রশ্নের উত্তর&#10;&#10;কী জানতে চান?
+          </div>
+        </div>
+      </div>
+      <div class="guru-quick">
+        <button class="quick-btn">ভালো টিউটর খুঁজুন</button>
+        <button class="quick-btn">আমার জন্য পোস্ট খুঁজুন</button>
+        <button class="quick-btn">Commission কত?</button>
+        <button class="quick-btn">Tuition tips</button>
+      </div>
+      <div class="guru-input-row">
+        <input
+          class="form-control"
+          id="guruInput"
+          placeholder="Guru কে জিজ্ঞেস করুন..."
+          style="border-radius: 99px; font-size: 13px"
+        />
+        <button
+          class="btn btn-guru btn-sm"
+          id="guruSend"
+          style="border-radius: 99px; white-space: nowrap"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+    {% load static %}
+    <script src="{% static 'js/main.js' %}"></script>
+    {# ✅ REMOVED duplicate inline sidebar script — main.js handles this already #}
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>
