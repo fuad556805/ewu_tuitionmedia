@@ -4,6 +4,10 @@ from . import views
 app_name = 'payments'
 
 urlpatterns = [
+    # Unified (spec-required)
+    path('create/', views.UnifiedPaymentCreateView.as_view(), name='payment-create'),
+    path('verify/', views.UnifiedPaymentVerifyView.as_view(), name='payment-verify'),
+
     # bKash
     path('bkash/create/',  views.BkashCreatePaymentView.as_view(),  name='bkash-create'),
     path('bkash/execute/', views.BkashExecutePaymentView.as_view(), name='bkash-execute'),

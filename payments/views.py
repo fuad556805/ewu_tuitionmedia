@@ -446,3 +446,180 @@ class MyCommissionsView(APIView):
             return Response({'error': 'Only tutors can view commissions.'}, status=status.HTTP_403_FORBIDDEN)
         comms = Commission.objects.filter(tutor=request.user).select_related('tuition', 'payment')
         return Response(CommissionSerializer(comms, many=True).data)
+
+
+# ──────────────────────────────────────────
+# Unified Payment Create & Verify (spec-required)
+# ──────────────────────────────────────────
+
+class UnifiedPaymentCreateView(APIView):
+    """
+    POST /api/payment/create/
+    Body: { method, purpose, tutor_id OR tuition_id }
+    Creates a bKash or Nagad payment and returns the redirect URL.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        from .serializers import BkashCreateSerializer
+        ser = BkashCreateSerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data   = ser.validated_data
+        method = data['method']
+        user   = request.user
+
+        try:
+            amount, purpose, related = _resolve_amount_and_purpose(user, data)
+        except ValueError as exc:
+            return Response({'error': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+        invoice = _generate_invoice()
+        raw = {
+            'tutor_id':      data.get('tutor_id'),
+            'tuition_id':    data.get('tuition_id'),
+            'commission_id': related.pk if purpose == 'commission' else None,
+        }
+
+        if method == 'bkash':
+            callback_url = _get_callback_url(request, '/api/payment/bkash/execute/')
+            bkash_resp   = bkash_service.create_payment(
+                amount=str(amount), invoice_number=invoice, callback_url=callback_url
+            )
+            if 'error' in bkash_resp or bkash_resp.get('statusCode') != '0000':
+                return Response(
+                    {'error': bkash_resp.get('statusMessage', 'bKash payment creation failed.')},
+                    status=status.HTTP_502_BAD_GATEWAY,
+                )
+            payment = Payment.objects.create(
+                user=user, amount=amount, method='bkash', status='initiated',
+                purpose=purpose, payment_id=bkash_resp['paymentID'],
+                raw_response={**raw, 'invoice': invoice},
+            )
+            return Response({
+                'payment_id':   payment.payment_id,
+                'redirect_url': bkash_resp.get('bkashURL'),
+                'method':       'bkash',
+                'amount':       str(amount),
+                'status':       'initiated',
+            }, status=status.HTTP_201_CREATED)
+
+        elif method == 'nagad':
+            callback_url = _get_callback_url(request, '/api/payment/nagad/callback/')
+            nagad_resp   = nagad_service.initiate_payment(
+                order_id=invoice, amount=str(amount), callback_url=callback_url
+            )
+            if 'error' in nagad_resp:
+                return Response({'error': nagad_resp['error']}, status=status.HTTP_502_BAD_GATEWAY)
+            payment = Payment.objects.create(
+                user=user, amount=amount, method='nagad', status='initiated',
+                purpose=purpose, payment_id=invoice,
+                raw_response={**raw, 'invoice': invoice, 'nagad_init': nagad_resp},
+            )
+            return Response({
+                'payment_id':   payment.payment_id,
+                'redirect_url': nagad_resp.get('callBackUrl'),
+                'method':       'nagad',
+                'amount':       str(amount),
+                'status':       'initiated',
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({'error': 'Invalid method.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UnifiedPaymentVerifyView(APIView):
+    """
+    POST /api/payment/verify/
+    Body: { payment_id }
+    Queries bKash/Nagad and updates local payment status.
+    For bKash this also executes if not yet done.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        payment_id = request.data.get('payment_id')
+        if not payment_id:
+            return Response({'error': 'payment_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        payment = Payment.objects.filter(payment_id=payment_id, user=request.user).first()
+        if not payment:
+            return Response({'error': 'Payment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if payment.status == 'completed':
+            return Response({'message': 'Payment already completed.', 'status': 'completed'})
+
+        if payment.method == 'bkash':
+            exec_resp  = bkash_service.execute_payment(payment_id)
+            query_resp = bkash_service.query_payment(payment_id)
+
+            if bkash_service.is_successful(query_resp):
+                with transaction.atomic():
+                    payment.status         = 'completed'
+                    payment.transaction_id = query_resp.get('trxID', '')
+                    payment.raw_response   = {**payment.raw_response, 'execute': exec_resp, 'query': query_resp}
+                    payment.save()
+                    _finalize_payment(payment)
+                return Response({'message': 'Payment verified.', 'transaction_id': payment.transaction_id, 'status': 'completed'})
+
+            payment.status = 'failed'
+            payment.save(update_fields=['status'])
+            return Response({'error': 'Payment verification failed.', 'status': 'failed'}, status=status.HTTP_402_PAYMENT_REQUIRED)
+
+        elif payment.method == 'nagad':
+            payment_ref_id = payment.raw_response.get('nagad_init', {}).get('paymentReferenceId', payment_id)
+            verify_resp    = nagad_service.verify_payment(payment_ref_id)
+
+            if nagad_service.is_successful(verify_resp):
+                with transaction.atomic():
+                    payment.status         = 'completed'
+                    payment.transaction_id = verify_resp.get('merchantOrderId', payment_ref_id)
+                    payment.raw_response   = {**payment.raw_response, 'verify': verify_resp}
+                    payment.save()
+                    _finalize_payment(payment)
+                return Response({'message': 'Payment verified.', 'transaction_id': payment.transaction_id, 'status': 'completed'})
+
+            payment.status = 'failed'
+            payment.save(update_fields=['status'])
+            return Response({'error': 'Nagad verification failed.', 'status': 'failed'}, status=status.HTTP_402_PAYMENT_REQUIRED)
+
+        return Response({'error': 'Unknown payment method.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ──────────────────────────────────────────
+# Admin Broadcast
+# ──────────────────────────────────────────
+
+class AdminBroadcastView(APIView):
+    """
+    POST /api/admin/broadcast/
+    Admin only. Sends a notification to ALL users.
+    Body: { message, type (optional) }
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        from accounts.models import User as UserModel, Notification as NotifModel
+
+        if request.user.role != 'admin':
+            return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+        message    = request.data.get('message', '').strip()
+        notif_type = request.data.get('type', 'info')
+
+        if not message:
+            return Response({'error': 'message is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if notif_type not in ('success', 'danger', 'warn', 'accent', 'info'):
+            notif_type = 'info'
+
+        users = UserModel.objects.exclude(role='admin').filter(banned=False)
+        notifications = [
+            NotifModel(user=u, text=message, notif_type=notif_type)
+            for u in users
+        ]
+        NotifModel.objects.bulk_create(notifications)
+
+        logger.info("Admin broadcast sent by %s to %d users", request.user.phone, len(notifications))
+
+        return Response({'message': f'Broadcast sent to {len(notifications)} users.'})
