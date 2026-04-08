@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third-party
+    'rest_framework',
+
     # Custom apps
     'accounts',
     'posts',
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
     'chat',
     'guru',
     'admin_panel',
+    'payments',
 ]
 
 # ================= MIDDLEWARE =================
@@ -137,6 +141,32 @@ LOGOUT_REDIRECT_URL = '/'
 
 # ================= API KEYS =================
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
+
+# ================= bKash =================
+BKASH_BASE_URL   = os.getenv('BKASH_BASE_URL',   'https://tokenized.sandbox.bka.sh/v1.2.0-beta')
+BKASH_APP_KEY    = os.getenv('BKASH_APP_KEY',    '')
+BKASH_APP_SECRET = os.getenv('BKASH_APP_SECRET', '')
+BKASH_USERNAME   = os.getenv('BKASH_USERNAME',   '')
+BKASH_PASSWORD   = os.getenv('BKASH_PASSWORD',   '')
+
+# ================= Nagad =================
+NAGAD_BASE_URL      = os.getenv('NAGAD_BASE_URL',     'http://sandbox.mynagad.com:10080')
+NAGAD_MERCHANT_ID   = os.getenv('NAGAD_MERCHANT_ID',  '')
+NAGAD_MERCHANT_KEY  = os.getenv('NAGAD_MERCHANT_KEY', '')
+NAGAD_PUBLIC_KEY    = os.getenv('NAGAD_PUBLIC_KEY',   '')
+
+# ================= DRF =================
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}
 
 # ================= MESSAGE STORAGE =================
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

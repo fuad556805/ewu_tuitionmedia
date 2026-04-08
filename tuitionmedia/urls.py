@@ -13,4 +13,5 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('guru/', include('guru.urls')),
     path('admin-panel/', include('admin_panel.urls')),
+    path('api/payment/', include('payments.urls', namespace='payments')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
