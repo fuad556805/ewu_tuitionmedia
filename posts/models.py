@@ -1,4 +1,3 @@
-'''E:\cse347Project\tuitionmedia\posts\models.py'''
 from django.db import models
 from accounts.models import User
 

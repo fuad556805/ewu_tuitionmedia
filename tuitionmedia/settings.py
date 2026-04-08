@@ -75,7 +75,20 @@ TEMPLATES = [
 # ================= DATABASE =================
 RENDER = os.getenv("RENDER", "FALSE").upper() == "TRUE"
 
-if RENDER:
+if os.getenv('DATABASE_URL'):
+    import urllib.parse
+    _db_url = urllib.parse.urlparse(os.getenv('DATABASE_URL'))
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _db_url.path[1:],
+            'USER': _db_url.username,
+            'PASSWORD': _db_url.password,
+            'HOST': _db_url.hostname,
+            'PORT': _db_url.port or '5432',
+        }
+    }
+elif RENDER:
     # Render (production) → SQLite
     DATABASES = {
         'default': {
