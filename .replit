@@ -42,4 +42,4 @@ build = ["bash", "-c", "python manage.py collectstatic --noinput && python manag
 [userenv]
 
 [userenv.shared]
-GEMINI_API_KEY = "AIzaSyCGnb3I_lnR3Pk9KELOTmVzB6FtB42xNfc"
+SMS_BACKEND = "bulksmsbd"

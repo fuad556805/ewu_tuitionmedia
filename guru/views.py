@@ -73,7 +73,12 @@ def guru_ask(request):
     api_key = settings.GEMINI_API_KEY
 
     # Try models in order — fallback if one hits quota or errors
-    models = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-001']
+    models = [
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-flash-8b',
+        'gemini-2.0-flash-lite',
+    ]
 
     payload = {
         'system_instruction': {'parts': [{'text': system_prompt}]},
