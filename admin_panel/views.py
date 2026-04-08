@@ -195,18 +195,39 @@ def user_profile(request, user_id):
 # ------------------------------
 @admin_required
 def admin_inbox(request):
+    from django.db.models import Q
     contacts = User.objects.exclude(id=request.user.id)
-    return render(request, 'admin_panel/admin_inbox.html', {'contacts': contacts})
+
+    active_user = None
+    messages_list = []
+
+    with_id = request.GET.get('with')
+    if with_id:
+        active_user = get_object_or_404(User, pk=with_id)
+        messages_list = Message.objects.filter(
+            Q(sender=request.user, receiver=active_user) |
+            Q(sender=active_user, receiver=request.user)
+        ).order_by('created_at')
+        messages_list.filter(receiver=request.user, read=False).update(read=True)
+
+    return render(request, 'admin_panel/admin_inbox.html', {
+        'contacts': contacts,
+        'active_user': active_user,
+        'messages_list': messages_list,
+    })
 
 
 @admin_required
 def admin_send_message(request):
     if request.method == 'POST':
         receiver = get_object_or_404(User, pk=request.POST.get('receiver_id'))
-        Message.objects.create(
-            sender=request.user,
-            receiver=receiver,
-            text=request.POST.get('text')
-        )
+        text = request.POST.get('text', '').strip()
+        if text:
+            Message.objects.create(
+                sender=request.user,
+                receiver=receiver,
+                text=text
+            )
+        return redirect(f'/admin-panel/inbox/?with={receiver.pk}')
 
     return redirect('admin_panel:admin_inbox')
