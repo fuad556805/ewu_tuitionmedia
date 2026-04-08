@@ -82,6 +82,50 @@ def accept_request(request, req_id):
 
 
 @login_required
+def tutor_accept_request(request, req_id):
+    """Tutor accepts a direct student request (post=None, tutor=request.user)"""
+    req = get_object_or_404(TuitionRequest, pk=req_id, tutor=request.user, status='pending')
+    if request.method == 'POST':
+        req.status = 'accepted'
+        req.save()
+        month = timezone.now().strftime('%B %Y')
+        Tuition.objects.create(
+            tutor=request.user, student=req.student,
+            subject=req.subject, month=month,
+            salary=0, commission=0, commission_status='pending'
+        )
+        Notification.objects.create(
+            user=req.student,
+            text=f"{request.user.get_full_name()} accepted your tuition request for {req.subject}!",
+            notif_type='success'
+        )
+        for admin in User.objects.filter(role='admin'):
+            Notification.objects.create(
+                user=admin,
+                text=f"New tuition confirmed: {request.user.get_full_name()} + {req.student.get_full_name()}",
+                notif_type='accent'
+            )
+        messages.success(request, "Request accepted! Tuition started.")
+    return redirect('dashboard')
+
+
+@login_required
+def tutor_reject_request(request, req_id):
+    """Tutor rejects a direct student request"""
+    req = get_object_or_404(TuitionRequest, pk=req_id, tutor=request.user, status='pending')
+    if request.method == 'POST':
+        req.status = 'rejected'
+        req.save()
+        Notification.objects.create(
+            user=req.student,
+            text=f"{request.user.get_full_name()} declined your tuition request for {req.subject}.",
+            notif_type='danger'
+        )
+        messages.warning(request, "Request declined.")
+    return redirect('dashboard')
+
+
+@login_required
 def reject_request(request, req_id):
     req = get_object_or_404(TuitionRequest, pk=req_id, student=request.user, status='pending')
     if request.method == 'POST':
