@@ -22,6 +22,16 @@ else:
         "ALLOWED_HOSTS", "ewu-tuitionmedia.onrender.com"
     ).split(",")
 
+# ================= CSRF TRUSTED ORIGINS =================
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.replit.dev',
+    'https://*.pike.replit.dev',
+    'https://*.repl.co',
+]
+_extra_origins = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+if _extra_origins:
+    CSRF_TRUSTED_ORIGINS += _extra_origins.split(",")
+
 # ================= INSTALLED APPS =================
 INSTALLED_APPS = [
     'django.contrib.admin',
