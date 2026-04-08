@@ -42,4 +42,4 @@ build = ["bash", "-c", "python manage.py collectstatic --noinput && python manag
 [userenv]
 
 [userenv.shared]
-SMS_BACKEND = "bulksmsbd"
+SMS_BACKEND = "console"
