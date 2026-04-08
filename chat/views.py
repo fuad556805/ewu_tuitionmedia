@@ -8,7 +8,9 @@ from tuitions.models import TuitionRequest
 
 
 def _is_connected(user_a, user_b):
-    """Check if two users have an accepted TuitionRequest between them."""
+    """Allow messaging if there's an accepted TuitionRequest, or if either party is an admin."""
+    if user_a.role == 'admin' or user_b.role == 'admin':
+        return True
     return TuitionRequest.objects.filter(
         Q(tutor=user_a, student=user_b) | Q(tutor=user_b, student=user_a),
         status='accepted'
@@ -21,14 +23,21 @@ def inbox(request):
 
     if me.role == 'admin':
         contacts = User.objects.exclude(id=me.id)
-        all_users = User.objects.exclude(id=me.id)
     else:
-        contacts = User.objects.filter(
+        # Users connected via accepted TuitionRequest
+        tuition_contacts = User.objects.filter(
             Q(sent_requests__student=me, sent_requests__status='accepted') |
             Q(received_requests__tutor=me, received_requests__status='accepted')
         ).distinct()
 
-        all_users = contacts
+        # Admins who have messaged this user
+        admin_contacts = User.objects.filter(
+            role='admin'
+        ).filter(
+            Q(sent_messages__receiver=me) | Q(received_messages__sender=me)
+        ).distinct()
+
+        contacts = (tuition_contacts | admin_contacts).distinct()
 
     active_id = request.GET.get('with')
     active_user = None
@@ -37,9 +46,8 @@ def inbox(request):
     if active_id:
         active_user = get_object_or_404(User, pk=active_id)
 
-        if me.role != 'admin':
-            if not _is_connected(me, active_user):
-                return redirect('inbox')
+        if not _is_connected(me, active_user):
+            return redirect('inbox')
 
         messages_list = Message.objects.filter(
             Q(sender=me, receiver=active_user) | Q(sender=active_user, receiver=me)
@@ -50,7 +58,6 @@ def inbox(request):
 
     return render(request, 'chat/inbox.html', {
         'contacts': contacts,
-        'all_users': all_users,
         'active_user': active_user,
         'messages_list': messages_list,
         'contact_ids': contact_ids,
@@ -65,11 +72,10 @@ def send_message(request):
         if receiver_id and text:
             receiver = get_object_or_404(User, pk=receiver_id)
 
-            if request.user.role != 'admin':
-                if not _is_connected(request.user, receiver):
-                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                        return JsonResponse({'ok': False, 'error': 'You cannot message this user yet.'})
-                    return redirect('inbox')
+            if not _is_connected(request.user, receiver):
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'ok': False, 'error': 'You cannot message this user yet.'})
+                return redirect('inbox')
 
             msg = Message.objects.create(sender=request.user, receiver=receiver, text=text)
 
@@ -91,9 +97,8 @@ def send_message(request):
 def get_messages(request, user_id):
     other = get_object_or_404(User, pk=user_id)
 
-    if request.user.role != 'admin':
-        if not _is_connected(request.user, other):
-            return JsonResponse({'messages': []})
+    if not _is_connected(request.user, other):
+        return JsonResponse({'messages': []})
 
     after_id = request.GET.get('after', 0)
     msgs = Message.objects.filter(
