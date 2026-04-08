@@ -24,7 +24,7 @@
       <div style="padding:10px 12px 8px;border-bottom:1px solid var(--glass-border);font-size:11px;font-weight:600;color:var(--muted)">USERS</div>
       <div style="overflow-y:auto;flex:1">
         {% for u in all_users %}
-          {% if u.is_accepted %}
+          {% if u.pk in contact_ids %}
             <a href="?with={{ u.pk }}"
                class="chat-contact {% if active_user.pk == u.pk %}active{% endif %}"
                style="text-decoration:none;color:var(--text)"
@@ -66,7 +66,7 @@
           {% endfor %}
         </div>
 
-        {% if active_user.is_accepted %}
+        {% if active_user.pk in contact_ids %}
           <div class="chat-input-row">
             <form id="chatForm" style="display:flex;gap:8px;width:100%">
               {% csrf_token %}

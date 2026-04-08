@@ -8,12 +8,6 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-BASE_URL     = settings.BKASH_BASE_URL
-APP_KEY      = settings.BKASH_APP_KEY
-APP_SECRET   = settings.BKASH_APP_SECRET
-USERNAME     = settings.BKASH_USERNAME
-PASSWORD     = settings.BKASH_PASSWORD
-
 _token_cache = {'id_token': None, 'refresh_token': None}
 
 
@@ -22,22 +16,22 @@ def _headers(token: str) -> dict:
         'Content-Type':  'application/json',
         'Accept':        'application/json',
         'authorization': token,
-        'x-app-key':     APP_KEY,
+        'x-app-key':     settings.BKASH_APP_KEY,
     }
 
 
 def grant_token() -> str | None:
     """Obtain a new id_token from bKash. Returns id_token on success."""
-    url  = f"{BASE_URL}/tokenized/checkout/token/grant"
+    url  = f"{settings.BKASH_BASE_URL}/tokenized/checkout/token/grant"
     body = {
-        'app_key':    APP_KEY,
-        'app_secret': APP_SECRET,
+        'app_key':    settings.BKASH_APP_KEY,
+        'app_secret': settings.BKASH_APP_SECRET,
     }
     headers = {
         'Content-Type': 'application/json',
         'Accept':       'application/json',
-        'username':     USERNAME,
-        'password':     PASSWORD,
+        'username':     settings.BKASH_USERNAME,
+        'password':     settings.BKASH_PASSWORD,
     }
     try:
         resp = requests.post(url, json=body, headers=headers, timeout=15)
@@ -68,7 +62,7 @@ def create_payment(amount: str, invoice_number: str, callback_url: str) -> dict:
     if not token:
         return {'error': 'Could not obtain bKash token'}
 
-    url  = f"{BASE_URL}/tokenized/checkout/create"
+    url  = f"{settings.BKASH_BASE_URL}/tokenized/checkout/create"
     body = {
         'mode':                   '0011',
         'payerReference':         invoice_number,
@@ -98,7 +92,7 @@ def execute_payment(payment_id: str) -> dict:
     if not token:
         return {'error': 'Could not obtain bKash token'}
 
-    url  = f"{BASE_URL}/tokenized/checkout/execute"
+    url  = f"{settings.BKASH_BASE_URL}/tokenized/checkout/execute"
     body = {'paymentID': payment_id}
     try:
         resp = requests.post(url, json=body, headers=_headers(token), timeout=15)
@@ -120,7 +114,7 @@ def query_payment(payment_id: str) -> dict:
     if not token:
         return {'error': 'Could not obtain bKash token'}
 
-    url  = f"{BASE_URL}/tokenized/checkout/payment/status"
+    url  = f"{settings.BKASH_BASE_URL}/tokenized/checkout/payment/status"
     body = {'paymentID': payment_id}
     try:
         resp = requests.post(url, json=body, headers=_headers(token), timeout=15)

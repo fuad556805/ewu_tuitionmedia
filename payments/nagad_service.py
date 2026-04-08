@@ -17,21 +17,18 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-MERCHANT_ID    = settings.NAGAD_MERCHANT_ID
-MERCHANT_KEY   = settings.NAGAD_MERCHANT_KEY       # Merchant private key (PEM)
-NAGAD_PUB_KEY  = settings.NAGAD_PUBLIC_KEY         # Nagad public key (PEM)
-BASE_URL       = settings.NAGAD_BASE_URL            # sandbox or live
-
 
 # ──────────────────── Crypto helpers ────────────────────
 
 def _load_private_key():
-    pem = MERCHANT_KEY.encode() if isinstance(MERCHANT_KEY, str) else MERCHANT_KEY
+    key = settings.NAGAD_MERCHANT_KEY
+    pem = key.encode() if isinstance(key, str) else key
     return serialization.load_pem_private_key(pem, password=None)
 
 
 def _load_nagad_public_key():
-    pem = NAGAD_PUB_KEY.encode() if isinstance(NAGAD_PUB_KEY, str) else NAGAD_PUB_KEY
+    key = settings.NAGAD_PUBLIC_KEY
+    pem = key.encode() if isinstance(key, str) else key
     return serialization.load_pem_public_key(pem)
 
 
@@ -92,7 +89,7 @@ def initiate_payment(order_id: str, amount: str, callback_url: str) -> dict:
     challenge    = str(uuid.uuid4())
 
     sensitive_data = {
-        'merchantId':      MERCHANT_ID,
+        'merchantId':      settings.NAGAD_MERCHANT_ID,
         'datetime':        datetime_str,
         'orderId':         order_id,
         'challenge':       challenge,
@@ -101,7 +98,7 @@ def initiate_payment(order_id: str, amount: str, callback_url: str) -> dict:
     encrypted_data = _encrypt_with_nagad_public_key(json.dumps(sensitive_data))
     signature      = _sign_with_merchant_key(json.dumps(sensitive_data))
 
-    url  = f"{BASE_URL}/remote-payment-gateway-1.0/api/dfs/check-out/initialize/{MERCHANT_ID}/{order_id}"
+    url  = f"{settings.NAGAD_BASE_URL}/remote-payment-gateway-1.0/api/dfs/check-out/initialize/{settings.NAGAD_MERCHANT_ID}/{order_id}"
     body = {
         'dateTime':         datetime_str,
         'sensitiveData':    encrypted_data,
@@ -126,7 +123,7 @@ def initiate_payment(order_id: str, amount: str, callback_url: str) -> dict:
         challenge_back  = data.get('challenge')
 
         payment_data = {
-            'merchantId':         MERCHANT_ID,
+            'merchantId':         settings.NAGAD_MERCHANT_ID,
             'orderId':            order_id,
             'challenge':          challenge_back,
             'amount':             str(amount),
@@ -138,7 +135,7 @@ def initiate_payment(order_id: str, amount: str, callback_url: str) -> dict:
         enc_payment    = _encrypt_with_nagad_public_key(json.dumps(payment_data))
         payment_sig    = _sign_with_merchant_key(json.dumps(payment_data))
 
-        complete_url  = f"{BASE_URL}/remote-payment-gateway-1.0/api/dfs/check-out/complete/{MERCHANT_ID}/{order_id}"
+        complete_url  = f"{settings.NAGAD_BASE_URL}/remote-payment-gateway-1.0/api/dfs/check-out/complete/{settings.NAGAD_MERCHANT_ID}/{order_id}"
         complete_body = {
             'sensitiveData': enc_payment,
             'signature':     payment_sig,
@@ -161,7 +158,7 @@ def verify_payment(payment_ref_id: str) -> dict:
     Verify a Nagad payment using the paymentReferenceId from callback.
     Returns full verification response.
     """
-    url = f"{BASE_URL}/remote-payment-gateway-1.0/api/dfs/verify/payment/{payment_ref_id}"
+    url = f"{settings.NAGAD_BASE_URL}/remote-payment-gateway-1.0/api/dfs/verify/payment/{payment_ref_id}"
     try:
         resp = requests.get(url, headers=_headers(), timeout=15)
         resp.raise_for_status()

@@ -49,11 +49,14 @@ def inbox(request):
         )
         messages_list.filter(receiver=me, read=False).update(read=True)
 
+    contact_ids = set(contacts.values_list('id', flat=True))
+
     return render(request, 'chat/inbox.html', {
         'contacts': contacts,
         'all_users': all_users,
         'active_user': active_user,
         'messages_list': messages_list,
+        'contact_ids': contact_ids,
     })
 
 
