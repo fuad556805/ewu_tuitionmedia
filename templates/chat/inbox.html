@@ -23,21 +23,19 @@
          style="border-radius:var(--radius) 0 0 var(--radius);border-right:1px solid var(--glass-border)">
       <div style="padding:10px 12px 8px;border-bottom:1px solid var(--glass-border);font-size:11px;font-weight:600;color:var(--muted)">USERS</div>
       <div style="overflow-y:auto;flex:1">
-        {% for u in all_users %}
-          {% if u.pk in contact_ids %}
-            <a href="?with={{ u.pk }}"
-               class="chat-contact {% if active_user.pk == u.pk %}active{% endif %}"
-               style="text-decoration:none;color:var(--text)"
-               onclick="onContactClick(event)">
-              <div class="avatar avatar-sm" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">{{ u.first_name|first }}</div>
-              <div>
-                <div style="font-weight:600;font-size:12px">{{ u.get_full_name|truncatechars:14 }}</div>
-                <div style="color:var(--muted);font-size:10px;text-transform:capitalize">{{ u.role }}</div>
-              </div>
-            </a>
-          {% endif %}
+        {% for u in contacts %}
+          <a href="?with={{ u.pk }}"
+             class="chat-contact {% if active_user.pk == u.pk %}active{% endif %}"
+             style="text-decoration:none;color:var(--text)"
+             onclick="onContactClick(event)">
+            <div class="avatar avatar-sm" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">{{ u.first_name|first }}</div>
+            <div>
+              <div style="font-weight:600;font-size:12px">{{ u.get_full_name|truncatechars:14 }}</div>
+              <div style="color:var(--muted);font-size:10px;text-transform:capitalize">{{ u.role }}</div>
+            </div>
+          </a>
         {% empty %}
-          <div style="padding:14px;color:var(--muted);font-size:13px">No users yet.</div>
+          <div style="padding:14px;color:var(--muted);font-size:13px">No conversations yet.</div>
         {% endfor %}
       </div>
     </div>

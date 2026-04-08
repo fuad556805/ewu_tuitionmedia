@@ -36,7 +36,7 @@
       <!-- Action Buttons -->
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
         {% if is_connected %}
-          <a href="{% url 'inbox' %}" class="btn btn-primary">💬 Message</a>
+          <a href="{% url 'inbox' %}?with={{ viewed_user.pk }}" class="btn btn-primary">💬 Message</a>
           <span class="badge badge-success" style="font-size:12px">✓ Connected</span>
         {% elif can_accept == 'student' %}
           <form method="post" action="{% url 'accept_request' existing_req.pk %}">

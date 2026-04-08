@@ -52,13 +52,7 @@
         <div style="color:var(--muted);font-size:12px">{{ req.subject }}</div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <a href="{% url 'public_profile' req.student.pk %}" class="btn btn-secondary btn-sm">View Profile</a>
-        <form method="post" action="{% url 'tutor_accept_request' req.pk %}">
-          {% csrf_token %}<button class="btn btn-success btn-sm">✓</button>
-        </form>
-        <form method="post" action="{% url 'tutor_reject_request' req.pk %}">
-          {% csrf_token %}<button class="btn btn-danger btn-sm">✗</button>
-        </form>
+        <a href="{% url 'public_profile' req.student.pk %}" class="btn btn-primary btn-sm">View Profile →</a>
       </div>
     </div>
     {% endfor %}

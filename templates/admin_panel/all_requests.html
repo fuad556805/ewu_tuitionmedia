@@ -37,18 +37,16 @@
             <td style="color:var(--muted)">{{ r.subject }}</td>
             <td>
               {% if r.post %}
-                <button class="btn btn-secondary btn-sm"
-                        onclick="showPostDetail(
-                          '{{ r.post.subject|escapejs }}',
-                          '{{ r.post.student.get_full_name|escapejs }}',
-                          '{{ r.post.location|escapejs }}',
-                          '{{ r.post.budget }}',
-                          '{{ r.post.classes|escapejs }}',
-                          '{{ r.post.schedule|escapejs }}',
-                          '{{ r.post.details|escapejs }}',
-                          '{{ r.post.status }}',
-                          '{{ r.post.created_at|date:"M d, Y" }}'
-                        )"
+                <button class="btn btn-secondary btn-sm post-detail-btn"
+                        data-subject="{{ r.post.subject }}"
+                        data-student="{{ r.post.student.get_full_name }}"
+                        data-location="{{ r.post.location }}"
+                        data-budget="{{ r.post.budget }}"
+                        data-classes="{{ r.post.classes }}"
+                        data-schedule="{{ r.post.schedule }}"
+                        data-details="{{ r.post.details }}"
+                        data-status="{{ r.post.status }}"
+                        data-created="{{ r.post.created_at|date:'M d, Y' }}"
                         style="font-size:16px;padding:4px 10px">
                   📋
                 </button>
@@ -83,32 +81,45 @@
 </div>
 
 <script>
-function showPostDetail(subject, student, location, budget, classes, schedule, details, status, created) {
-  var rows = [
-    ['📚 Subject', subject],
-    ['👤 Student', student],
-    ['📍 Location', location || '—'],
-    ['💰 Budget', budget ? 'BDT ' + budget + '/mo' : '—'],
-    ['🎓 Classes', classes || '—'],
-    ['🕐 Schedule', schedule || '—'],
-    ['📝 Details', details || '—'],
-    ['📌 Status', status],
-    ['📅 Posted', created],
-  ];
-  var html = '';
-  rows.forEach(function(r) {
-    html += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">'
-          + '<span style="color:var(--muted);min-width:110px;flex-shrink:0">' + r[0] + '</span>'
-          + '<span style="font-weight:500;word-break:break-word">' + r[1] + '</span>'
-          + '</div>';
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.post-detail-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var rows = [
+        ['📚 Subject',  btn.dataset.subject  || '—'],
+        ['👤 Student',  btn.dataset.student  || '—'],
+        ['📍 Location', btn.dataset.location || '—'],
+        ['💰 Budget',   btn.dataset.budget   ? 'BDT ' + btn.dataset.budget + '/mo' : '—'],
+        ['🎓 Classes',  btn.dataset.classes  || '—'],
+        ['🕐 Schedule', btn.dataset.schedule || '—'],
+        ['📝 Details',  btn.dataset.details  || '—'],
+        ['📌 Status',   btn.dataset.status   || '—'],
+        ['📅 Posted',   btn.dataset.created  || '—'],
+      ];
+      var html = '';
+      rows.forEach(function(r) {
+        html += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">'
+              + '<span style="color:var(--muted);min-width:110px;flex-shrink:0">' + r[0] + '</span>'
+              + '<span style="font-weight:500;word-break:break-word;white-space:pre-wrap">' + escHtml(r[1]) + '</span>'
+              + '</div>';
+      });
+      document.getElementById('postModalBody').innerHTML = html;
+      document.getElementById('postModal').style.display = 'flex';
+    });
   });
-  document.getElementById('postModalBody').innerHTML = html;
-  var modal = document.getElementById('postModal');
-  modal.style.display = 'flex';
+});
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
+
 function closePostModal() {
   document.getElementById('postModal').style.display = 'none';
 }
+
 document.getElementById('postModal').addEventListener('click', function(e) {
   if (e.target === this) closePostModal();
 });
