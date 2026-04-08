@@ -2,8 +2,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-
-# Load .env file
+# Load .env file if exists
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,7 +15,7 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # e.g. 'example.com,www.example.com'
+    ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # ================= APPS =================
 INSTALLED_APPS = [
@@ -49,7 +48,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tuitionmedia.urls'
-
 AUTH_USER_MODEL = 'accounts.User'
 
 # ================= TEMPLATES =================
@@ -73,6 +71,7 @@ TEMPLATES = [
 RENDER = os.getenv("RENDER") == "TRUE"
 
 if RENDER:
+    # Use SQLite on Render (no PostgreSQL needed)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
