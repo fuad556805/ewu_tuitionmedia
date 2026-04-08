@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import dj_database_url
+
 
 # Load .env file
 load_dotenv()
@@ -71,15 +71,8 @@ TEMPLATES = [
 
 # ================= DATABASE =================
 RENDER = os.getenv("RENDER") == "TRUE"
-DATABASE_URL = os.getenv("DATABASE_URL", "")
 
-if RENDER and DATABASE_URL:
-    # Use Render PostgreSQL
-    DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
-    }
-elif RENDER:
-    # Render + SQLite (quick deploy)
+if RENDER:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -87,7 +80,7 @@ elif RENDER:
         }
     }
 else:
-    # Local development PostgreSQL
+    # Local PostgreSQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
