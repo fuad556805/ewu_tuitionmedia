@@ -8,16 +8,21 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ================= SECURITY =================
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-tuitionmedia-secret-key-change-in-production')
+SECRET_KEY = os.getenv(
+    'SECRET_KEY', 'django-insecure-tuitionmedia-secret-key-change-in-production'
+)
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-# ALLOWED HOSTS
+# ================= ALLOWED HOSTS =================
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+    # Use environment variable, fallback to Render URL
+    ALLOWED_HOSTS = os.getenv(
+        "ALLOWED_HOSTS", "ewu-tuitionmedia.onrender.com"
+    ).split(",")
 
-# ================= APPS =================
+# ================= INSTALLED APPS =================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -68,11 +73,10 @@ TEMPLATES = [
 ]
 
 # ================= DATABASE =================
-# render environment variable পড়া
 RENDER = os.getenv("RENDER", "FALSE").upper() == "TRUE"
 
 if RENDER:
-    # Render-এ SQLite ব্যবহার করা হবে
+    # Render (production) → SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -80,7 +84,7 @@ if RENDER:
         }
     }
 else:
-    # Local PC-তে PostgreSQL
+    # Local development → PostgreSQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
