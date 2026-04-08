@@ -4,6 +4,16 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up — TuitionMedia</title>
   {% load static %}<link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <style>
+    .otp-input { letter-spacing: 6px; font-size: 24px; text-align: center; font-weight: 700; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .otp-timer { color: var(--muted); font-size: 13px; text-align: center; margin-top: 8px; }
+    .otp-timer span { color: var(--accent); font-weight: 600; }
+    .resend-link { color: var(--accent); cursor: pointer; text-decoration: underline; font-size: 13px; }
+    .resend-link.disabled { color: var(--muted); pointer-events: none; text-decoration: none; cursor: default; }
+    .alert-success { background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.4); color: #86efac; padding: 12px 16px; border-radius: 10px; font-size: 14px; margin-bottom: 14px; }
+  </style>
 </head>
 <body data-user-theme="dark">
 <div class="orb orb-1"></div><div class="orb orb-2"></div>
@@ -12,80 +22,275 @@
   <div class="glass auth-card">
     <a href="{% url 'landing' %}" style="color:var(--muted);font-size:13px;text-decoration:none;display:block;margin-bottom:20px">← Back</a>
     <div class="auth-title">Join TuitionMedia</div>
-    <p style="color:var(--muted);font-size:14px;margin-bottom:22px">Create your free account — login works instantly!</p>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:22px">Create your free account — OTP verified!</p>
 
-    <!-- Role picker -->
-    <div class="role-picker">
-      <label class="role-option selected" id="roleStudent">
-        <input type="radio" name="_role_pick" value="student" checked style="display:none">
-        <div style="font-size:22px;margin-bottom:4px">🎓</div>
-        <div style="font-weight:600;font-size:14px">Student</div>
-      </label>
-      <label class="role-option" id="roleTutor">
-        <input type="radio" name="_role_pick" value="tutor" style="display:none">
-        <div style="font-size:22px;margin-bottom:4px">📚</div>
-        <div style="font-weight:600;font-size:14px">Tutor</div>
-      </label>
-    </div>
+    <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 
-    <form method="post">
-      {% csrf_token %}
+    <!-- ─── Step 1: Details ─── -->
+    <div class="step active" id="step1">
+      <div class="role-picker">
+        <label class="role-option selected" id="roleStudent">
+          <input type="radio" name="_role_pick" value="student" checked style="display:none">
+          <div style="font-size:22px;margin-bottom:4px">🎓</div>
+          <div style="font-weight:600;font-size:14px">Student</div>
+        </label>
+        <label class="role-option" id="roleTutor">
+          <input type="radio" name="_role_pick" value="tutor" style="display:none">
+          <div style="font-size:22px;margin-bottom:4px">📚</div>
+          <div style="font-weight:600;font-size:14px">Tutor</div>
+        </label>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>First Name</label>
-          <input class="form-control" name="first_name" placeholder="First name" required>
+          <input class="form-control" id="firstName" placeholder="First name" required>
         </div>
         <div class="form-group">
           <label>Last Name</label>
-          <input class="form-control" name="last_name" placeholder="Last name">
+          <input class="form-control" id="lastName" placeholder="Last name">
         </div>
       </div>
       <div class="form-group">
         <label>Phone Number</label>
-        <input class="form-control" name="phone" placeholder="01XXXXXXXXX" required>
+        <input class="form-control" id="phone" placeholder="01XXXXXXXXX" required inputmode="tel">
       </div>
       <div class="form-group">
         <label>Password</label>
         <div class="pw-wrap">
-          <input class="form-control" name="password" type="password" placeholder="Min 6 characters" required>
+          <input class="form-control" id="password" type="password" placeholder="Min 8 characters" required>
           <button type="button" class="pw-toggle">👁️</button>
         </div>
       </div>
-      <input type="hidden" name="role" id="roleInput" value="student">
 
-      {% if form.errors %}
-      <div class="alert alert-danger">
-        {% for field, errors in form.errors.items %}
-          {% for error in errors %}{{ error }}{% endfor %}
-        {% endfor %}
+      <div id="step1Error" class="alert alert-danger" style="display:none"></div>
+
+      <button id="sendOtpBtn" class="btn btn-primary btn-block" style="margin-top:16px;font-size:15px;padding:13px">
+        Send OTP →
+      </button>
+    </div>
+
+    <!-- ─── Step 2: OTP Verification ─── -->
+    <div class="step" id="step2">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:40px;margin-bottom:8px">📱</div>
+        <div style="font-weight:600;font-size:16px;color:var(--text)">OTP পাঠানো হয়েছে</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">
+          We sent a 6-digit OTP to <strong id="phoneDisplay" style="color:var(--accent)"></strong>
+        </div>
       </div>
-      {% endif %}
 
+      <div class="form-group">
+        <label style="text-align:center;display:block">Enter 6-Digit OTP</label>
+        <input class="form-control otp-input" id="otpInput" placeholder="------" maxlength="6" inputmode="numeric" pattern="[0-9]*">
+      </div>
 
-      <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;font-size:15px;padding:13px">Create Account →</button>
-    </form>
+      <div class="otp-timer" id="otpTimer">
+        OTP expires in <span id="countdown">2:00</span>
+      </div>
+
+      <div id="step2Error" class="alert alert-danger" style="display:none;margin-top:12px"></div>
+      <div id="step2Success" class="alert-success" style="display:none;margin-top:12px"></div>
+
+      <button id="verifyOtpBtn" class="btn btn-primary btn-block" style="margin-top:16px;font-size:15px;padding:13px">
+        Verify &amp; Create Account ✓
+      </button>
+
+      <div style="text-align:center;margin-top:14px;color:var(--muted);font-size:13px">
+        Didn't get it?
+        <span class="resend-link disabled" id="resendLink">Resend OTP</span>
+        <span id="resendTimer" style="color:var(--muted);font-size:12px"></span>
+      </div>
+
+      <div style="text-align:center;margin-top:10px">
+        <span style="color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline" id="backBtn">← Change details</span>
+      </div>
+    </div>
 
     <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:16px">
       Already have an account? <a href="{% url 'login' %}" style="color:var(--accent);font-weight:600">Log In</a>
-    </div>
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--glass-border);text-align:center">
-      <a href="{% url 'login' %}" style="color:var(--muted);font-size:12px">Admin? Log in here →</a>
     </div>
   </div>
 </div>
 
 <script>
-  // Role picker sync
+  const csrf = document.getElementById('csrfToken').value;
+  let selectedRole = 'student';
+  let expiryTimer, resendCooldown;
+
+  // Role picker
   document.querySelectorAll('.role-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
       const radio = opt.querySelector('input');
-      if (radio) {
-        radio.checked = true;
-        document.getElementById('roleInput').value = radio.value;
-      }
+      if (radio) { radio.checked = true; selectedRole = radio.value; }
     });
+  });
+
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+  }
+
+  function setError(el, msg) {
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  function startCountdown(seconds) {
+    clearInterval(expiryTimer);
+    const el = document.getElementById('countdown');
+    const timerEl = document.getElementById('otpTimer');
+    timerEl.innerHTML = 'OTP expires in <span id="countdown">2:00</span>';
+    const cdEl = document.getElementById('countdown');
+    let remaining = seconds;
+    function tick() {
+      const m = Math.floor(remaining / 60), s = remaining % 60;
+      cdEl.textContent = m + ':' + String(s).padStart(2, '0');
+      if (remaining <= 0) {
+        clearInterval(expiryTimer);
+        timerEl.innerHTML = '<span style="color:#f87171">OTP মেয়াদ শেষ। Please resend.</span>';
+        enableResend();
+      }
+      remaining--;
+    }
+    tick();
+    expiryTimer = setInterval(tick, 1000);
+  }
+
+  function enableResend() {
+    document.getElementById('resendLink').classList.remove('disabled');
+    document.getElementById('resendTimer').textContent = '';
+  }
+
+  function startResendCooldown(seconds) {
+    document.getElementById('resendLink').classList.add('disabled');
+    const timerSpan = document.getElementById('resendTimer');
+    let rem = seconds;
+    clearInterval(resendCooldown);
+    function tick() {
+      timerSpan.textContent = rem > 0 ? ` (${rem}s)` : '';
+      if (rem <= 0) { clearInterval(resendCooldown); enableResend(); }
+      rem--;
+    }
+    tick();
+    resendCooldown = setInterval(tick, 1000);
+  }
+
+  // ─── Send OTP ───
+  document.getElementById('sendOtpBtn').addEventListener('click', async () => {
+    const firstName = document.getElementById('firstName').value.trim();
+    const phone     = document.getElementById('phone').value.trim();
+    const password  = document.getElementById('password').value.trim();
+    const errEl     = document.getElementById('step1Error');
+
+    setError(errEl, '');
+    if (!firstName)              return setError(errEl, 'First name is required.');
+    if (!phone)                  return setError(errEl, 'Phone number is required.');
+    if (password.length < 8)    return setError(errEl, 'Password must be at least 8 characters.');
+
+    const btn = document.getElementById('sendOtpBtn');
+    btn.textContent = 'Sending…'; btn.disabled = true;
+
+    try {
+      const resp = await fetch('/api/auth/send-otp/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        setError(errEl, data.error || 'Failed to send OTP. Please try again.');
+        btn.textContent = 'Send OTP →'; btn.disabled = false;
+        return;
+      }
+      document.getElementById('phoneDisplay').textContent = data.phone;
+      showStep(2);
+      startCountdown(120);
+      startResendCooldown(60);
+      document.getElementById('otpInput').focus();
+    } catch (e) {
+      setError(errEl, 'Network error. Please try again.');
+      btn.textContent = 'Send OTP →'; btn.disabled = false;
+    }
+  });
+
+  // ─── Verify OTP ───
+  document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
+    const otp   = document.getElementById('otpInput').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const errEl = document.getElementById('step2Error');
+    const succEl= document.getElementById('step2Success');
+
+    setError(errEl, ''); succEl.style.display = 'none';
+    if (otp.length !== 6) return setError(errEl, 'Please enter the 6-digit OTP.');
+
+    const btn = document.getElementById('verifyOtpBtn');
+    btn.textContent = 'Verifying…'; btn.disabled = true;
+
+    try {
+      const resp = await fetch('/api/auth/verify-otp/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+        body: JSON.stringify({
+          phone,
+          otp,
+          first_name: document.getElementById('firstName').value.trim(),
+          last_name:  document.getElementById('lastName').value.trim(),
+          password:   document.getElementById('password').value.trim(),
+          role:       selectedRole,
+        }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        setError(errEl, data.error || 'Verification failed. Please try again.');
+        btn.textContent = 'Verify & Create Account ✓'; btn.disabled = false;
+        return;
+      }
+      clearInterval(expiryTimer); clearInterval(resendCooldown);
+      succEl.textContent = '✅ Account created! Redirecting to login…';
+      succEl.style.display = 'block';
+      setTimeout(() => { window.location.href = "{% url 'login' %}"; }, 1500);
+    } catch (e) {
+      setError(errEl, 'Network error. Please try again.');
+      btn.textContent = 'Verify & Create Account ✓'; btn.disabled = false;
+    }
+  });
+
+  // ─── Resend OTP ───
+  document.getElementById('resendLink').addEventListener('click', async () => {
+    const phone = document.getElementById('phone').value.trim();
+    const errEl = document.getElementById('step2Error');
+    setError(errEl, '');
+    try {
+      const resp = await fetch('/api/auth/resend-otp/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) { setError(errEl, data.error || 'Could not resend OTP.'); return; }
+      document.getElementById('otpInput').value = '';
+      startCountdown(120);
+      startResendCooldown(60);
+    } catch (e) {
+      setError(errEl, 'Network error. Please try again.');
+    }
+  });
+
+  // ─── Back button ───
+  document.getElementById('backBtn').addEventListener('click', () => {
+    clearInterval(expiryTimer); clearInterval(resendCooldown);
+    document.getElementById('step1Error').style.display = 'none';
+    const btn = document.getElementById('sendOtpBtn');
+    btn.textContent = 'Send OTP →'; btn.disabled = false;
+    showStep(1);
+  });
+
+  // OTP input: digits only
+  document.getElementById('otpInput').addEventListener('input', function() {
+    this.value = this.value.replace(/\D/g, '');
   });
 </script>
 {% load static %}<script src="{% static 'js/main.js' %}"></script>

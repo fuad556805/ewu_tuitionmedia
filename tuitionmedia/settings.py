@@ -141,6 +141,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 # ================= API KEYS =================
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
+GEMINI_API_KEY    = os.getenv('GEMINI_API_KEY', '')
 
 # ================= bKash =================
 BKASH_BASE_URL   = os.getenv('BKASH_BASE_URL',   'https://tokenized.sandbox.bka.sh/v1.2.0-beta')

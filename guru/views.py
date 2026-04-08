@@ -25,46 +25,64 @@ def guru_ask(request):
     if not user_message:
         return JsonResponse({'error': 'Empty message'}, status=400)
 
-    # Build context
-    tutors = User.objects.filter(role='tutor', banned=False).values('first_name', 'last_name', 'subjects', 'location', 'education')
-    tutor_list = [{'name': f"{t['first_name']} {t['last_name']}", 'subjects': t['subjects'],
-                   'location': t['location'], 'education': t['education']} for t in tutors]
+    tutors = User.objects.filter(role='tutor', banned=False).values(
+        'first_name', 'last_name', 'subjects', 'location', 'university', 'college'
+    )
+    tutor_list = [
+        {
+            'name': f"{t['first_name']} {t['last_name']}",
+            'subjects': t['subjects'],
+            'location': t['location'],
+            'education': t.get('university') or t.get('college', ''),
+        }
+        for t in tutors
+    ]
 
-    active_posts = Post.objects.filter(status='active').values('subject', 'location', 'budget', 'schedule', 'student__first_name')
-    post_list = [{'subject': p['subject'], 'location': p['location'],
-                  'budget': p['budget'], 'schedule': p['schedule']} for p in active_posts]
+    active_posts = Post.objects.filter(status='active').values(
+        'subject', 'location', 'budget', 'schedule', 'student__first_name'
+    )
+    post_list = [
+        {
+            'subject': p['subject'],
+            'location': p['location'],
+            'budget': p['budget'],
+            'schedule': p['schedule'],
+        }
+        for p in active_posts
+    ]
 
-    system_prompt = f"""You are Guru, a smart AI assistant for TuitionMedia — Bangladesh's tuition matching platform.
-Available tutors: {json.dumps(tutor_list)}
-Active posts: {json.dumps(post_list)}
-Current user: {request.user.get_full_name()} ({request.user.role})
-Respond in a warm mix of Bangla and English. Be helpful and concise (under 150 words).
-For matching: suggest specific tutors or posts by name with reasons.
-For general questions: give helpful advice about tuition, studying, platform usage."""
+    system_prompt = (
+        f"You are Guru, a smart AI assistant for TuitionMedia — Bangladesh's tuition matching platform.\n"
+        f"Available tutors: {json.dumps(tutor_list)}\n"
+        f"Active posts: {json.dumps(post_list)}\n"
+        f"Current user: {request.user.get_full_name()} ({request.user.role})\n"
+        f"Respond in a warm mix of Bangla and English. Be helpful and concise (under 150 words). "
+        f"For matching: suggest specific tutors or posts by name with reasons. "
+        f"For general questions: give helpful advice about tuition, studying, platform usage."
+    )
 
-    messages_payload = []
+    contents = []
     for h in history[-10:]:
-        messages_payload.append({'role': h['role'], 'content': h['content']})
-    messages_payload.append({'role': 'user', 'content': user_message})
+        role = 'user' if h['role'] == 'user' else 'model'
+        contents.append({'role': role, 'parts': [{'text': h['content']}]})
+    contents.append({'role': 'user', 'parts': [{'text': user_message}]})
+
+    api_key = settings.GEMINI_API_KEY
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+
+    payload = {
+        'system_instruction': {'parts': [{'text': system_prompt}]},
+        'contents': contents,
+        'generationConfig': {
+            'maxOutputTokens': 512,
+            'temperature': 0.7,
+        },
+    }
 
     try:
-        response = requests.post(
-            'https://api.anthropic.com/v1/messages',
-            headers={
-                'x-api-key': settings.ANTHROPIC_API_KEY,
-                'anthropic-version': '2023-06-01',
-                'content-type': 'application/json',
-            },
-            json={
-                'model': 'claude-sonnet-4-20250514',
-                'max_tokens': 512,
-                'system': system_prompt,
-                'messages': messages_payload,
-            },
-            timeout=30
-        )
+        response = requests.post(url, json=payload, timeout=30)
         result = response.json()
-        reply = result['content'][0]['text']
+        reply = result['candidates'][0]['content']['parts'][0]['text']
         return JsonResponse({'reply': reply})
     except Exception as e:
         return JsonResponse({'reply': 'দুঃখিত, এই মুহূর্তে সংযোগ সমস্যা হচ্ছে। Please try again.'})

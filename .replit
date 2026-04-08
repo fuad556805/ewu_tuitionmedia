@@ -37,3 +37,8 @@ externalPort = 80
 deploymentTarget = "autoscale"
 run = ["gunicorn", "--bind=0.0.0.0:5000", "--reuse-port", "tuitionmedia.wsgi:application"]
 build = ["bash", "-c", "python manage.py collectstatic --noinput && python manage.py migrate"]
+
+[userenv]
+
+[userenv.shared]
+GEMINI_API_KEY = "AIzaSyCGnb3I_lnR3Pk9KELOTmVzB6FtB42xNfc"
