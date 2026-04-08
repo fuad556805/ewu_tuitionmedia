@@ -68,10 +68,11 @@ TEMPLATES = [
 ]
 
 # ================= DATABASE =================
-RENDER = os.getenv("RENDER") == "TRUE"
+# render environment variable পড়া
+RENDER = os.getenv("RENDER", "FALSE").upper() == "TRUE"
 
 if RENDER:
-    # Use SQLite on Render (no PostgreSQL needed)
+    # Render-এ SQLite ব্যবহার করা হবে
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -79,7 +80,7 @@ if RENDER:
         }
     }
 else:
-    # Local PostgreSQL
+    # Local PC-তে PostgreSQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
