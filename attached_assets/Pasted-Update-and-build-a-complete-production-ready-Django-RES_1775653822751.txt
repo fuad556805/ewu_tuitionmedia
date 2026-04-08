@@ -1,0 +1,253 @@
+Update and build a complete production-ready Django REST Framework backend for a tuition platform called "TuitionMedia".
+
+The project is already uploaded on GitHub. Improve and extend it properly while maintaining clean architecture, scalability, and security.
+
+========================
+CORE FEATURES
+=============
+
+1. Authentication System:
+
+* Signup with phone number + OTP verification
+* Login system (phone/email + password OR OTP login)
+* Forgot Password via OTP
+* JWT authentication
+
+2. OTP System:
+
+* 6-digit OTP
+* Expiry: 2 minutes
+* Resend limit (3 per hour)
+* Secure hash storage
+* SMS API integration (Bangladesh supported)
+
+========================
+USER ROLES
+==========
+
+* Student
+* Tutor
+* Admin
+
+========================
+HOME PAGE LIVE DATA
+===================
+
+* Total tutors count
+* Total students count
+* Total users
+* Total tuition posts
+* Active/featured tutors
+
+Create API:
+GET /api/home/stats/
+
+========================
+PROFILE SYSTEM
+==============
+
+* Tutor profile (education, subject, experience)
+* Student profile
+* Upload profile image
+* Upload student ID / verification document
+
+Admin must approve profiles before they go public.
+
+========================
+POST SYSTEM (TUITION)
+=====================
+
+* Students create tuition posts (FREE)
+* Posts go to admin approval
+* Admin can approve/reject
+
+Endpoints:
+POST /api/tuition/create/
+PUT /api/tuition/update/
+GET /api/tuition/list/
+
+========================
+PROFILE & POST UPDATE
+=====================
+
+* Any edit requires admin re-approval
+* Maintain status: pending / approved / rejected
+
+========================
+PAYMENT SYSTEM (IMPORTANT)
+==========================
+
+Use ONLY:
+
+* bKash
+* Nagad
+
+Features:
+
+1. Student pays 100 BDT to unlock tutor contact
+2. Tutor pays 30% commission after tuition confirmed
+
+Payment Flow:
+
+* Create payment
+* Redirect / process
+* Verify transaction
+* Update status
+
+Models:
+
+* Payment
+* ContactUnlock
+* Commission
+
+Endpoints:
+POST /api/payment/create/
+POST /api/payment/verify/
+
+========================
+MESSAGING SYSTEM
+================
+
+* Chat between student and tutor AFTER acceptance
+* Only allowed if:
+
+  * Tutor applied
+  * Student accepted
+
+Endpoints:
+POST /api/chat/send/
+GET /api/chat/messages/
+
+========================
+ADMIN BROADCAST
+===============
+
+* Admin can send message to ALL users
+
+========================
+NOTIFICATION SYSTEM
+===================
+
+* Real-time notifications (or polling)
+* Events:
+
+  * OTP sent
+  * Profile approved/rejected
+  * Tuition approved
+  * Payment success
+  * New message
+
+Model:
+
+* Notification (user, title, message, is_read)
+
+========================
+APPLICATION SYSTEM
+==================
+
+* Tutor applies to tuition
+* Student accepts/rejects
+* When accepted → chat enabled
+
+========================
+SECURITY
+========
+
+* JWT Authentication
+* OTP hash নিরাপদভাবে store
+* Payment verification required
+* Rate limiting
+* Input validation
+
+========================
+FILE UPLOAD SYSTEM
+==================
+
+* Profile image upload
+* Student ID upload
+* Use Django media storage
+
+========================
+ADMIN PANEL
+===========
+
+* Approve/reject:
+
+  * Profiles
+  * Tuition posts
+* Manage users
+* View payments
+* Send broadcast messages
+
+========================
+ARCHITECTURE
+============
+
+* Django REST Framework
+* Use services layer:
+
+  * otp_service.py
+  * payment_service.py
+  * notification_service.py
+* Modular apps:
+
+  * accounts
+  * payments
+  * tuitions
+  * chat
+  * notifications
+
+========================
+API SUMMARY
+===========
+
+Auth:
+
+* /api/auth/send-otp/
+* /api/auth/verify-otp/
+* /api/auth/login/
+* /api/auth/forgot-password/
+
+Payment:
+
+* /api/payment/create/
+* /api/payment/verify/
+
+Tuition:
+
+* /api/tuition/create/
+* /api/tuition/update/
+* /api/tuition/list/
+
+Chat:
+
+* /api/chat/send/
+* /api/chat/messages/
+
+========================
+OUTPUT REQUIRED
+===============
+
+* models.py (all apps)
+* serializers.py
+* views.py (class-based DRF)
+* services (OTP, Payment, Notification)
+* urls.py
+* .env example
+* Setup instructions
+
+========================
+EXTRA INSTRUCTION
+=================
+
+* Fix existing bugs
+* Keep code clean and well-commented
+* Make it deploy-ready (Render/Replit)
+* Do NOT break existing frontend
+* Ensure GitHub repo updates properly
+
+========================
+GOAL
+====
+
+Make this a complete real-world scalable tuition platform backend like a startup-level product.
