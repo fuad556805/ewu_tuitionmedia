@@ -3,7 +3,7 @@ services:
     name: tuitionmedia
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn tuitionmedia.wsgi:application --bind 0.0.0.0:8000"
+    startCommand: "gunicorn tuitionmedia.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: DEBUG
         value: "False"
@@ -15,3 +15,9 @@ services:
         sync: false
       - key: SMS_BACKEND
         value: "console"
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY_B64
+        sync: false
+      - key: VAPID_CLAIMS_EMAIL
+        value: "admin@tuitionmedia.com"
