@@ -29,9 +29,7 @@
     <div class="messages-list">
       {% for message in messages %}
       <div class="msg-toast {{ message.tags }}">
-        {% if message.tags == 'success' %}✅{% elif message.tags == 'error'
-        %}❌{% elif message.tags == 'warning' %}⚠️{% else %}ℹ️{% endif %} {{
-        message }}
+        {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% elif message.tags == 'warning' %}⚠️{% else %}ℹ️{% endif %} {{ message }}
         <button class="close-btn">×</button>
       </div>
       {% endfor %}
