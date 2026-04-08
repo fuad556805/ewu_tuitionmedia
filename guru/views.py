@@ -70,9 +70,16 @@ def guru_ask(request):
         contents.append({'role': role, 'parts': [{'text': h['content']}]})
     contents.append({'role': 'user', 'parts': [{'text': user_message}]})
 
-    api_key = settings.GEMINI_API_KEY
+    # Collect all configured API keys (primary + secondary)
+    api_keys = [k for k in [
+        settings.GEMINI_API_KEY,
+        getattr(settings, 'GEMINI_API_KEY_2', ''),
+    ] if k]
 
-    # Try models in order — fallback if one hits quota or errors
+    if not api_keys:
+        logger.error("No Gemini API keys configured.")
+        return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে। Please try again later.'})
+
     models = [
         'gemini-2.5-flash-lite',
         'gemini-2.5-flash',
@@ -90,23 +97,24 @@ def guru_ask(request):
     }
 
     last_error = None
-    for model in models:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-        try:
-            response = requests.post(url, json=payload, timeout=30)
-            result = response.json()
+    for api_key in api_keys:
+        for model in models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+            try:
+                response = requests.post(url, json=payload, timeout=30)
+                result = response.json()
 
-            if response.status_code == 200 and 'candidates' in result:
-                reply = result['candidates'][0]['content']['parts'][0]['text']
-                return JsonResponse({'reply': reply})
+                if response.status_code == 200 and 'candidates' in result:
+                    reply = result['candidates'][0]['content']['parts'][0]['text']
+                    return JsonResponse({'reply': reply})
 
-            error_msg = result.get('error', {}).get('message', 'Unknown error')
-            logger.warning("Gemini model %s failed (%s): %s", model, response.status_code, error_msg)
-            last_error = error_msg
+                error_msg = result.get('error', {}).get('message', 'Unknown error')
+                logger.warning("Gemini key#%d model %s failed (%s): %s", api_keys.index(api_key) + 1, model, response.status_code, error_msg)
+                last_error = error_msg
 
-        except Exception as exc:
-            logger.error("Gemini model %s exception: %s", model, exc)
-            last_error = str(exc)
+            except Exception as exc:
+                logger.error("Gemini key#%d model %s exception: %s", api_keys.index(api_key) + 1, model, exc)
+                last_error = str(exc)
 
-    logger.error("All Gemini models failed. Last error: %s", last_error)
+    logger.error("All Gemini keys and models failed. Last error: %s", last_error)
     return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে। Please try again later.'})
