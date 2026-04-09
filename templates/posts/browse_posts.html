@@ -2,17 +2,105 @@
 {% block title %}Tuition Posts — TuitionMedia{% endblock %}
 {% block content %}
 <div style="animation:slideIn 0.4s ease">
+
   <div class="section-header">
     <div>
       <div class="section-title">Tuition Posts</div>
-      <div class="section-sub">{{ posts.count }} active post(s) · Use 🦉 Guru for smart matching</div>
+      <div class="section-sub">
+        {% if q or location or budget or classes %}
+          {{ posts|length }} result(s) found · <a href="{% url 'browse_posts' %}" style="color:var(--accent2);text-decoration:none">Clear filters</a>
+        {% else %}
+          {{ total }} active post(s) · Use 🦉 Guru for smart matching
+        {% endif %}
+      </div>
     </div>
   </div>
 
+  <!-- Search & Filter Bar -->
+  <form method="get" action="" id="searchForm">
+    <div class="glass" style="padding:16px 18px;margin-bottom:20px">
+      <!-- Main search row -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <div style="flex:2;min-width:200px;position:relative">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px">🔍</span>
+          <input
+            type="text"
+            name="q"
+            value="{{ q }}"
+            placeholder="Search by subject (Math, Physics, English...)"
+            class="form-control"
+            style="padding-left:36px"
+            autocomplete="off"
+          >
+        </div>
+        <button type="submit" class="btn btn-primary" style="white-space:nowrap">Search</button>
+        {% if q or location or budget or classes %}
+        <a href="{% url 'browse_posts' %}" class="btn btn-secondary" style="white-space:nowrap">✕ Clear</a>
+        {% endif %}
+      </div>
+
+      <!-- Filter row -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="position:relative;flex:1;min-width:140px">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">📍</span>
+          <input
+            type="text"
+            name="location"
+            value="{{ location }}"
+            placeholder="Location"
+            class="form-control"
+            style="padding-left:30px;font-size:13px"
+          >
+        </div>
+        <div style="position:relative;flex:1;min-width:140px">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">💰</span>
+          <input
+            type="number"
+            name="budget"
+            value="{{ budget }}"
+            placeholder="Max budget (BDT)"
+            class="form-control"
+            style="padding-left:30px;font-size:13px"
+            min="0"
+          >
+        </div>
+        <div style="position:relative;flex:1;min-width:140px">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">🎓</span>
+          <input
+            type="text"
+            name="classes"
+            value="{{ classes }}"
+            placeholder="Class (e.g. Class 10)"
+            class="form-control"
+            style="padding-left:30px;font-size:13px"
+          >
+        </div>
+      </div>
+
+      <!-- Active filter tags -->
+      {% if q or location or budget or classes %}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        {% if q %}<span class="badge badge-accent">Subject: {{ q }} <a href="?{% if location %}location={{ location }}&{% endif %}{% if budget %}budget={{ budget }}&{% endif %}{% if classes %}classes={{ classes }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+        {% if location %}<span class="badge badge-accent">📍 {{ location }} <a href="?{% if q %}q={{ q }}&{% endif %}{% if budget %}budget={{ budget }}&{% endif %}{% if classes %}classes={{ classes }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+        {% if budget %}<span class="badge badge-accent">💰 Max BDT {{ budget }} <a href="?{% if q %}q={{ q }}&{% endif %}{% if location %}location={{ location }}&{% endif %}{% if classes %}classes={{ classes }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+        {% if classes %}<span class="badge badge-accent">🎓 {{ classes }} <a href="?{% if q %}q={{ q }}&{% endif %}{% if location %}location={{ location }}&{% endif %}{% if budget %}budget={{ budget }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </form>
+
+  <!-- Results -->
   {% if not posts %}
-  <div class="glass" style="padding:40px;text-align:center">
-    <div style="font-size:36px;margin-bottom:10px">📄</div>
-    <div style="color:var(--muted)">No active posts right now.</div>
+  <div class="glass" style="padding:48px;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">📭</div>
+    <div style="font-weight:600;margin-bottom:6px">No posts found</div>
+    <div style="color:var(--muted);font-size:13px">
+      {% if q or location or budget or classes %}
+        Try adjusting your search filters, or <a href="{% url 'browse_posts' %}" style="color:var(--accent)">clear all filters</a>.
+      {% else %}
+        No active posts right now. Check back soon!
+      {% endif %}
+    </div>
   </div>
   {% endif %}
 
@@ -20,7 +108,7 @@
     {% for post in posts %}
     <div class="glass card">
       <div class="card-row">
-        <div>
+        <div style="flex:1;min-width:0">
           <div style="font-family:var(--font-head);font-weight:700;font-size:15px;margin-bottom:4px">{{ post.subject }}</div>
           <div style="color:var(--muted);font-size:13px;margin-bottom:8px">
             by
@@ -39,8 +127,8 @@
           <div style="color:var(--muted);font-size:12px;margin-top:6px">{{ post.details|truncatechars:120 }}</div>
           {% endif %}
         </div>
-        <div>
-          <div style="color:var(--muted);font-size:11px;margin-bottom:6px;text-align:right">{{ post.created_at|timesince }} ago</div>
+        <div style="flex-shrink:0;text-align:right">
+          <div style="color:var(--muted);font-size:11px;margin-bottom:6px">{{ post.created_at|timesince }} ago</div>
           <form method="post" action="{% url 'apply_to_post' post.pk %}">
             {% csrf_token %}
             <button class="btn btn-primary">Apply →</button>
@@ -50,5 +138,6 @@
     </div>
     {% endfor %}
   </div>
+
 </div>
 {% endblock %}

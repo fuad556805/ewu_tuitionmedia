@@ -2,46 +2,147 @@
 {% block title %}Browse Tutors — TuitionMedia{% endblock %}
 {% block content %}
 <div style="animation:slideIn 0.4s ease">
+
   <div class="section-header">
     <div>
       <div class="section-title">Browse Tutors</div>
-      <div class="section-sub">{{ tutors.count }} tutor(s) available · Ask 🦉 Guru for smart matching</div>
+      <div class="section-sub">
+        {% if q or subject or location or gender %}
+          {{ tutors|length }} tutor(s) found · <a href="{% url 'browse_tutors' %}" style="color:var(--accent2);text-decoration:none">Clear filters</a>
+        {% else %}
+          {{ total }} tutor(s) available · Ask 🦉 Guru for smart matching
+        {% endif %}
+      </div>
     </div>
   </div>
 
+  <!-- Search & Filter Bar -->
+  <form method="get" action="" id="searchForm">
+    <div class="glass" style="padding:16px 18px;margin-bottom:20px">
+      <!-- Main search row -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <div style="flex:2;min-width:200px;position:relative">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px">🔍</span>
+          <input
+            type="text"
+            name="q"
+            value="{{ q }}"
+            placeholder="Search by name or university..."
+            class="form-control"
+            style="padding-left:36px"
+            autocomplete="off"
+          >
+        </div>
+        <button type="submit" class="btn btn-primary" style="white-space:nowrap">Search</button>
+        {% if q or subject or location or gender %}
+        <a href="{% url 'browse_tutors' %}" class="btn btn-secondary" style="white-space:nowrap">✕ Clear</a>
+        {% endif %}
+      </div>
+
+      <!-- Filter row -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="position:relative;flex:1;min-width:140px">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">📚</span>
+          <input
+            type="text"
+            name="subject"
+            value="{{ subject }}"
+            placeholder="Subject (Math, English...)"
+            class="form-control"
+            style="padding-left:30px;font-size:13px"
+          >
+        </div>
+        <div style="position:relative;flex:1;min-width:140px">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">📍</span>
+          <input
+            type="text"
+            name="location"
+            value="{{ location }}"
+            placeholder="Location (Dhaka, Chittagong...)"
+            class="form-control"
+            style="padding-left:30px;font-size:13px"
+          >
+        </div>
+        <div style="flex:1;min-width:140px">
+          <select name="gender" class="form-control" style="font-size:13px">
+            <option value="">👤 Any Gender</option>
+            <option value="male"   {% if gender == 'male' %}selected{% endif %}>♂ Male Tutor</option>
+            <option value="female" {% if gender == 'female' %}selected{% endif %}>♀ Female Tutor</option>
+            <option value="other"  {% if gender == 'other' %}selected{% endif %}>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Active filter tags -->
+      {% if q or subject or location or gender %}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        {% if q %}<span class="badge badge-accent">🔍 "{{ q }}" <a href="?{% if subject %}subject={{ subject }}&{% endif %}{% if location %}location={{ location }}&{% endif %}{% if gender %}gender={{ gender }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+        {% if subject %}<span class="badge badge-accent">📚 {{ subject }} <a href="?{% if q %}q={{ q }}&{% endif %}{% if location %}location={{ location }}&{% endif %}{% if gender %}gender={{ gender }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+        {% if location %}<span class="badge badge-accent">📍 {{ location }} <a href="?{% if q %}q={{ q }}&{% endif %}{% if subject %}subject={{ subject }}&{% endif %}{% if gender %}gender={{ gender }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+        {% if gender %}<span class="badge badge-accent">👤 {{ gender|capfirst }} <a href="?{% if q %}q={{ q }}&{% endif %}{% if subject %}subject={{ subject }}&{% endif %}{% if location %}location={{ location }}{% endif %}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </form>
+
+  <!-- Results -->
   {% if not tutors %}
-  <div class="glass" style="padding:40px;text-align:center">
-    <div style="font-size:36px;margin-bottom:10px">👥</div>
-    <div style="color:var(--muted)">No approved tutors available yet.</div>
+  <div class="glass" style="padding:48px;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">🔭</div>
+    <div style="font-weight:600;margin-bottom:6px">No tutors found</div>
+    <div style="color:var(--muted);font-size:13px">
+      {% if q or subject or location or gender %}
+        Try broader search terms, or <a href="{% url 'browse_tutors' %}" style="color:var(--accent)">clear all filters</a>.
+      {% else %}
+        No approved tutors available yet.
+      {% endif %}
+    </div>
   </div>
   {% endif %}
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">
     {% for tutor in tutors %}
-    <div class="glass" style="padding:20px">
+    <div class="glass" style="padding:20px;display:flex;flex-direction:column">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div class="avatar avatar-md">{{ tutor.first_name|first }}</div>
-        <div style="flex:1">
+        {% if tutor.profile_image %}
+        <img src="{{ tutor.profile_image.url }}" alt="{{ tutor.get_full_name }}"
+             style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--glass-border);flex-shrink:0">
+        {% else %}
+        <div class="avatar avatar-md" style="flex-shrink:0">{{ tutor.first_name|first }}</div>
+        {% endif %}
+        <div style="flex:1;min-width:0">
           <a href="{% url 'public_profile' tutor.pk %}"
-             style="font-family:var(--font-head);font-weight:700;color:var(--text);text-decoration:none">
+             style="font-family:var(--font-head);font-weight:700;color:var(--text);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
             {{ tutor.get_full_name }}
           </a>
-          <div style="color:var(--muted);font-size:12px">{{ tutor.university|default:tutor.college|default:"Tutor" }}</div>
+          <div style="color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            {{ tutor.university|default:tutor.college|default:"Tutor" }}
+          </div>
+          {% if tutor.gender %}
+          <span class="badge badge-muted" style="font-size:10px;padding:1px 7px;margin-top:2px">{{ tutor.get_gender_display }}</span>
+          {% endif %}
         </div>
       </div>
+
       {% if tutor.get_subjects_list %}
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
-        {% for s in tutor.get_subjects_list %}
-        <span class="badge badge-muted">{{ s }}</span>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">
+        {% for s in tutor.get_subjects_list|slice:":4" %}
+        <span class="badge badge-muted" style="font-size:11px">{{ s }}</span>
         {% endfor %}
+        {% if tutor.get_subjects_list|length > 4 %}
+        <span class="badge badge-muted" style="font-size:11px">+{{ tutor.get_subjects_list|length|add:"-4" }} more</span>
+        {% endif %}
       </div>
       {% endif %}
+
       {% if tutor.location %}
-      <div style="color:var(--muted);font-size:13px;margin-bottom:12px">📍 {{ tutor.location }}</div>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:12px">📍 {{ tutor.location }}</div>
       {% endif %}
-      <a href="{% url 'public_profile' tutor.pk %}" class="btn btn-primary" style="width:100%;display:block;text-align:center;text-decoration:none">View Profile →</a>
+
+      <a href="{% url 'public_profile' tutor.pk %}" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:auto;text-decoration:none">View Profile →</a>
     </div>
     {% endfor %}
   </div>
+
 </div>
 {% endblock %}
