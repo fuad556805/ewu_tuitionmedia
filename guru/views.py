@@ -70,10 +70,10 @@ def guru_ask(request):
         contents.append({'role': role, 'parts': [{'text': h['content']}]})
     contents.append({'role': 'user', 'parts': [{'text': user_message}]})
 
-    # Collect all configured API keys (primary + secondary)
+    # Collect all configured API keys — try KEY2 first (KEY1 may be exhausted)
     api_keys = [k for k in [
-        settings.GEMINI_API_KEY,
         getattr(settings, 'GEMINI_API_KEY_2', ''),
+        settings.GEMINI_API_KEY,
     ] if k]
 
     if not api_keys:
