@@ -13,6 +13,8 @@ services:
         generateValue: true
       - key: GEMINI_API_KEY
         sync: false
+      - key: GEMINI_API_KEY_2
+        sync: false
       - key: SMS_BACKEND
         value: "console"
       - key: VAPID_PUBLIC_KEY
