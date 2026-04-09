@@ -357,3 +357,11 @@ def set_theme(request):
             request.user.theme = theme
             request.user.save(update_fields=['theme'])
     return JsonResponse({'ok': True})
+
+
+def terms_view(request):
+    return render(request, 'accounts/terms.html')
+
+
+def privacy_view(request):
+    return render(request, 'accounts/privacy.html')

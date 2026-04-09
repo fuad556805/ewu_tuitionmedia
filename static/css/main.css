@@ -142,8 +142,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 .sidebar-brand {
   padding: 22px 18px 14px;
@@ -169,6 +168,8 @@ body {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
 }
 .nav-link {
   display: flex;

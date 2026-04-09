@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — TuitionMedia</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body data-user-theme="dark">
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<nav class="landing-nav glass" style="border-radius:0">
+  <a href="{% url 'landing' %}" style="font-family:var(--font-head);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none">TuitionMedia</a>
+  <div style="display:flex;gap:12px">
+    <a href="{% url 'login' %}" class="btn btn-ghost">Log In</a>
+    <a href="{% url 'signup' %}" class="btn btn-primary">Get Started</a>
+  </div>
+</nav>
+
+<div style="max-width:780px;margin:0 auto;padding:48px 24px 80px;position:relative;z-index:2">
+  <div class="glass" style="padding:clamp(24px,5vw,48px)">
+    <h1 style="font-family:var(--font-head);font-size:clamp(24px,4vw,36px);font-weight:800;margin-bottom:8px">Privacy Policy</h1>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:32px">Last updated: January 2025</p>
+
+    <div style="display:flex;flex-direction:column;gap:28px;color:var(--text);font-size:14px;line-height:1.8">
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">1. Information We Collect</h2>
+        <p>We collect information you provide directly: name, phone number, educational background, location, and profile details. We also collect usage data such as login times and pages visited.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">2. How We Use Your Information</h2>
+        <ul style="padding-left:20px;color:var(--muted);display:flex;flex-direction:column;gap:6px">
+          <li>To create and manage your account.</li>
+          <li>To match students with suitable tutors.</li>
+          <li>To process payments and track commissions.</li>
+          <li>To send notifications about your tuition activities.</li>
+          <li>To improve platform features and user experience.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">3. Information Sharing</h2>
+        <p>We do not sell your personal data. Your profile information (name, subjects, location) is visible to other registered users on the platform for the purpose of tutor-student matching. Payment details are processed securely and are not shared with third parties beyond what is required for transaction processing.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">4. Phone Number & OTP</h2>
+        <p>Your phone number is used for account verification via OTP and for contact purposes within the platform. We do not share your phone number with external advertisers.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">5. Data Security</h2>
+        <p>We implement appropriate technical and organisational measures to protect your data against unauthorised access, alteration, or disclosure. All data is stored on secured servers with encrypted connections.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">6. Guru AI</h2>
+        <p>When you interact with Guru AI, your messages and anonymised tutor/post data are sent to Google's Gemini API for processing. We do not store Guru AI conversation history. Please do not share sensitive personal information in AI chats.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">7. Cookies & Local Storage</h2>
+        <p>We use cookies for session management and to remember your theme preference. No third-party advertising cookies are used.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">8. Your Rights</h2>
+        <p>You may request access to, correction of, or deletion of your personal data by contacting us. Account deletion will remove your profile and associated data from our active systems.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">9. Contact</h2>
+        <p>For privacy-related queries, contact us at <span style="color:var(--accent)">privacy@tuitionmedia.com</span></p>
+      </section>
+    </div>
+
+    <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--glass-border);display:flex;gap:12px;flex-wrap:wrap">
+      <a href="{% url 'landing' %}" class="btn btn-secondary">← Back to Home</a>
+      <a href="{% url 'terms' %}" class="btn btn-ghost">Terms of Service</a>
+    </div>
+  </div>
+</div>
+
+{% load static %}
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

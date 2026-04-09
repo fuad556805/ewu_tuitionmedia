@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — TuitionMedia</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body data-user-theme="dark">
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<nav class="landing-nav glass" style="border-radius:0">
+  <a href="{% url 'landing' %}" style="font-family:var(--font-head);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none">TuitionMedia</a>
+  <div style="display:flex;gap:12px">
+    <a href="{% url 'login' %}" class="btn btn-ghost">Log In</a>
+    <a href="{% url 'signup' %}" class="btn btn-primary">Get Started</a>
+  </div>
+</nav>
+
+<div style="max-width:780px;margin:0 auto;padding:48px 24px 80px;position:relative;z-index:2">
+  <div class="glass" style="padding:clamp(24px,5vw,48px)">
+    <h1 style="font-family:var(--font-head);font-size:clamp(24px,4vw,36px);font-weight:800;margin-bottom:8px">Terms of Service</h1>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:32px">Last updated: January 2025</p>
+
+    <div style="display:flex;flex-direction:column;gap:28px;color:var(--text);font-size:14px;line-height:1.8">
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">1. Acceptance of Terms</h2>
+        <p>By accessing or using TuitionMedia, you agree to be bound by these Terms of Service. If you do not agree, please do not use the platform.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">2. Platform Description</h2>
+        <p>TuitionMedia is an online marketplace that connects students and parents with qualified tutors in Bangladesh. We facilitate discovery, communication, and payment tracking — but we are not a party to the tuition agreement itself.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">3. User Accounts</h2>
+        <p>You must provide accurate information when creating an account. You are responsible for keeping your login credentials secure. TuitionMedia reserves the right to suspend or ban accounts that violate these terms.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">4. Tutor Profiles & Verification</h2>
+        <p>Tutors must submit accurate educational and personal information. Profile edits are subject to admin review. TuitionMedia does not guarantee the accuracy of tutor-provided information but makes reasonable efforts to verify profiles.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">5. Payment & Commission Policy</h2>
+        <div class="glass" style="padding:16px 20px;border-left:3px solid var(--accent);margin-top:8px">
+          <p><strong>TuitionMedia charges a 30% platform commission</strong> on the agreed tuition salary for the first month of each tuition assignment.</p>
+          <ul style="margin-top:10px;padding-left:20px;color:var(--muted);display:flex;flex-direction:column;gap:6px">
+            <li>Commission applies to the first month's salary only.</li>
+            <li>Payment is processed via bKash or Nagad.</li>
+            <li>The remaining 70% is paid directly to the tutor.</li>
+            <li>No commission applies from the second month onwards.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">6. Prohibited Conduct</h2>
+        <p>Users may not: post false information, harass other users, attempt to bypass the platform for payments (during the commission period), or use the platform for any illegal purpose.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">7. Limitation of Liability</h2>
+        <p>TuitionMedia is not liable for disputes between students and tutors, quality of tuition, or any indirect damages arising from use of the platform.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">8. Changes to Terms</h2>
+        <p>We may update these terms at any time. Continued use of TuitionMedia after changes constitutes acceptance of the updated terms.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--accent)">9. Contact</h2>
+        <p>For questions about these terms, contact us at <span style="color:var(--accent)">support@tuitionmedia.com</span></p>
+      </section>
+    </div>
+
+    <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--glass-border);display:flex;gap:12px;flex-wrap:wrap">
+      <a href="{% url 'landing' %}" class="btn btn-secondary">← Back to Home</a>
+      <a href="{% url 'privacy' %}" class="btn btn-ghost">Privacy Policy</a>
+    </div>
+  </div>
+</div>
+
+{% load static %}
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
