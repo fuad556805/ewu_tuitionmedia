@@ -64,57 +64,92 @@ def guru_ask(request):
         f"For general questions: give helpful advice about tuition, studying, platform usage."
     )
 
+    # ── 1. GROQ (try first) ──────────────────────────────────────────
+    groq_keys = [k for k in [
+        getattr(settings, 'GROQ_API_KEY', ''),
+        getattr(settings, 'GROQ_API_KEY_2', ''),
+    ] if k]
+
+    groq_models = [
+        'llama-3.3-70b-versatile',
+        'llama-3.1-8b-instant',
+        'mixtral-8x7b-32768',
+    ]
+
+    messages = [{"role": "system", "content": system_prompt}]
+    for h in history[-10:]:
+        messages.append({"role": h['role'], "content": h['content']})
+    messages.append({"role": "user", "content": user_message})
+
+    for groq_key in groq_keys:
+        for model in groq_models:
+            try:
+                response = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {groq_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": model,
+                        "messages": messages,
+                        "max_tokens": 512,
+                        "temperature": 0.7,
+                    },
+                    timeout=30,
+                )
+                result = response.json()
+                if response.status_code == 200 and 'choices' in result:
+                    reply = result['choices'][0]['message']['content']
+                    logger.info("Groq success: %s", model)
+                    return JsonResponse({'reply': reply})
+
+                error_msg = result.get('error', {}).get('message', 'Unknown error')
+                logger.warning("Groq model %s failed (%s): %s", model, response.status_code, error_msg)
+
+            except Exception as exc:
+                logger.error("Groq model %s exception: %s", model, exc)
+
+    # ── 2. GEMINI (fallback) ─────────────────────────────────────────
+    gemini_keys = [k for k in [
+        getattr(settings, 'GEMINI_API_KEY_2', ''),
+        getattr(settings, 'GEMINI_API_KEY', ''),
+    ] if k]
+
+    gemini_models = [
+        'gemini-2.0-flash',
+        'gemini-2.0-flash-lite',
+    ]
+
     contents = []
     for h in history[-10:]:
         role = 'user' if h['role'] == 'user' else 'model'
         contents.append({'role': role, 'parts': [{'text': h['content']}]})
     contents.append({'role': 'user', 'parts': [{'text': user_message}]})
 
-    # Collect all configured API keys — try KEY2 first (KEY1 may be exhausted)
-    api_keys = [k for k in [
-        getattr(settings, 'GEMINI_API_KEY_2', ''),
-        settings.GEMINI_API_KEY,
-    ] if k]
-
-    if not api_keys:
-        logger.error("No Gemini API keys configured.")
-        return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে। Please try again later.'})
-
-    models = [
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite',
-    'gemini-2.0-flash-exp',
-    'gemini-1.5-flash-latest', 
-]
-
-    payload = {
+    gemini_payload = {
         'system_instruction': {'parts': [{'text': system_prompt}]},
         'contents': contents,
-        'generationConfig': {
-            'maxOutputTokens': 512,
-            'temperature': 0.7,
-        },
+        'generationConfig': {'maxOutputTokens': 512, 'temperature': 0.7},
     }
 
-    last_error = None
-    for api_key in api_keys:
-        for model in models:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    for gemini_key in gemini_keys:
+        for model in gemini_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
             try:
-                response = requests.post(url, json=payload, timeout=30)
+                response = requests.post(url, json=gemini_payload, timeout=30)
                 result = response.json()
-
                 if response.status_code == 200 and 'candidates' in result:
                     reply = result['candidates'][0]['content']['parts'][0]['text']
+                    logger.info("Gemini success: %s", model)
                     return JsonResponse({'reply': reply})
 
                 error_msg = result.get('error', {}).get('message', 'Unknown error')
-                logger.warning("Gemini key#%d model %s failed (%s): %s", api_keys.index(api_key) + 1, model, response.status_code, error_msg)
-                last_error = error_msg
+                logger.warning("Gemini model %s failed (%s): %s", model, response.status_code, error_msg)
 
             except Exception as exc:
-                logger.error("Gemini key#%d model %s exception: %s", api_keys.index(api_key) + 1, model, exc)
-                last_error = str(exc)
+                logger.error("Gemini model %s exception: %s", model, exc)
 
-    logger.error("All Gemini keys and models failed. Last error: %s", last_error)
+    # ── 3. সব fail ──────────────────────────────────────────────────
+    logger.error("All Groq and Gemini keys/models failed.")
     return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে। Please try again later.'})
