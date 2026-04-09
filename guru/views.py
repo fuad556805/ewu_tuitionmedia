@@ -81,10 +81,10 @@ def guru_ask(request):
         return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে। Please try again later.'})
 
     models = [
-        'gemini-2.5-flash-lite',
-        'gemini-2.5-flash',
         'gemini-2.0-flash',
         'gemini-2.0-flash-lite',
+        'gemini-1.5-flash',
+        'gemini-1.5-flash-8b',
     ]
 
     payload = {
