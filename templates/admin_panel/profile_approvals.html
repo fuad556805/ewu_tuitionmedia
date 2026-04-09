@@ -20,9 +20,15 @@
   <div style="display:flex;flex-direction:column;gap:12px">
     {% for u in pending %}
     <div class="glass" style="padding:18px">
-      <div class="approval-row" style="display:flex;justify-content:space-between;align-items:center">
+      <!-- Top row: avatar + info + action buttons -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
         <div style="display:flex;gap:14px;align-items:center;flex:1;min-width:0">
-          <div class="avatar avatar-md" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %});flex-shrink:0">{{ u.first_name|first }}</div>
+          {% if u.profile_image %}
+            <img src="{{ u.profile_image.url }}" alt="Profile"
+                 style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0">
+          {% else %}
+            <div class="avatar avatar-md" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %});flex-shrink:0">{{ u.first_name|first|upper }}</div>
+          {% endif %}
           <div style="min-width:0">
             <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px">{{ u.get_full_name }}</div>
             <div style="display:flex;gap:8px;margin-bottom:4px;flex-wrap:wrap">
@@ -35,7 +41,7 @@
             {% if u.subjects %}<div style="color:var(--muted);font-size:13px">📚 {{ u.subjects }}</div>{% endif %}
           </div>
         </div>
-        <div class="approval-actions" style="display:flex;gap:8px;flex-shrink:0">
+        <div style="display:flex;gap:8px;flex-shrink:0;align-items:center">
           <form method="post" action="{% url 'admin_panel:approve_profile' u.pk %}">
             {% csrf_token %}<input type="hidden" name="action" value="approve">
             <button class="btn btn-success btn-sm">✓ Approve</button>
@@ -46,6 +52,22 @@
           </form>
         </div>
       </div>
+
+      <!-- ID Document preview -->
+      {% if u.id_image %}
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--glass-border)">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600">🪪 Identity Document</div>
+        <a href="{{ u.id_image.url }}" target="_blank">
+          <img src="{{ u.id_image.url }}" alt="ID Document"
+               style="max-width:320px;width:100%;border-radius:var(--radius-sm);border:1px solid var(--glass-border);object-fit:cover;max-height:160px;cursor:zoom-in">
+        </a>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Click image to view full size</div>
+      </div>
+      {% else %}
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--glass-border);font-size:12px;color:var(--muted)">
+        🪪 No ID document uploaded
+      </div>
+      {% endif %}
     </div>
     {% endfor %}
   </div>
