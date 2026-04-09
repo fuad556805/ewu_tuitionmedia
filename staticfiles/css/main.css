@@ -142,8 +142,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 .sidebar-brand {
   padding: 22px 18px 14px;
@@ -169,6 +168,8 @@ body {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
 }
 .nav-link {
   display: flex;
@@ -584,8 +585,39 @@ textarea.form-control { resize: vertical; }
     z-index: 1060 !important;
     transform: translateX(-110%) !important;
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  /* Reorder: Theme/Logout → Brand → Nav links */
+  .sidebar .sidebar-brand {
+    order: 2 !important;
+    flex-shrink: 0 !important;
+  }
+  .sidebar .sidebar-footer {
+    order: 1 !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+    padding: 12px 12px 10px !important;
+    border-top: none !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+  }
+  .sidebar .sidebar-footer .theme-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 18px !important;
+  }
+  .sidebar .sidebar-footer .btn-sm {
+    min-height: 40px !important;
+    font-size: 13px !important;
+  }
+  .sidebar .sidebar-nav {
+    order: 3 !important;
+    flex: 1 !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
+    min-height: 0 !important;
   }
   .sidebar.mobile-open {
     transform: translateX(0) !important;

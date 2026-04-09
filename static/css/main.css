@@ -585,17 +585,18 @@ textarea.form-control { resize: vertical; }
     z-index: 1060 !important;
     transform: translateX(-110%) !important;
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    overflow: hidden !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  /* Reorder: Brand → Theme/Logout → Nav links */
+  /* Reorder: Theme/Logout → Brand → Nav links */
   .sidebar .sidebar-brand {
-    order: 1 !important;
+    order: 2 !important;
     flex-shrink: 0 !important;
   }
   .sidebar .sidebar-footer {
-    order: 2 !important;
+    order: 1 !important;
     flex-shrink: 0 !important;
     overflow: visible !important;
     padding: 12px 12px 10px !important;
