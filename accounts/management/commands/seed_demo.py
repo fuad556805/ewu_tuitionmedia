@@ -1,3 +1,4 @@
+import os
 from django.core.management.base import BaseCommand
 from accounts.models import User, Notification
 from posts.models import Post
@@ -10,49 +11,64 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Seeding demo data...')
 
-        # Admin
-        if not User.objects.filter(phone='01000000000').exists():
-            admin = User.objects.create_superuser(
-                username='admin', phone='01000000000',
-                password='admin123', email='admin@tuitionmedia.com',
-                first_name='Super', last_name='Admin', role='admin'
-            )
-            self.stdout.write(f'  Created admin: 01000000000 / admin123')
-
         # Demo tutor
-        if not User.objects.filter(phone='01711111111').exists():
-            tutor = User.objects.create_user(
-                username='01711111111', phone='01711111111',
-                password='demo123', first_name='Tanvir', last_name='Ahmed',
-                role='tutor', education='BUET - EEE',
-                location='Dhanmondi, Dhaka',
-                subjects='Physics, Math, Chemistry'
-            )
-            self.stdout.write(f'  Created tutor: 01711111111 / demo123')
-        else:
-            tutor = User.objects.get(phone='01711111111')
+        tutor, _ = User.objects.get_or_create(phone='01711111111', defaults=dict(
+            username='01711111111', password='!unusable',
+            first_name='Tanvir', last_name='Ahmed',
+            role='tutor', location='Dhanmondi, Dhaka',
+            subjects='Physics, Math, Chemistry',
+            university='BUET', department='EEE',
+            gender='male', profile_approved=True,
+        ))
+        if _:
+            tutor.set_password('demo123')
+        # always ensure profile image is assigned if the file exists
+        if not tutor.profile_image:
+            profile_file = 'profiles/Screenshot_2025-11-25_184224.png'
+            id_file      = 'id_docs/ewulogo.png'
+            from django.conf import settings
+            if os.path.exists(os.path.join(settings.MEDIA_ROOT, profile_file)):
+                tutor.profile_image = profile_file
+            if os.path.exists(os.path.join(settings.MEDIA_ROOT, id_file)):
+                tutor.id_image = id_file
+        tutor.profile_approved = True
+        tutor.save()
+        self.stdout.write(f'  Tutor ready: 01711111111 / demo123')
 
         # Demo student
-        if not User.objects.filter(phone='01733333333').exists():
-            student = User.objects.create_user(
-                username='01733333333', phone='01733333333',
-                password='demo123', first_name='Ayesha', last_name='Rahman',
-                role='student'
-            )
-            self.stdout.write(f'  Created student: 01733333333 / demo123')
-        else:
-            student = User.objects.get(phone='01733333333')
+        student, _ = User.objects.get_or_create(phone='01733333333', defaults=dict(
+            username='01733333333', password='!unusable',
+            first_name='Ayesha', last_name='Rahman',
+            role='student', gender='female', profile_approved=True,
+        ))
+        if _:
+            student.set_password('demo123')
+        if not student.profile_image:
+            profile_file = 'profiles/Screenshot_2025-11-25_184224.png'
+            id_file      = 'id_docs/Screenshot_2025-09-06_121122.png'
+            from django.conf import settings
+            if os.path.exists(os.path.join(settings.MEDIA_ROOT, profile_file)):
+                student.profile_image = profile_file
+            if os.path.exists(os.path.join(settings.MEDIA_ROOT, id_file)):
+                student.id_image = id_file
+        student.profile_approved = True
+        student.save()
+        self.stdout.write(f'  Student ready: 01733333333 / demo123')
 
         # Demo tutor 2
-        if not User.objects.filter(phone='01722222222').exists():
-            User.objects.create_user(
-                username='01722222222', phone='01722222222',
-                password='demo123', first_name='Sadia', last_name='Islam',
-                role='tutor', education='DU - English',
-                location='Gulshan, Dhaka', subjects='English, Bengali, History'
-            )
+        t2, _ = User.objects.get_or_create(phone='01722222222', defaults=dict(
+            username='01722222222', password='!unusable',
+            first_name='Sadia', last_name='Islam',
+            role='tutor', location='Gulshan, Dhaka',
+            subjects='English, Bengali, History',
+            university='DU', department='English',
+            gender='female', profile_approved=True,
+        ))
+        if _:
+            t2.set_password('demo123')
+            t2.save()
 
-        # Demo post
+        # Demo post + request + tuition (only create once)
         if not Post.objects.filter(student=student).exists():
             post = Post.objects.create(
                 student=student, subject='HSC Physics & Chemistry',
@@ -60,27 +76,19 @@ class Command(BaseCommand):
                 classes='Class 11-12', schedule='Weekends 3-6 PM',
                 status='active'
             )
-
-            # Demo request
-            req = TuitionRequest.objects.create(
+            TuitionRequest.objects.create(
                 tutor=tutor, student=student,
                 post=post, subject=post.subject, status='accepted'
             )
-
-            # Demo tuition
             Tuition.objects.create(
                 tutor=tutor, student=student,
                 subject='HSC Physics & Chemistry',
                 salary=5000, commission=1500,
                 commission_status='pending', month='April 2026'
             )
-
-            # Notifications
-            Notification.objects.create(user=tutor, text='Ayesha accepted your tuition request!', notif_type='success')
+            Notification.objects.create(user=tutor,   text='Ayesha accepted your tuition request!', notif_type='success')
             Notification.objects.create(user=student, text='Welcome to TuitionMedia! Account ready.', notif_type='success')
 
-        self.stdout.write(self.style.SUCCESS('\nDemo data seeded successfully!'))
-        self.stdout.write('\nLogin credentials:')
-        self.stdout.write('  Admin:   01000000000 / admin123')
+        self.stdout.write(self.style.SUCCESS('\nDemo data ready!'))
         self.stdout.write('  Tutor:   01711111111 / demo123')
         self.stdout.write('  Student: 01733333333 / demo123')

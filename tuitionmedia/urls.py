@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
 from django.http import HttpResponse
 
 from accounts.api_views import HomeStatsView
@@ -38,4 +39,6 @@ urlpatterns = [
     path('api/home/stats/',      HomeStatsView.as_view(),      name='home-stats'),
     path('api/admin/broadcast/', AdminBroadcastView.as_view(), name='admin-broadcast'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
