@@ -17,7 +17,6 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    # Use environment variable, fallback to Render URL
     ALLOWED_HOSTS = os.getenv(
         "ALLOWED_HOSTS", "ewu-tuitionmedia.onrender.com"
     ).split(",")
@@ -58,7 +57,7 @@ INSTALLED_APPS = [
 # ================= MIDDLEWARE =================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,7 +104,6 @@ if os.getenv('DATABASE_URL'):
         }
     }
 elif RENDER:
-    # Render (production) → SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -113,7 +111,6 @@ elif RENDER:
         }
     }
 else:
-    # Local development → PostgreSQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -145,8 +142,8 @@ LOGOUT_REDIRECT_URL = '/'
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
 GEMINI_API_KEY    = os.getenv('GEMINI_API_KEY', '')
 GEMINI_API_KEY_2  = os.getenv('GEMINI_API_KEY_2', '')
-GROQ_API_KEY      = os.getenv('GROQ_API_KEY', '')   # ← এটা যোগ করো
-GROQ_API_KEY_2    = os.getenv('GROQ_API_KEY_2', '') # ← এটাও
+GROQ_API_KEY      = os.getenv('GROQ_API_KEY', '')
+GROQ_API_KEY_2    = os.getenv('GROQ_API_KEY_2', '')
 
 # ================= bKash =================
 BKASH_BASE_URL   = os.getenv('BKASH_BASE_URL',   'https://tokenized.sandbox.bka.sh/v1.2.0-beta')
@@ -162,7 +159,8 @@ NAGAD_MERCHANT_KEY  = os.getenv('NAGAD_MERCHANT_KEY', '')
 NAGAD_PUBLIC_KEY    = os.getenv('NAGAD_PUBLIC_KEY',   '')
 
 # ================= SMS =================
-SMS_BACKEND = os.getenv('SMS_BACKEND', 'console')   # console | twilio | bulksmsbd | sslwireless
+SMS_BACKEND   = os.getenv('SMS_BACKEND', 'console')   # console | twilio | bulksmsbd | sslwireless
+SMS_FALLBACKS = os.getenv('SMS_FALLBACKS', 'bulksmsbd,console').split(',')  # fallback chain
 
 # Twilio
 TWILIO_ACCOUNT_SID  = os.getenv('TWILIO_ACCOUNT_SID', '')
@@ -171,7 +169,7 @@ TWILIO_FROM_NUMBER  = os.getenv('TWILIO_FROM_NUMBER', '')
 
 # BulkSMSBD (local BD)
 BULKSMSBD_API_KEY   = os.getenv('BULKSMSBD_API_KEY', '')
-BULKSMSBD_SENDER_ID = os.getenv('BULKSMSBD_SENDER_ID', 'TuitionMD')
+BULKSMSBD_SENDER_ID = os.getenv('BULKSMSBD_SENDER_ID', '')  # approved হলে দিন, নইলে খালি
 
 # SSL Wireless (local BD)
 SSLWIRELESS_USERNAME = os.getenv('SSLWIRELESS_USERNAME', '')
@@ -218,7 +216,5 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    # Tell Django to trust the X-Forwarded-Proto header from Render's proxy
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    # Do NOT redirect to HTTPS here — Render/Cloudflare handles SSL termination
     SECURE_SSL_REDIRECT = False
