@@ -1,0 +1,52 @@
+2026-04-10T06:12:44.028704782Z 127.0.0.1 - - [10/Apr/2026:01:12:44 -0500] "HEAD / HTTP/1.1" 200 8464 "-" "Go-http-client/1.1"
+2026-04-10T06:12:45.818150823Z 127.0.0.1 - - [10/Apr/2026:01:12:45 -0500] "HEAD / HTTP/1.1" 200 8464 "-" "Go-http-client/1.1"
+2026-04-10T06:12:46.630440653Z ==> Your service is live 🎉
+2026-04-10T06:12:46.821137298Z ==> 
+2026-04-10T06:12:46.824089879Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:12:46.826750294Z ==> 
+2026-04-10T06:12:46.829546397Z ==> Available at your primary URL https://ewu-tuitionmedia.onrender.com
+2026-04-10T06:12:46.832461317Z ==> 
+2026-04-10T06:12:46.835233978Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:12:48.564312046Z 127.0.0.1 - - [10/Apr/2026:01:12:48 -0500] "GET / HTTP/1.1" 200 8464 "-" "Go-http-client/2.0"
+2026-04-10T06:13:45.878287507Z [2026-04-10 01:13:45 -0500] [56] [INFO] Handling signal: term
+2026-04-10T06:13:45.879679956Z [2026-04-10 01:13:45 -0500] [58] [INFO] Worker exiting (pid: 58)
+2026-04-10T06:13:47.331456667Z [2026-04-10 01:13:47 -0500] [56] [INFO] Shutting down: Master
+2026-04-10T06:15:14.691191376Z ==> Deploying...
+2026-04-10T06:15:14.736802036Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-04-10T06:15:56.516018146Z ==> Your service is live 🎉
+2026-04-10T06:15:56.934950036Z ==> 
+2026-04-10T06:15:56.937523109Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:15:56.940801227Z ==> 
+2026-04-10T06:15:56.943093875Z ==> Available at your primary URL https://ewu-tuitionmedia.onrender.com
+2026-04-10T06:15:56.945580747Z ==> 
+2026-04-10T06:15:56.949814625Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:16:55.505276612Z [2026-04-10 01:16:55 -0500] [56] [INFO] Handling signal: term
+2026-04-10T06:16:55.506500404Z [2026-04-10 01:16:55 -0500] [57] [INFO] Worker exiting (pid: 57)
+2026-04-10T06:16:57.123053385Z [2026-04-10 01:16:57 -0500] [56] [INFO] Shutting down: Master
+2026-04-10T06:17:44.705557083Z 127.0.0.1 - - [10/Apr/2026:01:17:44 -0500] "GET /accounts/signup/ HTTP/1.1" 200 13155 "https://ewu-tuitionmedia.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:18:10.259123226Z SMS backend 'stytch' failed: Stytch error: {'status_code': 404, 'request_id': 'request-id-live-389188ac-ff22-41d5-b831-2b28979ddb8e', 'error_type': 'project_not_found', 'error_message': 'Project could not be found.', 'error_url': 'https://stytch.com/docs/api/errors/404#project_not_found'}
+2026-04-10T06:18:10.259161437Z [DEV SMS] To: +8801338136424 | Message: Your TuitionMedia OTP is: 748205
+2026-04-10T06:18:10.259169057Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:18:10.259175217Z Primary backend 'stytch' failed — sent via fallback 'console'
+2026-04-10T06:18:10.259881496Z 
+2026-04-10T06:18:10.259900056Z ==================================================
+2026-04-10T06:18:10.259906417Z [OTP SMS] To: +8801338136424
+2026-04-10T06:18:10.259911287Z Your TuitionMedia OTP is: 748205
+2026-04-10T06:18:10.259916007Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:18:10.259920427Z ==================================================
+2026-04-10T06:18:10.259923417Z 
+2026-04-10T06:18:10.259941097Z 127.0.0.1 - - [10/Apr/2026:01:18:10 -0500] "POST /api/auth/send-otp/ HTTP/1.1" 200 81 "https://ewu-tuitionmedia.onrender.com/accounts/signup/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:20:28.454398852Z SMS backend 'stytch' failed: Stytch error: {'status_code': 404, 'request_id': 'request-id-live-6aa7e309-0360-4ff0-8aa3-eba59940fd54', 'error_type': 'project_not_found', 'error_message': 'Project could not be found.', 'error_url': 'https://stytch.com/docs/api/errors/404#project_not_found'}
+2026-04-10T06:20:28.454448144Z [DEV SMS] To: +8801710470569 | Message: Your TuitionMedia OTP is: 335820
+2026-04-10T06:20:28.454456674Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:20:28.454474504Z Primary backend 'stytch' failed — sent via fallback 'console'
+2026-04-10T06:20:28.454771592Z 
+2026-04-10T06:20:28.454781342Z ==================================================
+2026-04-10T06:20:28.454785852Z [OTP SMS] To: +8801710470569
+2026-04-10T06:20:28.454789022Z Your TuitionMedia OTP is: 335820
+2026-04-10T06:20:28.454792322Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:20:28.454795573Z ==================================================
+2026-04-10T06:20:28.454798253Z 
+2026-04-10T06:20:28.454802203Z 127.0.0.1 - - [10/Apr/2026:01:20:28 -0500] "POST /api/auth/resend-otp/ HTTP/1.1" 200 83 "https://ewu-tuitionmedia.onrender.com/accounts/signup/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:21:08.77172324Z ==> Detected service running on port 10000
+2026-04-10T06:21:08.838304611Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding

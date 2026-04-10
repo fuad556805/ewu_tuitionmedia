@@ -1,0 +1,180 @@
+A
+AF's workspace
+ewu_tuitionmedia
+
+
+Search
+Ctrl+
+K
+
+New
+
+Upgrade
+
+
+f
+Dashboard
+ewu_tuitionmedia
+Events
+Settings
+Monitor
+Logs
+Metrics
+Manage
+Environment
+Shell
+Scaling
+Previews
+Disk
+One-Off Jobs
+Workflows: Now in beta
+Orchestrate your agents and background jobs with automatic retries and scale-to-zero. Learn more
+Create Workflow
+
+
+Changelog
+Invite a friend
+
+Contact support
+Render Status
+Web Service
+ewu_tuitionmedia
+Python 3
+Free
+Upgrade your instance
+
+Connect
+
+Manual Deploy
+Service ID:
+srv-d7atr2vfte5s73cvvrh0
+
+fuad556805 / ewu_tuitionmedia
+main
+https://ewu-tuitionmedia.onrender.com
+
+Environment
+
+Create environment group
+Environment Variables
+Set environment-specific config and secrets (such as API keys), then read those values from your code. Learn more.
+
+Export
+
+Edit
+Key	Value
+Key
+BULKSMSBD_API_KEY
+Value
+• • • • • • • • • • • •
+
+Key
+BULKSMSBD_SENDER_ID
+Value
+• • • • • • • • • • • •
+
+Key
+DATABASE_URL
+Value
+• • • • • • • • • • • •
+
+Key
+DEBUG
+Value
+• • • • • • • • • • • •
+
+Key
+DJANGO_SUPERUSER_PASSWORD
+Value
+• • • • • • • • • • • •
+
+Key
+DJANGO_SUPERUSER_PHONE
+Value
+• • • • • • • • • • • •
+
+Key
+DJANGO_SUPERUSER_USERNAME
+Value
+• • • • • • • • • • • •
+
+Key
+GEMINI_API_KEY
+Value
+• • • • • • • • • • • •
+
+Key
+GEMINI_API_KEY_2
+Value
+• • • • • • • • • • • •
+
+Key
+GROQ_API_KEY
+Value
+• • • • • • • • • • • •
+
+Key
+RENDER
+Value
+• • • • • • • • • • • •
+
+Key
+SECRET_KEY
+Value
+• • • • • • • • • • • •
+
+Key
+SMS_BACKEND
+Value
+• • • • • • • • • • • •
+
+Key
+SMS_FALLBACKS
+Value
+• • • • • • • • • • • •
+
+Key
+STYTCH_PROJECT_ID
+Value
+• • • • • • • • • • • •
+
+Key
+STYTCH_SECRET
+Value
+• • • • • • • • • • • •
+
+Key
+TWILIO_ACCOUNT_SID
+Value
+• • • • • • • • • • • •
+
+Key
+TWILIO_AUTH_TOKEN
+Value
+• • • • • • • • • • • •
+
+Key
+TWILIO_VERIFY_SERVICE_SID
+Value
+• • • • • • • • • • • •
+
+
+Show more
+Secret Files
+Store plaintext files containing secret data (such as a .env file or a private key).
+Access during builds and at runtime from your app's root, or from /etc/secrets/<filename>.
+
+Add file
+More options
+Linked Environment Groups
+Environment groups are collections of environment variables and secret files that you can share across multiple services.
+Link Environment Group
+Link Environment Group
+
+Select an environment group…
+Link only
+Choose an option
+0 services selected:
+
+Move
+
