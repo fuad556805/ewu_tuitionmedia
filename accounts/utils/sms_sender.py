@@ -1,11 +1,11 @@
 """
 SMS Sender Utility for Bangladesh
 Supports:
-  1. Twilio Verify    — international, any number (recommended)
-  2. Twilio SMS       — international, verified numbers only
-  3. BulkSMSBD        — local BD provider
-  4. SSL Wireless     — local BD provider
-  5. Console          — development only
+  1. twilio_verify  — Twilio Verify API (any number, recommended)
+  2. twilio         — Twilio SMS (verified numbers only)
+  3. bulksmsbd      — local BD provider
+  4. sslwireless    — local BD provider
+  5. console        — development only
 
 Fallback chain: configured backend → fallback backends → console
 """
@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 def _normalize_bd_phone(phone: str) -> str:
-    """Convert BD phone to E.164 format (+8801XXXXXXXXX)."""
     phone = phone.strip().replace(' ', '').replace('-', '')
     if phone.startswith('+880'):
         return phone
@@ -30,22 +29,22 @@ def _normalize_bd_phone(phone: str) -> str:
 # ──────────────────── Backends ────────────────────
 
 def _send_twilio_verify(phone: str, otp: str):
-    """Twilio Verify — works with any number, no verified caller ID needed."""
+    """
+    Twilio Verify — যেকোনো নম্বরে কাজ করে।
+    OTP টা ignore করে — Twilio নিজেই OTP পাঠায়।
+    verify করার সময় twilio_verify_check() call করতে হবে।
+    """
     from twilio.rest import Client
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-
-    # Verification পাঠাও
     verification = client.verify \
         .v2 \
         .services(settings.TWILIO_VERIFY_SERVICE_SID) \
         .verifications \
         .create(to=phone, channel='sms')
-
     logger.info("Twilio Verify sent to %s (status: %s)", phone, verification.status)
 
 
 def _send_twilio(phone: str, message: str):
-    """Twilio SMS — শুধু verified numbers এ কাজ করে (trial account)."""
     from twilio.rest import Client
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     msg = client.messages.create(
@@ -99,10 +98,31 @@ def _send_console(phone: str, message: str):
     print(f"\n{'='*50}\n[OTP SMS] To: {phone}\n{message}\n{'='*50}\n")
 
 
-# ──────────────────── Special handler for Twilio Verify ────────────────────
+# ──────────────────── Twilio Verify Check ────────────────────
 
-def _is_verify_backend(name: str) -> bool:
-    return name == 'twilio_verify'
+def twilio_verify_check(phone: str, otp: str) -> bool:
+    """
+    Twilio Verify দিয়ে OTP verify করে।
+    True = সঠিক, False = ভুল।
+    শুধু SMS_BACKEND=twilio_verify হলে call করতে হবে।
+    """
+    try:
+        from twilio.rest import Client
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        result = client.verify \
+            .v2 \
+            .services(settings.TWILIO_VERIFY_SERVICE_SID) \
+            .verification_checks \
+            .create(to=phone, code=otp)
+        return result.status == 'approved'
+    except Exception as e:
+        logger.error("Twilio Verify check failed: %s", e)
+        return False
+
+
+def is_twilio_verify_active() -> bool:
+    """Primary backend twilio_verify কিনা check করে।"""
+    return getattr(settings, 'SMS_BACKEND', 'console').lower() == 'twilio_verify'
 
 
 # ──────────────────── Fallback chain ────────────────────
@@ -118,6 +138,10 @@ def _get_fallback_chain(primary: str) -> list:
 # ──────────────────── Public interface ────────────────────
 
 def send_otp_sms(phone: str, otp: str):
+    """
+    OTP SMS পাঠায়।
+    Primary backend fail হলে fallback chain try করে।
+    """
     phone = _normalize_bd_phone(phone)
     message = (
         f"Your TuitionMedia OTP is: {otp}\n"
@@ -127,36 +151,29 @@ def send_otp_sms(phone: str, otp: str):
     primary = getattr(settings, 'SMS_BACKEND', 'console').lower()
     chain   = _get_fallback_chain(primary)
 
+    _backend_map = {
+        'twilio_verify': lambda p, m: _send_twilio_verify(p, otp),
+        'twilio':        _send_twilio,
+        'bulksmsbd':     _send_bulksmsbd,
+        'sslwireless':   _send_sslwireless,
+        'console':       _send_console,
+    }
+
     last_error = None
     for backend_name in chain:
-
+        sender = _backend_map.get(backend_name)
+        if sender is None:
+            logger.warning("Unknown SMS backend: '%s', skipping.", backend_name)
+            continue
         try:
             logger.info("Trying SMS via %s to %s", backend_name, phone)
-
-            # Twilio Verify আলাদাভাবে handle করে — OTP নিজেই generate করে
-            if _is_verify_backend(backend_name):
-                _send_twilio_verify(phone, otp)
-            else:
-                sender = {
-                    'twilio':      _send_twilio,
-                    'bulksmsbd':   _send_bulksmsbd,
-                    'sslwireless': _send_sslwireless,
-                    'console':     _send_console,
-                }.get(backend_name)
-
-                if sender is None:
-                    logger.warning("Unknown SMS backend: '%s', skipping.", backend_name)
-                    continue
-
-                sender(phone, message)
-
+            sender(phone, message)
             if backend_name != primary:
                 logger.warning(
                     "Primary backend '%s' failed — sent via fallback '%s'",
                     primary, backend_name
                 )
             return
-
         except Exception as exc:
             last_error = exc
             logger.warning("SMS backend '%s' failed: %s", backend_name, exc)
