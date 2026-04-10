@@ -31,6 +31,21 @@
       font-size: 15px !important;
     }
   }
+  .stat-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border-radius: 16px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .stat-card-link:hover {
+    transform: translateY(-2px);
+    opacity: 0.85;
+  }
+  .stat-card-link:active {
+    transform: scale(0.97);
+    opacity: 0.7;
+  }
 </style>
 
 <div style="animation:slideIn 0.4s ease">
@@ -48,42 +63,67 @@
 
   <!-- Stat Cards -->
   <div class="admin-stat-grid">
-    <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:24px;margin-bottom:6px">👥</div>
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Users</div>
-      <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--accent)">{{ total_users }}</div>
-      <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(168,85,247,0.08)"></div>
-    </div>
-    <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:24px;margin-bottom:6px">✅</div>
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Profile Approvals</div>
-      <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:{% if pending_profiles > 0 %}var(--warn){% else %}var(--success){% endif %}">{{ pending_profiles }}</div>
-      <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(251,191,36,0.08)"></div>
-    </div>
-    <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:24px;margin-bottom:6px">📋</div>
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Posts Pending</div>
-      <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:{% if pending_posts > 0 %}var(--accent2){% else %}var(--success){% endif %}">{{ pending_posts }}</div>
-      <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(236,72,153,0.08)"></div>
-    </div>
-    <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:24px;margin-bottom:6px">🎓</div>
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Active Tuitions</div>
-      <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--success)">{{ active_tuitions }}</div>
-      <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(77,255,166,0.08)"></div>
-    </div>
-    <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:24px;margin-bottom:6px">💰</div>
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pending Commission</div>
-      <div style="font-size:20px;font-weight:800;font-family:var(--font-head);color:var(--accent2)">৳{{ pending_commission }}</div>
-      <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(236,72,153,0.08)"></div>
-    </div>
-    <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:24px;margin-bottom:6px">📄</div>
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Posts</div>
-      <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--accent3)">{{ total_posts }}</div>
-      <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(99,102,241,0.08)"></div>
-    </div>
+
+    <!-- Total Users -->
+    <a href="{% url 'admin_panel:all_users' %}" class="stat-card-link">
+      <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden;cursor:pointer">
+        <div style="font-size:24px;margin-bottom:6px">👥</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Users</div>
+        <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--accent)">{{ total_users }}</div>
+        <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(168,85,247,0.08)"></div>
+      </div>
+    </a>
+
+    <!-- Profile Approvals -->
+    <a href="{% url 'admin_panel:profile_approvals' %}" class="stat-card-link">
+      <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden;cursor:pointer">
+        <div style="font-size:24px;margin-bottom:6px">✅</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Profile Approvals</div>
+        <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:{% if pending_profiles > 0 %}var(--warn){% else %}var(--success){% endif %}">{{ pending_profiles }}</div>
+        <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(251,191,36,0.08)"></div>
+      </div>
+    </a>
+
+    <!-- Posts Pending -->
+    <a href="{% url 'admin_panel:posts_approval' %}" class="stat-card-link">
+      <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden;cursor:pointer">
+        <div style="font-size:24px;margin-bottom:6px">📋</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Posts Pending</div>
+        <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:{% if pending_posts > 0 %}var(--accent2){% else %}var(--success){% endif %}">{{ pending_posts }}</div>
+        <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(236,72,153,0.08)"></div>
+      </div>
+    </a>
+
+    <!-- Active Tuitions -->
+    <a href="{% url 'admin_panel:payments' %}" class="stat-card-link">
+      <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden;cursor:pointer">
+        <div style="font-size:24px;margin-bottom:6px">🎓</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Active Tuitions</div>
+        <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--success)">{{ active_tuitions }}</div>
+        <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(77,255,166,0.08)"></div>
+      </div>
+    </a>
+
+    <!-- Pending Commission -->
+    <a href="{% url 'admin_panel:payments' %}" class="stat-card-link">
+      <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden;cursor:pointer">
+        <div style="font-size:24px;margin-bottom:6px">💰</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pending Commission</div>
+        <div style="font-size:20px;font-weight:800;font-family:var(--font-head);color:var(--accent2)">৳{{ pending_commission }}</div>
+        <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(236,72,153,0.08)"></div>
+      </div>
+    </a>
+
+    <!-- Total Posts -->
+    <a href="{% url 'admin_panel:posts_approval' %}" class="stat-card-link">
+      <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden;cursor:pointer">
+        <div style="font-size:24px;margin-bottom:6px">📄</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Posts</div>
+        <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--accent3)">{{ total_posts }}</div>
+        <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(99,102,241,0.08)"></div>
+      </div>
+    </a>
+
   </div>
 
   <!-- Main Two-Col -->
