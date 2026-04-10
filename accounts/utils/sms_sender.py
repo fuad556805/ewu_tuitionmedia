@@ -29,10 +29,19 @@ def _normalize_bd_phone(phone: str) -> str:
 
 # ──────────────────── Backends ────────────────────
 
+def _stytch_base_url() -> str:
+    """Return the correct Stytch API base URL based on the project environment."""
+    project_id = getattr(settings, 'STYTCH_PROJECT_ID', '')
+    if project_id.startswith('project-test-'):
+        return 'https://test.stytch.com'
+    return 'https://api.stytch.com'
+
+
 def _send_stytch(phone: str, otp: str):
     import requests
+    base = _stytch_base_url()
     resp = requests.post(
-        f"https://api.stytch.com/v1/otps/sms/send",
+        f"{base}/v1/otps/sms/send",
         json={
             'phone_number': phone,
             'expiration_minutes': 2,
@@ -126,8 +135,9 @@ def stytch_verify_check(phone: str, otp: str) -> bool:
         if not phone_id:
             logger.error("Stytch phone_id not found for %s", phone)
             return False
+        base = _stytch_base_url()
         resp = requests.post(
-            "https://api.stytch.com/v1/otps/authenticate",
+            f"{base}/v1/otps/authenticate",
             json={
                 'method_id': phone_id,
                 'code':      otp,
