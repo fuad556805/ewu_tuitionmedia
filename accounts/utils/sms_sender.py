@@ -1,10 +1,11 @@
 """
 SMS Sender Utility for Bangladesh
 Supports:
-  1. Twilio           — international, reliable
-  2. BulkSMSBD        — local BD provider (bulk SMS)
-  3. SSL Wireless     — popular local BD provider
-  4. Mock/Console     — for development (logs OTP to console)
+  1. Twilio Verify    — international, any number (recommended)
+  2. Twilio SMS       — international, verified numbers only
+  3. BulkSMSBD        — local BD provider
+  4. SSL Wireless     — local BD provider
+  5. Console          — development only
 
 Fallback chain: configured backend → fallback backends → console
 """
@@ -28,7 +29,23 @@ def _normalize_bd_phone(phone: str) -> str:
 
 # ──────────────────── Backends ────────────────────
 
+def _send_twilio_verify(phone: str, otp: str):
+    """Twilio Verify — works with any number, no verified caller ID needed."""
+    from twilio.rest import Client
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
+    # Verification পাঠাও
+    verification = client.verify \
+        .v2 \
+        .services(settings.TWILIO_VERIFY_SERVICE_SID) \
+        .verifications \
+        .create(to=phone, channel='sms')
+
+    logger.info("Twilio Verify sent to %s (status: %s)", phone, verification.status)
+
+
 def _send_twilio(phone: str, message: str):
+    """Twilio SMS — শুধু verified numbers এ কাজ করে (trial account)."""
     from twilio.rest import Client
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     msg = client.messages.create(
@@ -82,38 +99,25 @@ def _send_console(phone: str, message: str):
     print(f"\n{'='*50}\n[OTP SMS] To: {phone}\n{message}\n{'='*50}\n")
 
 
-_BACKENDS = {
-    'twilio':      _send_twilio,
-    'bulksmsbd':   _send_bulksmsbd,
-    'sslwireless': _send_sslwireless,
-    'console':     _send_console,
-}
+# ──────────────────── Special handler for Twilio Verify ────────────────────
+
+def _is_verify_backend(name: str) -> bool:
+    return name == 'twilio_verify'
 
 
 # ──────────────────── Fallback chain ────────────────────
 
 def _get_fallback_chain(primary: str) -> list:
-    """
-    Returns ordered list of backends to try.
-    Primary backend first, then SMS_FALLBACKS list, then console.
-    """
     fallbacks = getattr(settings, 'SMS_FALLBACKS', [])
     chain = [primary] + [f for f in fallbacks if f != primary]
-
-    # console সবসময় শেষে থাকবে (last resort)
     if 'console' not in chain:
         chain.append('console')
-
     return chain
 
 
 # ──────────────────── Public interface ────────────────────
 
 def send_otp_sms(phone: str, otp: str):
-    """
-    Send an OTP SMS to the given phone number.
-    Tries primary backend first, then fallbacks on failure.
-    """
     phone = _normalize_bd_phone(phone)
     message = (
         f"Your TuitionMedia OTP is: {otp}\n"
@@ -125,24 +129,37 @@ def send_otp_sms(phone: str, otp: str):
 
     last_error = None
     for backend_name in chain:
-        sender = _BACKENDS.get(backend_name)
-        if sender is None:
-            logger.warning("Unknown SMS backend: '%s', skipping.", backend_name)
-            continue
 
         try:
             logger.info("Trying SMS via %s to %s", backend_name, phone)
-            sender(phone, message)
+
+            # Twilio Verify আলাদাভাবে handle করে — OTP নিজেই generate করে
+            if _is_verify_backend(backend_name):
+                _send_twilio_verify(phone, otp)
+            else:
+                sender = {
+                    'twilio':      _send_twilio,
+                    'bulksmsbd':   _send_bulksmsbd,
+                    'sslwireless': _send_sslwireless,
+                    'console':     _send_console,
+                }.get(backend_name)
+
+                if sender is None:
+                    logger.warning("Unknown SMS backend: '%s', skipping.", backend_name)
+                    continue
+
+                sender(phone, message)
+
             if backend_name != primary:
-                logger.warning("Primary backend '%s' failed — sent via fallback '%s'", primary, backend_name)
-            return  # সফল হলে বের হয়ে যাও
+                logger.warning(
+                    "Primary backend '%s' failed — sent via fallback '%s'",
+                    primary, backend_name
+                )
+            return
 
         except Exception as exc:
             last_error = exc
             logger.warning("SMS backend '%s' failed: %s", backend_name, exc)
-            continue  # পরের backend try করো
+            continue
 
-    # সব backend fail হলে
-    raise RuntimeError(
-        f"All SMS backends failed. Last error: {last_error}"
-    )
+    raise RuntimeError(f"All SMS backends failed. Last error: {last_error}")
