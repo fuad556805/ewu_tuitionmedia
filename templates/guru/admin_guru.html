@@ -19,8 +19,13 @@
           <span class="pulse-dot" style="background:#4dffa6"></span> Admin Data Access Active
         </div>
       </div>
-      <div style="margin-left:auto">
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
         <span class="badge badge-guru">Powered by Gemini AI</span>
+        <button onclick="window.location='{% url 'admin_panel:overview' %}'"
+                title="Close"
+                style="background:rgba(255,255,255,0.07);border:1px solid var(--glass-border);color:var(--muted);cursor:pointer;font-size:20px;line-height:1;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.2s"
+                onmouseover="this.style.background='rgba(255,255,255,0.15)'"
+                onmouseout="this.style.background='rgba(255,255,255,0.07)'">×</button>
       </div>
     </div>
 
