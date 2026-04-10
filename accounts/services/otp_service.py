@@ -16,7 +16,7 @@ from django.utils import timezone
 from accounts.models import OTPVerification
 
 OTP_LENGTH          = 6
-OTP_EXPIRY_MINS     = 3
+OTP_EXPIRY_MINS     = 2
 MAX_RESENDS_PER_H   = 4
 MAX_VERIFY_ATTEMPTS = 5
 RESEND_COOLDOWN_S   = 60
