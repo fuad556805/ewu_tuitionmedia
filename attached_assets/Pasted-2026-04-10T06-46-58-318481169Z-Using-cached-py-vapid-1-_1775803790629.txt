@@ -1,0 +1,50 @@
+2026-04-10T06:46:58.318481169Z Using cached py_vapid-1.9.4-py2.py3-none-any.whl (23 kB)
+2026-04-10T06:46:58.31962872Z Using cached packaging-26.0-py3-none-any.whl (74 kB)
+2026-04-10T06:46:58.470449973Z Installing collected packages: whitenoise, urllib3, tzdata, sqlparse, python-dotenv, pyjwt, pycparser, psycopg2-binary, propcache, pillow, packaging, multidict, idna, frozenlist, charset-normalizer, certifi, attrs, asgiref, aiohappyeyeballs, yarl, requests, gunicorn, Django, cffi, aiosignal, djangorestframework, cryptography, aiohttp, py-vapid, http-ece, djangorestframework-simplejwt, aiohttp-retry, twilio, pywebpush
+2026-04-10T06:47:07.573215059Z 
+2026-04-10T06:47:07.577094104Z Successfully installed Django-6.0.4 aiohappyeyeballs-2.6.1 aiohttp-3.13.5 aiohttp-retry-2.9.1 aiosignal-1.4.0 asgiref-3.11.1 attrs-26.1.0 certifi-2026.2.25 cffi-2.0.0 charset-normalizer-3.4.7 cryptography-46.0.7 djangorestframework-3.17.1 djangorestframework-simplejwt-5.5.0 frozenlist-1.8.0 gunicorn-25.3.0 http-ece-1.2.1 idna-3.11 multidict-6.7.1 packaging-26.0 pillow-12.2.0 propcache-0.4.1 psycopg2-binary-2.9.11 py-vapid-1.9.4 pycparser-3.0 pyjwt-2.9.0 python-dotenv-1.2.2 pywebpush-2.3.0 requests-2.33.1 sqlparse-0.5.5 twilio-9.4.4 tzdata-2026.1 urllib3-2.6.3 whitenoise-6.12.0 yarl-1.23.0
+2026-04-10T06:47:07.583396926Z 
+2026-04-10T06:47:07.583416397Z [notice] A new release of pip is available: 25.3 -> 26.0.1
+2026-04-10T06:47:07.583421347Z [notice] To update, run: pip install --upgrade pip
+2026-04-10T06:47:17.198873846Z Operations to perform:
+2026-04-10T06:47:17.198892966Z   Apply all migrations: accounts, admin, auth, chat, contenttypes, payments, posts, sessions, tuitions
+2026-04-10T06:47:17.198897857Z Running migrations:
+2026-04-10T06:47:17.198902237Z   No migrations to apply.
+2026-04-10T06:47:17.68747879Z 
+2026-04-10T06:47:17.687509181Z 157 static files copied to '/opt/render/project/src/staticfiles', 3 unmodified.
+2026-04-10T06:47:19.417637781Z ==> Uploading build...
+2026-04-10T06:47:33.463287196Z ==> Uploaded in 9.4s. Compression took 4.6s
+2026-04-10T06:47:33.554047421Z ==> Build successful 🎉
+2026-04-10T06:47:36.01388122Z ==> Deploying...
+2026-04-10T06:47:36.067199011Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-04-10T06:48:08.245271444Z ==> Running 'gunicorn tuitionmedia.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --preload'
+2026-04-10T06:48:24.349292669Z [2026-04-10 01:48:24 -0500] [56] [INFO] Starting gunicorn 25.3.0
+2026-04-10T06:48:24.349708365Z [2026-04-10 01:48:24 -0500] [56] [INFO] Listening at: http://0.0.0.0:10000 (56)
+2026-04-10T06:48:24.349747196Z [2026-04-10 01:48:24 -0500] [56] [INFO] Using worker: sync
+2026-04-10T06:48:24.354645059Z [2026-04-10 01:48:24 -0500] [57] [INFO] Booting worker with pid: 57
+2026-04-10T06:48:24.44937314Z [2026-04-10 01:48:24 -0500] [56] [INFO] Control socket listening at /opt/render/.gunicorn/gunicorn.ctl
+2026-04-10T06:48:27.934173677Z ==> Your service is live 🎉
+2026-04-10T06:48:28.058243025Z ==> 
+2026-04-10T06:48:28.062715811Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:48:28.06827281Z ==> 
+2026-04-10T06:48:28.07616542Z ==> Available at your primary URL https://ewu-tuitionmedia.onrender.com
+2026-04-10T06:48:28.080533484Z ==> 
+2026-04-10T06:48:28.085547641Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:48:29.754568995Z 127.0.0.1 - - [10/Apr/2026:01:48:29 -0500] "HEAD / HTTP/1.1" 200 8464 "-" "Go-http-client/1.1"
+2026-04-10T06:48:31.538583941Z 127.0.0.1 - - [10/Apr/2026:01:48:31 -0500] "GET / HTTP/1.1" 200 8464 "-" "Go-http-client/2.0"
+2026-04-10T06:48:36.553139063Z 127.0.0.1 - - [10/Apr/2026:01:48:36 -0500] "GET / HTTP/1.1" 200 8464 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:48:36.911391587Z 127.0.0.1 - - [10/Apr/2026:01:48:36 -0500] "GET /static/css/main.css HTTP/1.1" 200 0 "https://ewu-tuitionmedia.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:48:37.446111724Z 127.0.0.1 - - [10/Apr/2026:01:48:37 -0500] "GET /static/js/main.js HTTP/1.1" 200 0 "https://ewu-tuitionmedia.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:48:38.74769052Z 127.0.0.1 - - [10/Apr/2026:01:48:38 -0500] "GET /accounts/signup/ HTTP/1.1" 200 13155 "https://ewu-tuitionmedia.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:49:12.597773762Z SMS backend 'stytch' failed: Stytch error: {'status_code': 400, 'request_id': 'request-id-test-2b402b24-5560-4496-b41e-c71d58536450', 'error_type': 'invalid_phone_number_country_code', 'error_message': "The phone number's country code is invalid, unsupported, or disabled for your Stytch Workspace. Please see here for additional information: https://stytch.com/docs/api/errors/400#invalid_phone_number_country_code", 'error_url': 'https://stytch.com/docs/api/errors/400#invalid_phone_number_country_code'}
+2026-04-10T06:49:12.597800192Z [DEV SMS] To: +8801338136424 | Message: Your TuitionMedia OTP is: 938127
+2026-04-10T06:49:12.597805683Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:49:12.597814693Z Primary backend 'stytch' failed — sent via fallback 'console'
+2026-04-10T06:49:12.598771189Z 
+2026-04-10T06:49:12.598787449Z ==================================================
+2026-04-10T06:49:12.598792569Z [OTP SMS] To: +8801338136424
+2026-04-10T06:49:12.598796469Z Your TuitionMedia OTP is: 938127
+2026-04-10T06:49:12.598799899Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:49:12.598803389Z ==================================================
+2026-04-10T06:49:12.59881892Z 
+2026-04-10T06:49:12.59882502Z 127.0.0.1 - - [10/Apr/2026:01:49:12 -0500] "POST /api/auth/send-otp/ HTTP/1.1" 200 81 "https://ewu-tuitionmedia.onrender.com/accounts/signup/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
