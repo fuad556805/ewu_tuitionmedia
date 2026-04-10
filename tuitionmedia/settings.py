@@ -166,6 +166,7 @@ SMS_FALLBACKS = os.getenv('SMS_FALLBACKS', 'bulksmsbd,console').split(',')  # fa
 TWILIO_ACCOUNT_SID  = os.getenv('TWILIO_ACCOUNT_SID', '')
 TWILIO_AUTH_TOKEN   = os.getenv('TWILIO_AUTH_TOKEN', '')
 TWILIO_FROM_NUMBER  = os.getenv('TWILIO_FROM_NUMBER', '')
+TWILIO_VERIFY_SERVICE_SID = os.getenv('TWILIO_VERIFY_SERVICE_SID', '') 
 
 # BulkSMSBD (local BD)
 BULKSMSBD_API_KEY   = os.getenv('BULKSMSBD_API_KEY', '')
