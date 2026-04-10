@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TuitionMedia — Full Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --primary:#4f46e5;--primary-light:#818cf8;--accent:#7c3aed;
+    --dark:#0f172a;--text:#1e293b;--muted:#64748b;
+    --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+    --green:#059669;--orange:#d97706;--red:#dc2626;--blue:#2563eb;
+  }
+  body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);font-size:14px;line-height:1.75}
+  @media print{body{background:#fff;font-size:12px}@page{margin:2cm;size:A4}.no-print{display:none}.page-break{page-break-before:always}}
+
+  /* Cover */
+  .cover{background:linear-gradient(160deg,#0f172a 0%,#1e1b4b 45%,#4c1d95 100%);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;position:relative;overflow:hidden}
+  .cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(99,102,241,0.35) 0%,transparent 55%),radial-gradient(ellipse at 80% 75%,rgba(168,85,247,0.25) 0%,transparent 50%)}
+  .cover-badge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:99px;padding:6px 20px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:28px;display:inline-block}
+  .cover h1{font-family:'Merriweather',serif;font-size:52px;font-weight:700;line-height:1.2;margin-bottom:12px}
+  .cover h1 span{color:#a5b4fc}
+  .cover .sub{font-size:16px;opacity:0.75;margin-bottom:10px;font-weight:300}
+  .cover .tagline{font-size:13px;opacity:0.55;max-width:480px;margin:0 auto 52px}
+  .cover-meta{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:24px 36px;display:inline-grid;grid-template-columns:repeat(3,1fr);gap:20px 48px;text-align:left;backdrop-filter:blur(8px)}
+  .cover-meta-item label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:0.55;margin-bottom:3px}
+  .cover-meta-item span{font-weight:600;font-size:13px}
+  .cover-logo{width:80px;height:80px;background:linear-gradient(135deg,#6366f1,#a855f7);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 28px;box-shadow:0 8px 40px rgba(99,102,241,0.45)}
+
+  /* Layout */
+  .container{max-width:860px;margin:0 auto;padding:48px 40px}
+  section{margin-bottom:60px}
+
+  /* Typography */
+  .section-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+  h2{font-family:'Merriweather',serif;font-size:24px;font-weight:700;color:var(--dark);margin-bottom:20px;padding-bottom:10px;border-bottom:3px solid var(--primary)}
+  h3{font-size:15px;font-weight:700;color:var(--dark);margin:28px 0 10px;display:flex;align-items:center;gap:8px}
+  h4{font-size:13px;font-weight:700;color:var(--dark);margin:16px 0 6px}
+  p{margin-bottom:14px;color:var(--text);font-size:13.5px}
+
+  /* Cards */
+  .card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .card-accent{border-left:4px solid var(--primary)}
+  .card-green{border-left:4px solid var(--green)}
+  .card-red{border-left:4px solid var(--red)}
+  .card-orange{border-left:4px solid var(--orange)}
+  .card-blue{border-left:4px solid var(--blue)}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);margin-bottom:16px;font-size:13px}
+  th{background:var(--dark);color:#fff;padding:11px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr:nth-child(even) td{background:#f8fafc}
+
+  /* Grid */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  @media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+  /* Lists */
+  ul,ol{padding-left:20px;margin-bottom:14px}
+  li{margin-bottom:5px;font-size:13.5px}
+  ul.clean{list-style:none;padding:0}
+  ul.clean li{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;font-size:13px}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean li .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:5px}
+
+  /* Badge */
+  .badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+  .badge-blue{background:#eff6ff;color:#1d4ed8}
+  .badge-purple{background:#f5f3ff;color:#7c3aed}
+  .badge-green{background:#f0fdf4;color:#15803d}
+  .badge-orange{background:#fff7ed;color:#c2410c}
+  .badge-red{background:#fef2f2;color:#b91c1c}
+  .badge-gray{background:#f1f5f9;color:#475569}
+
+  /* Diagram containers */
+  .diagram{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:28px;margin:16px 0;overflow-x:auto}
+  .diagram pre{font-family:'Courier New',monospace;font-size:11.5px;line-height:1.6;color:var(--dark);white-space:pre}
+
+  /* Stat */
+  .stat-box{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+  .stat-box .num{font-size:30px;font-weight:800;color:var(--primary);line-height:1}
+  .stat-box .lbl{font-size:11px;color:var(--muted);margin-top:5px;font-weight:600}
+
+  /* TOC */
+  .toc{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:28px 32px}
+  .toc h3{font-size:14px;font-weight:700;margin-bottom:16px;color:var(--dark)}
+  .toc-group{margin-bottom:10px}
+  .toc-group .group-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .toc li{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dotted var(--border);font-size:12.5px;list-style:none}
+  .toc li:last-child{border-bottom:none}
+  .toc li span{color:var(--muted);font-size:11px}
+  .toc a{text-decoration:none;color:var(--text)}
+  .toc a:hover{color:var(--primary)}
+
+  /* Req numbering */
+  .req{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+  .req:last-child{border-bottom:none}
+  .req .id{font-family:'Courier New',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;height:fit-content;flex-shrink:0;margin-top:2px}
+  .req .fr-id{background:#eff6ff;color:#1d4ed8}
+  .req .nf-id{background:#f5f3ff;color:#7c3aed}
+  .req .body strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+  .req .body p{font-size:12.5px;color:var(--muted);margin:0}
+  .req .priority{margin-left:auto;flex-shrink:0;margin-top:2px}
+
+  /* Scenario box */
+  .scenario{background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1px solid #c7d2fe;border-radius:12px;padding:24px}
+  .scenario-step{display:flex;gap:14px;margin-bottom:16px}
+  .scenario-step:last-child{margin-bottom:0}
+  .scenario-step .step-num{width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .scenario-step .step-body strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+  .scenario-step .step-body span{font-size:12.5px;color:var(--muted)}
+
+  /* Flow arrow */
+  .flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:16px 0}
+  .flow-box{background:var(--primary);color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;text-align:center}
+  .flow-box.green{background:var(--green)}
+  .flow-box.orange{background:var(--orange)}
+  .flow-box.red{background:var(--red)}
+  .flow-box.gray{background:#64748b}
+  .flow-arr{color:var(--muted);font-size:18px;padding:0 6px}
+
+  /* Footer */
+  .doc-footer{text-align:center;padding:40px 0 20px;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ COVER ═══════════════ -->
+<div class="cover">
+  <div class="cover-logo">📚</div>
+  <div class="cover-badge">Full Project Report</div>
+  <h1>Tuition<span>Media</span></h1>
+  <p class="sub">Smart Tuition Matching Platform</p>
+  <p class="tagline">Requirements Analysis · System Design · Data Flow · Use Cases · Activity Diagrams · Sample Scenarios</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><label>Platform</label><span>Django 6.0.4 + PostgreSQL</span></div>
+    <div class="cover-meta-item"><label>Target Region</label><span>Bangladesh</span></div>
+    <div class="cover-meta-item"><label>Report Type</label><span>Full Technical Report</span></div>
+    <div class="cover-meta-item"><label>Architecture</label><span>Monolithic MVC + REST API</span></div>
+    <div class="cover-meta-item"><label>AI Integration</label><span>Gemini API + Groq</span></div>
+    <div class="cover-meta-item"><label>Document Version</label><span>1.0 — 2026</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════ BODY ═══════════════ -->
+<div class="container">
+
+  <!-- TOC -->
+  <section>
+    <div class="toc">
+      <h3>📋 Table of Contents</h3>
+      <div class="toc-group">
+        <div class="group-label">Part I — Project Overview</div>
+        <ul>
+          <li><a href="#intro">1. Introduction &amp; Background</a><span>§1</span></li>
+          <li><a href="#reqanalysis">2. Requirements Analysis</a><span>§2</span></li>
+          <li><a href="#func">3. Functional Requirements</a><span>§3</span></li>
+          <li><a href="#nonfunc">4. Non-Functional Requirements</a><span>§4</span></li>
+        </ul>
+      </div>
+      <div class="toc-group">
+        <div class="group-label">Part II — System Design</div>
+        <ul>
+          <li><a href="#classdiag">5. Class Diagram</a><span>§5</span></li>
+          <li><a href="#dfd">6. Data Flow Diagram (DFD)</a><span>§6</span></li>
+          <li><a href="#usecase">7. Use Case Diagram</a><span>§7</span></li>
+          <li><a href="#activity">8. Activity Diagrams</a><span>§8</span></li>
+        </ul>
+      </div>
+      <div class="toc-group">
+        <div class="group-label">Part III — Implementation</div>
+        <ul>
+          <li><a href="#arch">9. System Architecture</a><span>§9</span></li>
+          <li><a href="#scenario">10. Sample Usage Scenarios</a><span>§10</span></li>
+          <li><a href="#payment">11. Payment Flow Detail</a><span>§11</span></li>
+          <li><a href="#security">12. Security Design</a><span>§12</span></li>
+          <li><a href="#api">13. REST API Overview</a><span>§13</span></li>
+          <li><a href="#conclusion">14. Conclusion</a><span>§14</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §1 INTRODUCTION -->
+  <section id="intro">
+    <div class="section-label">Section 01</div>
+    <h2>Introduction &amp; Background</h2>
+    <p>Private tutoring is one of the most significant supplementary education markets in Bangladesh. Millions of students seek home tutors every year for school, college, and university subjects. Despite the scale of the market, the process of finding, verifying, and hiring a tutor remains largely informal — relying on word-of-mouth referrals, social media posts, or local middlemen.</p>
+    <p>These methods are slow, untrustworthy, and unscalable. Parents cannot verify a tutor's credentials, tutors cannot showcase their work, and no financial trail exists for commission or salary agreements. <strong>TuitionMedia</strong> is designed to solve all of these problems in a single, integrated web platform.</p>
+
+    <h3>🎯 Project Goals</h3>
+    <div class="grid-2">
+      <div class="card card-accent">
+        <h4>For Students</h4>
+        <ul>
+          <li>Post detailed tuition requirements</li>
+          <li>Browse and filter verified tutors</li>
+          <li>Unlock contact details via payment</li>
+          <li>Communicate directly in-platform</li>
+          <li>Track tuition and payment history</li>
+        </ul>
+      </div>
+      <div class="card card-accent">
+        <h4>For Tutors</h4>
+        <ul>
+          <li>Build a verified public profile</li>
+          <li>Browse and apply to student posts</li>
+          <li>Receive direct tuition requests</li>
+          <li>Manage active tuitions</li>
+          <li>Pay commissions digitally (bKash/Nagad)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-top:14px">
+      <div class="stat-box"><div class="num">3</div><div class="lbl">User Roles</div></div>
+      <div class="stat-box"><div class="num">7</div><div class="lbl">App Modules</div></div>
+      <div class="stat-box"><div class="num">25+</div><div class="lbl">REST Endpoints</div></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §2 REQUIREMENTS ANALYSIS -->
+  <section id="reqanalysis">
+    <div class="section-label">Section 02</div>
+    <h2>Requirements Analysis</h2>
+    <p>Requirements were elicited by analysing the target user group (students, parents, tutors in Bangladesh), studying existing informal processes, and reviewing comparable platforms. The analysis produced the following key findings:</p>
+
+    <h3>📌 Stakeholder Analysis</h3>
+    <table>
+      <thead><tr><th>Stakeholder</th><th>Goal</th><th>Pain Point</th><th>Platform Role</th></tr></thead>
+      <tbody>
+        <tr><td>Student / Parent</td><td>Find a reliable tutor fast</td><td>Can't verify credentials</td><td>Browse, unlock, request</td></tr>
+        <tr><td>Tutor</td><td>Acquire students, prove quality</td><td>No structured showcase</td><td>Profile, apply, tuition mgmt</td></tr>
+        <tr><td>Admin</td><td>Maintain quality &amp; revenue</td><td>Manual, error-prone approval</td><td>Full platform control panel</td></tr>
+        <tr><td>Payment Provider</td><td>Process transactions</td><td>Low digital adoption</td><td>API integration (bKash/Nagad)</td></tr>
+        <tr><td>AI Provider</td><td>API usage growth</td><td>—</td><td>Guru assistant backbone</td></tr>
+      </tbody>
+    </table>
+
+    <h3>📐 System Boundary</h3>
+    <p>The system interacts with the following external entities:</p>
+    <div class="grid-2">
+      <div class="card">
+        <strong>External Inputs</strong>
+        <ul style="margin-top:10px">
+          <li>User registrations and profile data</li>
+          <li>Tuition post details from students</li>
+          <li>Tuition applications from tutors</li>
+          <li>Payment callbacks from bKash / Nagad</li>
+          <li>AI responses from Gemini / Groq</li>
+          <li>OTP confirmations from SMS provider</li>
+        </ul>
+      </div>
+      <div class="card">
+        <strong>External Outputs</strong>
+        <ul style="margin-top:10px">
+          <li>Verified tutor contact information</li>
+          <li>Payment receipts and history</li>
+          <li>Push / SMS notifications to users</li>
+          <li>Commission confirmation to tutors</li>
+          <li>Approval / rejection status updates</li>
+          <li>Guru AI responses to users</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §3 FUNCTIONAL REQUIREMENTS -->
+  <section id="func">
+    <div class="section-label">Section 03</div>
+    <h2>Functional Requirements</h2>
+
+    <h3>👤 Authentication &amp; Accounts</h3>
+    <div>
+      <div class="req"><span class="id fr-id">FR-01</span><div class="body"><strong>Phone-based Registration</strong><p>The system shall allow users to register using a unique phone number and password, assigning a role of Student or Tutor.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-02</span><div class="body"><strong>OTP Password Reset</strong><p>The system shall provide a forgot-password flow using SMS OTP sent to the registered phone number.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-03</span><div class="body"><strong>Role-based Dashboard</strong><p>Upon login, users shall be redirected to a personalised dashboard based on their role (Student / Tutor / Admin).</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-04</span><div class="body"><strong>Profile Management</strong><p>Users shall be able to update personal details, upload a profile photo, and upload an ID document. Edits reset approval status.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id fr-id">FR-05</span><div class="body"><strong>Profile Approval Gate</strong><p>Admin must approve a tutor profile before it becomes publicly visible in search results.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+    </div>
+
+    <h3>📋 Posts &amp; Matching</h3>
+    <div>
+      <div class="req"><span class="id fr-id">FR-06</span><div class="body"><strong>Create Tuition Post</strong><p>Students shall be able to create posts specifying subject, location, budget, schedule, and details. Posts require admin approval before being visible.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-07</span><div class="body"><strong>Browse Posts (Tutor View)</strong><p>Tutors shall be able to browse all active, approved tuition posts and apply to them with a single click.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-08</span><div class="body"><strong>Browse Tutors (Student View)</strong><p>Students shall be able to browse all approved tutor profiles, filter by subject and location, and initiate a tuition request.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-09</span><div class="body"><strong>Tuition Request Workflow</strong><p>Either party may send a TuitionRequest. The recipient can accept or reject. On acceptance, a Tuition record is automatically created.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+    </div>
+
+    <h3>💰 Payments</h3>
+    <div>
+      <div class="req"><span class="id fr-id">FR-10</span><div class="body"><strong>Contact Unlock Payment</strong><p>Students shall pay a platform fee (via bKash or Nagad) to unlock a tutor's full contact details (phone, address).</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-11</span><div class="body"><strong>Commission Payment</strong><p>Tutors shall pay a 30% commission on first-month salary. Payment can be made digitally or via manual proof upload.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-12</span><div class="body"><strong>Payment History</strong><p>All payment transactions shall be recorded and accessible by the payer and admin with full status and metadata.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id fr-id">FR-13</span><div class="body"><strong>Salary Entry by Admin</strong><p>Admins shall be able to set the confirmed salary amount for active tuitions to trigger commission calculation.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    </div>
+
+    <h3>💬 Messaging &amp; Notifications</h3>
+    <div>
+      <div class="req"><span class="id fr-id">FR-14</span><div class="body"><strong>Permission-gated Messaging</strong><p>Users may only message each other if an accepted TuitionRequest exists between them. Admins can message anyone.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id fr-id">FR-15</span><div class="body"><strong>AJAX Real-time Chat</strong><p>The messaging interface shall update with new messages every 3 seconds without requiring a page reload.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id fr-id">FR-16</span><div class="body"><strong>Unread Message Badges</strong><p>Unread message counts shall be displayed per contact in the sidebar and as a total in the navbar, refreshed every 8 seconds.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
+      <div class="req"><span class="id fr-id">FR-17</span><div class="body"><strong>Push Notifications</strong><p>The system shall send browser push notifications for key events using VAPID Web Push. Users may opt in on first visit.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
+      <div class="req"><span class="id fr-id">FR-18</span><div class="body"><strong>In-app Notification Panel</strong><p>A slide-in panel shall show the user's recent notifications with read/unread status, time, and a link to the relevant resource.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    </div>
+
+    <h3>🛡️ Administration</h3>
+    <div>
+      <div class="req"><span class="id fr-id">FR-19</span><div class="body"><strong>Profile &amp; Post Approvals</strong><p>Admins shall be able to approve or reject pending tutor profiles and student posts from a centralised approval panel.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-20</span><div class="body"><strong>User Management</strong><p>Admins shall be able to view all users, access individual profiles, and toggle ban status to restrict platform access.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id fr-id">FR-21</span><div class="body"><strong>Admin Inbox</strong><p>Admins shall have a dedicated inbox to message any user directly, with AJAX message loading, send, unread badges, and real-time polling.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id fr-id">FR-22</span><div class="body"><strong>Guru AI Admin Mode</strong><p>Admins shall have access to a Guru AI assistant with live platform statistics (users, commissions, pending tasks) for operational insights.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §4 NON-FUNCTIONAL REQUIREMENTS -->
+  <section id="nonfunc">
+    <div class="section-label">Section 04</div>
+    <h2>Non-Functional Requirements</h2>
+
+    <h3>⚡ Performance</h3>
+    <div>
+      <div class="req"><span class="id nf-id">NFR-01</span><div class="body"><strong>Page Load Time</strong><p>All template pages shall render within 1.5 seconds under normal load. Static files are served by WhiteNoise with compression enabled.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-02</span><div class="body"><strong>API Response Time</strong><p>REST API endpoints shall return responses within 300 ms for standard CRUD operations, excluding payment gateway callbacks.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-03</span><div class="body"><strong>Efficient Query Design</strong><p>The ORM shall use select_related() and prefetch_related() for all foreign key traversals. Unread counts shall use aggregated DB queries rather than in-Python loops.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    </div>
+
+    <h3>🔒 Security</h3>
+    <div>
+      <div class="req"><span class="id nf-id">NFR-04</span><div class="body"><strong>CSRF Protection</strong><p>All state-changing POST requests (forms and AJAX) shall include a valid CSRF token validated by Django middleware.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-05</span><div class="body"><strong>Authentication Enforcement</strong><p>All views except landing, login, and signup shall require authentication. Admin views require role='admin' check.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-06</span><div class="body"><strong>Secure Cookies in Production</strong><p>SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE shall be True in non-debug environments.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-07</span><div class="body"><strong>Password Hashing</strong><p>All passwords shall be stored as PBKDF2 hashes using Django's built-in password hasher. Plaintext passwords shall never be persisted.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-08</span><div class="body"><strong>Secrets Management</strong><p>API keys, payment credentials, and JWT secrets shall be loaded exclusively from environment variables. No credentials shall appear in source code.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+    </div>
+
+    <h3>📱 Usability</h3>
+    <div>
+      <div class="req"><span class="id nf-id">NFR-09</span><div class="body"><strong>Responsive Design</strong><p>All pages shall be usable on desktop, tablet, and mobile (minimum 320px width) without horizontal scroll.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-10</span><div class="body"><strong>Theme Switching</strong><p>The system shall support three visual themes (Dark Purple, Ocean Blue, Sunset Gold) persisted per user account.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-11</span><div class="body"><strong>No Reload Interactions</strong><p>Message sending, loading conversations, and unread count polling shall not require full page reloads (AJAX/fetch API).</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    </div>
+
+    <h3>🔧 Maintainability</h3>
+    <div>
+      <div class="req"><span class="id nf-id">NFR-12</span><div class="body"><strong>Modular App Structure</strong><p>Code shall be organised into independent Django apps (accounts, posts, tuitions, payments, chat, guru, admin_panel) with clear domain ownership.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-13</span><div class="body"><strong>Database Migrations</strong><p>All schema changes shall be managed through Django's migration system. No raw DDL shall be executed manually against production.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-14</span><div class="body"><strong>Configurable SMS Backend</strong><p>The SMS provider shall be swappable via a single environment variable (console, twilio, bulksmsbd, sslwireless) without code changes.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
+    </div>
+
+    <h3>📈 Scalability &amp; Reliability</h3>
+    <div>
+      <div class="req"><span class="id nf-id">NFR-15</span><div class="body"><strong>Gunicorn Production Server</strong><p>The production deployment shall use Gunicorn as the WSGI server with configurable worker count to handle concurrent requests.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+      <div class="req"><span class="id nf-id">NFR-16</span><div class="body"><strong>AI Fallback Strategy</strong><p>The Guru AI module shall support a dual-provider strategy (Gemini primary, Groq fallback) to maintain availability during API outages.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §5 CLASS DIAGRAM -->
+  <div class="page-break"></div>
+  <section id="classdiag">
+    <div class="section-label">Section 05</div>
+    <h2>Class Diagram</h2>
+    <p>The following class diagram shows all primary entities, their attributes, visibility, and relationships. Associations are annotated with cardinality.</p>
+    <div class="diagram">
+      <pre>
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                              CLASS DIAGRAM — TuitionMedia                        │
+└──────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────┐          ┌───────────────────────────┐
+│          «model»          │          │          «model»          │
+│           User            │          │      OTPVerification      │
+├───────────────────────────┤          ├───────────────────────────┤
+│ + id : BigInt (PK)        │          │ + id : BigInt (PK)        │
+│ + phone : varchar(15) UK  │          │ + phone : varchar(20) UK  │
+│ + username : varchar(150) │          │ + otp_hash : varchar(128) │
+│ + first_name : varchar    │          │ + expires_at : DateTime   │
+│ + last_name : varchar     │          │ + attempts : SmallInt     │
+│ + role : enum             │          │ + is_verified : bool      │
+│   [student|tutor|admin]   │          │ + created_at : DateTime   │
+│ + gender : varchar        │          └───────────────────────────┘
+│ + profile_image : Image   │
+│ + school : varchar        │          ┌───────────────────────────┐
+│ + college : varchar       │          │          «model»          │
+│ + university : varchar    │          │      PushSubscription     │
+│ + department : varchar    │          ├───────────────────────────┤
+│ + subjects : varchar      │◄─────────│ + user : FK(User)         │
+│ + location : varchar      │ 1    *   │ + endpoint : TextField    │
+│ + id_image : Image        │          │ + p256dh : TextField      │
+│ + profile_approved : bool │          │ + auth : TextField        │
+│ + banned : bool           │          │ + created_at : DateTime   │
+│ + theme : varchar         │          └───────────────────────────┘
+└─────────────┬─────────────┘
+              │ 1                       ┌───────────────────────────┐
+    ┌─────────┼─────────┐               │          «model»          │
+    │         │         │               │       Notification        │
+    * 1..n    * 1..n    * 1..n          ├───────────────────────────┤
+    │         │         └───────────────│ + user : FK(User)         │
+    │         │                         │ + text : TextField        │
+    │         │                         │ + notif_type : varchar    │
+    │         │                         │ + link : varchar          │
+    │         │                         │ + read : bool             │
+    │         │                         │ + created_at : DateTime   │
+    │         │                         └───────────────────────────┘
+    │         │
+    │    ┌────▼────────────────────────┐
+    │    │          «model»            │
+    │    │           Post              │
+    │    ├─────────────────────────────┤
+    │    │ + id : BigInt (PK)          │
+    │    │ + student : FK(User)        │
+    │    │ + subject : varchar         │
+    │    │ + location : varchar        │
+    │    │ + budget : varchar          │
+    │    │ + classes : varchar         │
+    │    │ + schedule : varchar        │
+    │    │ + details : TextField       │
+    │    │ + status : enum             │
+    │    │   [pending_approval|active  │
+    │    │    |rejected|closed]        │
+    │    │ + request_count : Int       │
+    │    │ + created_at : DateTime     │
+    │    └─────────────────────────────┘
+    │
+    │    ┌─────────────────────────────┐
+    └───►│          «model»            │
+    *   1│       TuitionRequest        │
+         ├─────────────────────────────┤
+         │ + id : BigInt (PK)          │
+         │ + tutor : FK(User)          │
+         │ + student : FK(User)        │
+         │ + post : FK(Post) nullable  │◄────── optional
+         │ + subject : varchar         │
+         │ + status : enum             │
+         │   [pending|accepted|rejected│
+         │ + created_at : DateTime     │
+         └──────────────┬──────────────┘
+                        │ 1 (on accept)
+                        │
+                        ▼
+         ┌─────────────────────────────┐
+         │          «model»            │
+         │          Tuition            │
+         ├─────────────────────────────┤
+         │ + id : BigInt (PK)          │
+         │ + tutor : FK(User)          │
+         │ + student : FK(User)        │
+         │ + subject : varchar         │
+         │ + salary : Int              │
+         │ + commission : Int          │
+         │ + commission_status : enum  │
+         │   [pending|proof_uploaded   │
+         │    |paid]                   │
+         │ + month : varchar           │
+         │ + status : enum             │
+         │   [active|completed|cancel] │
+         │ + proof_image : Image       │
+         └──────────────┬──────────────┘
+                        │ 1
+                        │
+                        ▼ 1
+         ┌─────────────────────────────┐
+         │          «model»            │
+         │        Commission           │
+         ├─────────────────────────────┤
+         │ + id : BigInt (PK)          │
+         │ + tutor : FK(User)          │
+         │ + tuition : OneToOne        │
+         │ + amount : Decimal          │
+         │ + payment : OneToOne(opt.)  │
+         │ + paid : bool               │
+         └─────────────────────────────┘
+
+         ┌─────────────────────────────┐      ┌────────────────────────────┐
+         │          «model»            │      │          «model»           │
+         │          Payment            │      │       ContactUnlock        │
+         ├─────────────────────────────┤      ├────────────────────────────┤
+         │ + id : BigInt (PK)          │      │ + id : BigInt (PK)         │
+         │ + user : FK(User)           │      │ + student : FK(User)       │
+         │ + amount : Decimal          │      │ + tutor : FK(User)         │
+         │ + method : enum[bkash|nagad]│      │ + payment : OneToOne       │
+         │ + status : enum             │◄─────│ + created_at : DateTime    │
+         │ + purpose : enum            │      └────────────────────────────┘
+         │ + transaction_id : varchar  │
+         │ + payment_id : varchar      │
+         │ + raw_response : JSON       │
+         │ + created_at : DateTime     │
+         └─────────────────────────────┘
+
+         ┌─────────────────────────────┐      ┌────────────────────────────┐
+         │          «model»            │      │          «model»           │
+         │          Message            │      │        ChatRequest         │
+         ├─────────────────────────────┤      ├────────────────────────────┤
+         │ + id : BigInt (PK)          │      │ + id : BigInt (PK)         │
+         │ + sender : FK(User)         │      │ + sender : FK(User)        │
+         │ + receiver : FK(User)       │      │ + receiver : FK(User)      │
+         │ + text : TextField          │      │ + status : enum            │
+         │ + read : bool               │      │   [pending|accepted|       │
+         │ + created_at : DateTime     │      │    rejected]               │
+         └─────────────────────────────┘      │ + created_at : DateTime    │
+                                              └────────────────────────────┘
+      </pre>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §6 DATA FLOW DIAGRAM -->
+  <section id="dfd">
+    <div class="section-label">Section 06</div>
+    <h2>Data Flow Diagram (DFD)</h2>
+
+    <h3>Level 0 — Context Diagram</h3>
+    <div class="diagram">
+      <pre>
+                    ┌────────────────────────────────────────────────────┐
+                    │                                                    │
+   ┌──────────┐     │                  ╔════════════╗                   │
+   │ Student  │────►│ tuition posts    ║            ║  OTP / alerts     │
+   │ / Parent │◄────│ contact data     ║ TuitionMedia║─────────────────►│ SMS Provider
+   └──────────┘     │                  ║   System   ║                   │ (BulkSMS etc.)
+                    │                  ║            ║                   │
+   ┌──────────┐     │ applications     ║            ║  push messages   │
+   │  Tutor   │────►│ commission proof ║            ║─────────────────►│ Push (VAPID)
+   │          │◄────│ salary info      ╚════════════╝                   │
+   └──────────┘     │                       ▲  │                       │
+                    │                       │  │ transactions          │
+   ┌──────────┐     │ approvals/bans        │  ▼                       │
+   │  Admin   │────►│ salary amounts        │  ┌──────────────────┐   │
+   │          │◄────│ reports              ─┘  │  bKash / Nagad   │   │
+   └──────────┘     │                         │  Payment Gateway  │   │
+                    │                         └──────────────────┘   │
+                    │                               ▲  │              │
+                    │                    queries    │  │  responses  │
+                    │                         ┌────┴──▼────────┐     │
+                    │                         │  Gemini / Groq │     │
+                    │                         │   (Guru AI)    │     │
+                    └─────────────────────────└────────────────┘─────┘
+      </pre>
+    </div>
+
+    <h3>Level 1 — Expanded Data Flow</h3>
+    <div class="diagram">
+      <pre>
+  ┌──────────┐  phone+pw   ┌─────────────┐  session     ┌───────────────┐
+  │  User    │────────────►│  P1: Auth   │─────────────►│  Session DB   │
+  │ (any)    │◄────────────│  Module     │◄─────────────│               │
+  └────┬─────┘  JWT token  └─────────────┘  session data└───────────────┘
+       │
+       ├──── student ─────►┌─────────────┐  post data   ┌───────────────┐
+       │                   │  P2: Posts  │─────────────►│  posts table  │
+       │                   │  Module     │◄─────────────│               │
+       │                   └──────┬──────┘  post list   └───────────────┘
+       │                          │ pending approval
+       │                          ▼
+       │                   ┌─────────────┐  decision    ┌───────────────┐
+       │◄── admin ─────────│  P3: Admin  │─────────────►│  posts table  │
+       │                   │  Approval   │              │  users table  │
+       │                   └──────┬──────┘              └───────────────┘
+       │                          │ notification
+       │                          ▼
+       │                   ┌─────────────┐  notif data  ┌───────────────┐
+       │◄──────────────────│ P4: Notify  │─────────────►│ notifications │
+       │                   │  Engine     │              │    table      │
+       │                   └─────────────┘              └───────────────┘
+       │
+       ├── tuition request►┌─────────────┐  req data    ┌───────────────┐
+       │                   │ P5: Tuition │─────────────►│  tuition_req  │
+       │◄── accept/reject ─│ Matching    │              │  tuition      │
+       │                   └──────┬──────┘              └───────────────┘
+       │                          │ accepted
+       │                          ▼
+       ├── payment init ──►┌─────────────┐  txn data    ┌───────────────┐
+       │                   │ P6: Payment │─────────────►│ payments table│
+       │◄── receipt ───────│  Gateway    │──────────────►  bKash/Nagad  │
+       │                   └─────────────┘  callback    └───────────────┘
+       │
+       ├── message ───────►┌─────────────┐  msg data    ┌───────────────┐
+       │◄── messages ──────│ P7: Chat    │─────────────►│ messages table│
+       │                   │  Module     │              └───────────────┘
+       │                   └─────────────┘
+       │
+       └── AI question ───►┌─────────────┐  API call    ┌───────────────┐
+           AI response ◄───│ P8: Guru AI │─────────────►│ Gemini / Groq │
+                           └─────────────┘              └───────────────┘
+      </pre>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §7 USE CASE DIAGRAM -->
+  <div class="page-break"></div>
+  <section id="usecase">
+    <div class="section-label">Section 07</div>
+    <h2>Use Case Diagram</h2>
+    <div class="diagram">
+      <pre>
+  ╔═══════════════════════════════════════════════════════════════════════════╗
+  ║                     TuitionMedia — Use Case Diagram                      ║
+  ╠═══════════════════════════════════════════════════════════════════════════╣
+  ║                                                                           ║
+  ║  ┌──────────┐     (UC-01) Register / Login with Phone                    ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │  STUDENT │     (UC-02) Create Tuition Post                            ║
+  ║  │ / PARENT │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-03) Browse Verified Tutors                         ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-04) Send Tuition Request                           ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-05) Unlock Tutor Contact (Pay)                     ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-06) Chat with Connected Tutor                      ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-07) View Notifications                             ║
+  ║  └──────────┘ ───────────────────────────────────────────►  (         )  ║
+  ║                                                                           ║
+  ║  ┌──────────┐     (UC-01) Register / Login with Phone                    ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │  TUTOR   │     (UC-08) Create / Update Profile + ID Doc               ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-09) Browse Student Posts                           ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-10) Apply to Tuition Post                          ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-11) Manage Active Tuitions                         ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-12) Upload Commission Proof / Pay Online           ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-06) Chat with Connected Student                    ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-13) Ask Guru AI                                    ║
+  ║  └──────────┘ ───────────────────────────────────────────►  (         )  ║
+  ║                                                                           ║
+  ║  ┌──────────┐     (UC-14) Approve / Reject Profiles                      ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │  ADMIN   │     (UC-15) Approve / Reject Tuition Posts                 ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-16) Ban / Unban Users                              ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-17) Set Salary &amp; Confirm Payments                  ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-18) Message Any User (Admin Inbox)                 ║
+  ║  │          │ ───────────────────────────────────────────►  (         )  ║
+  ║  │          │     (UC-19) Use Admin Guru AI Analytics                    ║
+  ║  └──────────┘ ───────────────────────────────────────────►  (         )  ║
+  ║                                                                           ║
+  ╚═══════════════════════════════════════════════════════════════════════════╝
+
+  Extends / Includes:
+  ─────────────────────────────────────────────────────────────────────────
+  UC-05 (Unlock Contact) ─── «include» ─── UC-P1: Initiate bKash/Nagad
+  UC-12 (Pay Commission) ─── «include» ─── UC-P1: Initiate bKash/Nagad
+  UC-04 (Send Request)   ─── «extend»  ─── UC-06 (Chat unlocked on accept)
+  UC-14 (Approve Profile)─── «extend»  ─── UC-07 (Notif sent to user)
+      </pre>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §8 ACTIVITY DIAGRAMS -->
+  <section id="activity">
+    <div class="section-label">Section 08</div>
+    <h2>Activity Diagrams</h2>
+
+    <h3>Activity 1 — Tuitor Registration &amp; Profile Approval</h3>
+    <div class="diagram">
+      <pre>
+  ●  START
+  │
+  ▼
+  [Tutor fills sign-up form: name, phone, password, role=tutor]
+  │
+  ▼
+  [System creates User record; profile_approved = False]
+  │
+  ▼
+  [Tutor logs in → redirected to dashboard]
+  │
+  ▼
+  [Tutor fills profile: university, subjects, location, uploads ID]
+  │
+  ▼
+  [System sets profile_approved = False; notifies admin]
+  │
+  ▼
+  ┌────────────────────────────────────────┐
+  │       Admin Reviews Profile            │
+  └────────────────────────────────────────┘
+  │
+  ┌──────────────┴──────────────┐
+  │ Approve                     │ Reject
+  ▼                             ▼
+  [profile_approved = True]   [Notification: "Profile rejected"]
+  [Notification: "Approved!"]   │
+  │                             ▼
+  │                           [Tutor revises &amp; resubmits]
+  ▼
+  [Tutor visible in Browse Tutors]
+  │
+  ◉  END
+      </pre>
+    </div>
+
+    <h3>Activity 2 — Student Posts a Tuition &amp; Tutor Applies</h3>
+    <div class="diagram">
+      <pre>
+  ●  START
+  │
+  ▼
+  [Student creates Post: subject, location, budget, schedule]
+  │
+  ▼
+  [Post status = pending_approval; Admin notified]
+  │
+  ▼
+  ┌────────────────────┐
+  │  Admin reviews     │
+  └────────────────────┘
+  │
+  ┌──────┴────────┐
+  │ Approve       │ Reject
+  ▼               ▼
+  [status=active] [status=rejected; student notified]
+  │               │
+  ▼               ◉  END
+  [Tutors browse Browse Posts]
+  │
+  ▼
+  [Tutor clicks Apply → TuitionRequest created (status=pending)]
+  │
+  ▼
+  [Student notified; views request]
+  │
+  ┌──────┴───────────┐
+  │ Accept           │ Reject
+  ▼                  ▼
+  [status=accepted]  [status=rejected; tutor notified]
+  │                  │
+  ▼                  ◉  END
+  [Tuition record created]
+  [Chat between them UNLOCKED]
+  │
+  ▼
+  [Admin sets Salary → Commission calculated (30%)]
+  │
+  ◉  END
+      </pre>
+    </div>
+
+    <h3>Activity 3 — Contact Unlock Payment (bKash)</h3>
+    <div class="diagram">
+      <pre>
+  ●  START
+  │
+  ▼
+  [Student views tutor profile; contact is hidden]
+  │
+  ▼
+  [Student clicks "Unlock Contact" → Payment page]
+  │
+  ▼
+  [System creates Payment record (status=initiated)]
+  │
+  ▼
+  [System calls bKash API: createPayment]
+  │
+  ▼
+  [bKash returns payment URL → redirect student]
+  │
+  ▼
+  [Student completes payment on bKash]
+  │
+  ▼
+  [bKash sends callback to /payments/bkash/callback/]
+  │
+  ▼
+  ┌────────────────────────────────────┐
+  │ System verifies payment with bKash │
+  └────────────────────────────────────┘
+  │
+  ┌──────┴──────────────────┐
+  │ Success                  │ Failure / Cancel
+  ▼                          ▼
+  [Payment status = completed][Payment status = failed/cancelled]
+  [ContactUnlock record created][Student shown error message]
+  [Tutor contact revealed]   │
+  │                          ◉  END
+  ▼
+  [Student sees phone + address]
+  │
+  ◉  END
+      </pre>
+    </div>
+
+    <h3>Activity 4 — Admin Inbox Messaging (AJAX Flow)</h3>
+    <div class="diagram">
+      <pre>
+  ●  START
+  │
+  ▼
+  [Admin opens /admin-panel/inbox/]
+  │
+  ▼
+  [Page loads contact list with per-contact unread badges]
+  │
+  ▼
+  ┌─────────────────────────────────────────────┐
+  │  Has ?with=user_id in URL?                  │
+  └───────────┬─────────────────────────────────┘
+  │ YES                        │ NO
+  ▼                            ▼
+  [Auto-load conversation]    [Show "No conversation selected"]
+  │
+  ▼
+  [fetch /admin-panel/inbox/messages/{id}/]
+  │
+  ▼
+  [Render chat bubbles in scrollable area]
+  [Mark received messages as read]
+  │
+  ▼
+  [Set polling interval: every 3s fetch new msgs]
+  │
+  ▼
+  [Admin types message + clicks Send]
+  │
+  ▼
+  [AJAX POST to /admin-panel/inbox/send/]
+  │
+  ▼
+  [Server creates Message record; returns JSON]
+  │
+  ▼
+  [Append bubble instantly; no page reload]
+  │
+  ▼
+  [Every 8s: fetch /admin-panel/inbox/unread-counts/]
+  [Update sidebar badges + header total]
+  │
+  ◉  END (continuous loop while page open)
+      </pre>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §9 ARCHITECTURE -->
+  <div class="page-break"></div>
+  <section id="arch">
+    <div class="section-label">Section 09</div>
+    <h2>System Architecture</h2>
+
+    <h3>🏗️ Application Layer Structure</h3>
+    <div class="diagram">
+      <pre>
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                         CLIENT LAYER                                │
+  │   Browser (Django Templates + Vanilla JS + Service Worker)          │
+  └───────────────────────────────┬─────────────────────────────────────┘
+                                  │ HTTPS
+  ┌───────────────────────────────▼─────────────────────────────────────┐
+  │                      PRESENTATION LAYER                             │
+  │   Gunicorn WSGI → Django URL Router → Views → Templates             │
+  │   WhiteNoise serves /static/ (CSS, JS, images)                      │
+  └───────────────────────────────┬─────────────────────────────────────┘
+                                  │
+  ┌───────────────────────────────▼─────────────────────────────────────┐
+  │                        BUSINESS LAYER                               │
+  │                                                                      │
+  │  ┌──────────┐ ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌───────────┐ │
+  │  │ accounts │ │  posts  │ │ tuitions │ │ payments │ │   chat    │ │
+  │  └──────────┘ └─────────┘ └──────────┘ └──────────┘ └───────────┘ │
+  │  ┌──────────┐ ┌──────────────┐                                      │
+  │  │   guru   │ │ admin_panel  │                                      │
+  │  └──────────┘ └──────────────┘                                      │
+  │                                                                      │
+  │  REST API Layer (DRF + SimpleJWT)                                   │
+  │  /api/auth/  /api/tuition/  /api/chat/  /api/payment/               │
+  └───────────────────────────────┬─────────────────────────────────────┘
+                                  │ Django ORM
+  ┌───────────────────────────────▼─────────────────────────────────────┐
+  │                         DATA LAYER                                  │
+  │                   PostgreSQL 16 Database                             │
+  │   Tables: users, posts, tuition_requests, tuitions, payments,       │
+  │           contact_unlocks, commissions, messages, chat_requests,    │
+  │           notifications, push_subscriptions, otp_verifications      │
+  └───────────────────────────────┬─────────────────────────────────────┘
+                                  │
+  ┌───────────────────────────────▼─────────────────────────────────────┐
+  │                      EXTERNAL SERVICES                              │
+  │                                                                      │
+  │   Google Gemini API      Groq API         bKash Tokenized API       │
+  │   Nagad Payment API      BulkSMSBD        Twilio (SMS)              │
+  │   VAPID Web Push                                                     │
+  └─────────────────────────────────────────────────────────────────────┘
+      </pre>
+    </div>
+
+    <h3>📁 Directory Structure</h3>
+    <div class="diagram">
+      <pre>
+  tuitionmedia/               ← Django project root
+  ├── tuitionmedia/
+  │   ├── settings.py         ← Configuration (DB, API keys, SMTP)
+  │   ├── urls.py             ← Root URL routing
+  │   ├── wsgi.py             ← WSGI entry point
+  │   └── context_processors.py ← VAPID key, unread notif count
+  │
+  ├── accounts/               ← User model, auth, OTP, notifications
+  ├── posts/                  ← Tuition post model + views
+  ├── tuitions/               ← Request + Tuition lifecycle
+  ├── payments/               ← bKash, Nagad, unlock, commission
+  ├── chat/                   ← Messaging + ChatRequest
+  ├── guru/                   ← AI assistant views
+  ├── admin_panel/            ← Admin-only dashboard + inbox
+  │
+  ├── templates/              ← Jinja2 / Django templates (global)
+  │   ├── base.html           ← Master layout (sidebar, nav, JS)
+  │   ├── admin_panel/        ← Admin-specific templates
+  │   ├── accounts/           ← Login, signup, profile, dashboard
+  │   ├── chat/               ← User inbox
+  │   ├── posts/, tuitions/   ← Domain templates
+  │   └── guru/               ← Guru chat templates
+  │
+  ├── static/
+  │   ├── css/main.css        ← Full design system (glass UI)
+  │   └── js/main.js          ← Theme switcher, push, Guru widget
+  │
+  ├── manage.py
+  ├── requirements.txt
+  └── Procfile                ← Gunicorn production command
+      </pre>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §10 SCENARIOS -->
+  <section id="scenario">
+    <div class="section-label">Section 10</div>
+    <h2>Sample Usage Scenarios</h2>
+
+    <h3>📖 Scenario 1 — Student Finds and Hires a Tutor</h3>
+    <div class="scenario">
+      <div class="scenario-step"><div class="step-num">1</div><div class="step-body"><strong>Registration</strong><span>Fatema (student) signs up with her phone number 01711XXXXXX and password. The system creates a Student-role user account.</span></div></div>
+      <div class="scenario-step"><div class="step-num">2</div><div class="step-body"><strong>Profile Complete</strong><span>Fatema fills her profile: class 10, school name, Dhaka location. profile_approved = True by default for students.</span></div></div>
+      <div class="scenario-step"><div class="step-num">3</div><div class="step-body"><strong>Create Post</strong><span>Fatema creates a tuition post: "Math &amp; Physics, Class 10, Mirpur, 3000 BDT/month". Post enters pending_approval status.</span></div></div>
+      <div class="scenario-step"><div class="step-num">4</div><div class="step-body"><strong>Admin Approves</strong><span>Admin reviews and approves the post. Fatema receives a notification. The post is now publicly visible to tutors.</span></div></div>
+      <div class="scenario-step"><div class="step-num">5</div><div class="step-body"><strong>Browse Tutors</strong><span>Fatema also browses available tutors and finds Karim (tutor), who has approved profile with Math &amp; Physics subjects.</span></div></div>
+      <div class="scenario-step"><div class="step-num">6</div><div class="step-body"><strong>Unlock Contact</strong><span>Fatema pays 100 BDT via bKash to unlock Karim's phone number and home address. ContactUnlock record is created.</span></div></div>
+      <div class="scenario-step"><div class="step-num">7</div><div class="step-body"><strong>Direct Request</strong><span>Fatema sends a TuitionRequest to Karim directly. Karim receives a notification.</span></div></div>
+      <div class="scenario-step"><div class="step-num">8</div><div class="step-body"><strong>Karim Accepts</strong><span>Karim accepts the request. A Tuition record is created. The chat between Fatema and Karim is now unlocked.</span></div></div>
+      <div class="scenario-step"><div class="step-num">9</div><div class="step-body"><strong>Tuition Begins</strong><span>Both parties communicate via in-platform chat. Admin sets salary = 3000 BDT. Commission = 900 BDT (30%) is calculated.</span></div></div>
+      <div class="scenario-step"><div class="step-num">10</div><div class="step-body"><strong>Commission Paid</strong><span>Karim pays 900 BDT commission via Nagad. The commission status changes to 'paid' and the tuition is marked active.</span></div></div>
+    </div>
+
+    <h3>📖 Scenario 2 — Admin Manages Platform</h3>
+    <div class="scenario">
+      <div class="scenario-step"><div class="step-num">1</div><div class="step-body"><strong>Login as Admin</strong><span>Admin logs in with admin credentials. Redirected to the Admin Overview dashboard showing platform statistics.</span></div></div>
+      <div class="scenario-step"><div class="step-num">2</div><div class="step-body"><strong>Profile Approvals</strong><span>Admin sees 3 pending profiles in the approval queue. Reviews ID documents and approves 2, rejects 1 (incomplete submission).</span></div></div>
+      <div class="scenario-step"><div class="step-num">3</div><div class="step-body"><strong>Post Approvals</strong><span>Admin reviews 2 pending tuition posts. Approves both after checking details are legitimate and not spam.</span></div></div>
+      <div class="scenario-step"><div class="step-num">4</div><div class="step-body"><strong>Inbox — User Message</strong><span>Admin opens Inbox, sees "2 unread" badge next to Fatema. Clicks her contact, conversation loads via AJAX instantly.</span></div></div>
+      <div class="scenario-step"><div class="step-num">5</div><div class="step-body"><strong>Reply &amp; Track</strong><span>Admin types a reply, clicks Send. Message appears in the bubble instantly (no reload). Unread badge clears.</span></div></div>
+      <div class="scenario-step"><div class="step-num">6</div><div class="step-body"><strong>Guru AI Analytics</strong><span>Admin opens Guru AI, asks "Show me this week's stats". Guru queries live DB and responds with user counts, revenue, pending commissions.</span></div></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════ §11 PAYMENT FLOW -->
+  <section id="payment">
+    <div class="section-label">Section 11</div>
+    <h2>Payment Flow Detail</h2>
+
+    <h3>bKash Tokenized Payment Flow</h3>
+    <div class="flow">
+      <div class="flow-box">User clicks Pay</div><div class="flow-arr">→</div>
+      <div class="flow-box">Create Payment record<br>(initiated)</div><div class="flow-arr">→</div>
+      <div class="flow-box orange">Call bKash<br>createPayment API</div><div class="flow-arr">→</div>
+      <div class="flow-box orange">Redirect to<br>bKash URL</div><div class="flow-arr">→</div>
+      <div class="flow-box green">User pays<br>on bKash</div><div class="flow-arr">→</div>
+      <div class="flow-box">bKash callback<br>to our server</div><div class="flow-arr">→</div>
+      <div class="flow-box green">Verify &amp; mark<br>completed</div>
+    </div>
+
+    <h3>Commission Tracking States</h3>
+    <div class="flow">
+      <div class="flow-box gray">No Salary Set</div><div class="flow-arr">→</div>
+      <div class="flow-box">Salary Set<br>(pending)</div><div class="flow-arr">→</div>
+      <div class="flow-box orange">Proof Uploaded<br>(proof_uploaded)</div><div class="flow-arr">→</div>
+      <div class="flow-box green">Admin Confirms<br>(paid)</div>
+    </div>
+
+    <table style="margin-top:20px">
+      <thead><tr><th>Event</th><th>Trigger</th><th>Record Created / Updated</th></tr></thead>
+      <tbody>
+        <tr><td>Student unlocks contact</td><td>Completed bKash/Nagad payment</td><td>Payment (completed) + ContactUnlock</td></tr>
+        <tr><td>Tutor pays commission online</td><td>Completed bKash/Nagad payment</td><td>Payment (completed) + Commission.paid=True</td></tr>
+        <tr><td>Tutor uploads proof</td><td>Manual proof image upload</td><td>Tuition.commission_status = proof_uploaded</td></tr>
+        <tr><td>Admin confirms payment</td><td>Admin clicks "Confirm"</td><td>Tuition.commission_status = paid</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ════════════════════════════════ §12 SECURITY -->
+  <section id="security">
+    <div class="section-label">Section 12</div>
+    <h2>Security Design</h2>
+    <table>
+      <thead><tr><th>Threat</th><th>Mechanism</th><th>Implementation</th></tr></thead>
+      <tbody>
+        <tr><td>Cross-Site Request Forgery</td><td>CSRF Token</td><td>Django CsrfViewMiddleware; all AJAX POST requests include X-CSRFToken header</td></tr>
+        <tr><td>Unauthorised Access</td><td>Authentication Guard</td><td>@login_required decorator + admin_required wrapper on all protected views</td></tr>
+        <tr><td>Privilege Escalation</td><td>Role Enforcement</td><td>admin_required() checks request.user.role == 'admin' for all admin views</td></tr>
+        <tr><td>Password Theft</td><td>PBKDF2 Hashing</td><td>Django's built-in password hasher (PBKDF2-SHA256) with salt</td></tr>
+        <tr><td>Session Hijacking</td><td>Secure Cookies</td><td>SESSION_COOKIE_SECURE=True and CSRF_COOKIE_SECURE=True in production</td></tr>
+        <tr><td>Credential Leak</td><td>Environment Variables</td><td>All API keys loaded via os.getenv(); .env excluded from VCS</td></tr>
+        <tr><td>SQL Injection</td><td>ORM Parameterization</td><td>All DB access via Django ORM with parameterised queries</td></tr>
+        <tr><td>XSS</td><td>Template Auto-escaping</td><td>Django templates auto-escape all user content; escHtml() in JS for dynamic content</td></tr>
+        <tr><td>Fake Profiles</td><td>Admin Approval Gate</td><td>profile_approved flag; tutors invisible until manually verified by admin</td></tr>
+        <tr><td>Banned User Access</td><td>Ban Flag Check</td><td>banned field on User; login blocked for banned accounts</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ════════════════════════════════ §13 REST API -->
+  <section id="api">
+    <div class="section-label">Section 13</div>
+    <h2>REST API Overview</h2>
+    <p>TuitionMedia exposes a versioned REST API under <code>/api/</code> secured with JWT Bearer tokens (SimpleJWT). This enables future mobile clients to consume the platform.</p>
+    <table>
+      <thead><tr><th>Base Path</th><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="5"><strong>/api/auth/</strong></td><td>send-otp/</td><td>POST</td><td>Send OTP to phone number</td></tr>
+        <tr><td>verify-otp/</td><td>POST</td><td>Verify OTP, return JWT tokens</td></tr>
+        <tr><td>login/</td><td>POST</td><td>Phone + password login, return JWT</td></tr>
+        <tr><td>me/</td><td>GET</td><td>Get current user profile</td></tr>
+        <tr><td>notifications/</td><td>GET</td><td>List notifications for current user</td></tr>
+        <tr><td rowspan="4"><strong>/api/tuition/</strong></td><td>list/</td><td>GET</td><td>List active tuitions</td></tr>
+        <tr><td>create/</td><td>POST</td><td>Create new tuition request</td></tr>
+        <tr><td>my/</td><td>GET</td><td>Get my active tuitions</td></tr>
+        <tr><td>&lt;pk&gt;/</td><td>GET/PATCH</td><td>Retrieve or update a tuition</td></tr>
+        <tr><td rowspan="4"><strong>/api/chat/</strong></td><td>send/</td><td>POST</td><td>Send a message</td></tr>
+        <tr><td>messages/</td><td>GET</td><td>Get messages with a user</td></tr>
+        <tr><td>inbox/</td><td>GET</td><td>Get contact list with last messages</td></tr>
+        <tr><td>requests/</td><td>GET/POST</td><td>Manage chat requests</td></tr>
+        <tr><td rowspan="4"><strong>/api/payment/</strong></td><td>create/</td><td>POST</td><td>Initiate a payment</td></tr>
+        <tr><td>verify/</td><td>POST</td><td>Verify a payment transaction</td></tr>
+        <tr><td>history/</td><td>GET</td><td>Get payment history</td></tr>
+        <tr><td>commissions/</td><td>GET</td><td>Get commission records</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ════════════════════════════════ §14 CONCLUSION -->
+  <section id="conclusion">
+    <div class="section-label">Section 14</div>
+    <h2>Conclusion</h2>
+    <p>TuitionMedia successfully digitises one of Bangladesh's largest informal markets by bringing together students, tutors, and administrators in a single, verified, and transparent platform. The system addresses the core pain points of the industry:</p>
+    <div class="grid-2">
+      <div class="card card-green">
+        <h4>✅ Problems Solved</h4>
+        <ul>
+          <li>Verified profiles eliminate fake tutors</li>
+          <li>Structured posts accelerate discovery</li>
+          <li>Digital payments create audit trails</li>
+          <li>Permissioned chat ensures privacy</li>
+          <li>Admin panel ensures platform quality</li>
+          <li>Guru AI provides intelligent assistance</li>
+        </ul>
+      </div>
+      <div class="card card-blue">
+        <h4>🔮 Future Enhancements</h4>
+        <ul>
+          <li>Native mobile apps (Android / iOS)</li>
+          <li>Video tutoring session integration</li>
+          <li>Automated background verification</li>
+          <li>Rating &amp; review system</li>
+          <li>Subscription tiers for premium access</li>
+          <li>AI-powered auto-matching algorithm</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:20px">
+      The platform is built on a scalable Django + PostgreSQL architecture with a clean separation of concerns across 7 Django apps, a REST API layer for future mobile clients, and integration with real-world payment providers. With the existing foundation, TuitionMedia is positioned to grow into a fully-featured marketplace for the Bangladesh tutoring ecosystem.
+    </p>
+  </section>
+
+  <div class="doc-footer">
+    <p><strong>TuitionMedia</strong> — Full Project Report · Version 1.0 · 2026</p>
+    <p style="margin-top:4px">Django 6.0.4 · PostgreSQL 16 · DRF · Gemini AI · bKash · Nagad</p>
+  </div>
+
+</div>
+</body>
+</html>

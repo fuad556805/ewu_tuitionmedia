@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TuitionMedia — Project Proposal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --primary:#4f46e5;--primary-light:#818cf8;--accent:#7c3aed;
+    --dark:#0f172a;--text:#1e293b;--muted:#64748b;
+    --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+    --green:#059669;--orange:#d97706;--red:#dc2626;
+  }
+  body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);font-size:14px;line-height:1.7}
+  @media print{body{background:#fff}@page{margin:2cm;size:A4}.page-break{page-break-before:always}}
+
+  /* Cover */
+  .cover{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;position:relative;overflow:hidden}
+  .cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(99,102,241,0.3) 0%,transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(124,58,237,0.2) 0%,transparent 50%)}
+  .cover-badge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:99px;padding:6px 20px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:32px;display:inline-block;backdrop-filter:blur(4px)}
+  .cover h1{font-family:'Merriweather',serif;font-size:48px;font-weight:700;line-height:1.2;margin-bottom:16px;text-shadow:0 2px 20px rgba(0,0,0,0.3)}
+  .cover h1 span{color:#a5b4fc}
+  .cover .tagline{font-size:18px;opacity:0.8;max-width:520px;margin:0 auto 48px;font-weight:300}
+  .cover-meta{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:28px 40px;display:inline-grid;grid-template-columns:1fr 1fr;gap:20px 60px;text-align:left;backdrop-filter:blur(8px)}
+  .cover-meta-item label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:0.6;margin-bottom:4px}
+  .cover-meta-item span{font-weight:600;font-size:14px}
+  .cover-logo{width:72px;height:72px;background:linear-gradient(135deg,#6366f1,#a855f7);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 32px;box-shadow:0 8px 32px rgba(99,102,241,0.4)}
+
+  /* Layout */
+  .container{max-width:820px;margin:0 auto;padding:48px 40px}
+  section{margin-bottom:56px}
+
+  /* Section titles */
+  .section-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+  h2{font-family:'Merriweather',serif;font-size:26px;font-weight:700;color:var(--dark);margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--primary);display:inline-block}
+  h3{font-size:16px;font-weight:700;color:var(--dark);margin:24px 0 10px}
+  p{margin-bottom:14px;color:var(--text)}
+
+  /* Cards */
+  .card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+  .card-accent{border-left:4px solid var(--primary)}
+  .card-green{border-left:4px solid var(--green)}
+  .card-orange{border-left:4px solid var(--orange)}
+
+  /* Grid */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  @media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);margin-bottom:16px}
+  th{background:var(--dark);color:#fff;padding:12px 16px;text-align:left;font-size:12px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
+  td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr:nth-child(even) td{background:#f8fafc}
+
+  /* List */
+  ul,ol{padding-left:20px;margin-bottom:14px}
+  li{margin-bottom:6px;font-size:13.5px}
+
+  /* Badge */
+  .badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600}
+  .badge-blue{background:#eff6ff;color:#1d4ed8}
+  .badge-purple{background:#f5f3ff;color:#7c3aed}
+  .badge-green{background:#f0fdf4;color:#15803d}
+  .badge-orange{background:#fff7ed;color:#c2410c}
+  .badge-red{background:#fef2f2;color:#b91c1c}
+
+  /* Timeline */
+  .timeline{position:relative;padding-left:28px}
+  .timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--border)}
+  .timeline-item{position:relative;margin-bottom:20px}
+  .timeline-item::before{content:'';position:absolute;left:-24px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--primary);border:2px solid var(--white);box-shadow:0 0 0 2px var(--primary)}
+  .timeline-item h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px}
+  .timeline-item p{font-size:12.5px;color:var(--muted);margin:0}
+
+  /* Quote */
+  blockquote{background:linear-gradient(135deg,#f5f3ff,#eff6ff);border-left:4px solid var(--primary);border-radius:0 12px 12px 0;padding:20px 24px;margin:20px 0;font-style:italic;color:var(--text)}
+  blockquote strong{display:block;margin-top:8px;font-style:normal;font-size:12px;color:var(--muted)}
+
+  /* Stat boxes */
+  .stat-box{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+  .stat-box .num{font-size:32px;font-weight:800;color:var(--primary);line-height:1}
+  .stat-box .lbl{font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* TOC */
+  .toc{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:28px 32px}
+  .toc h3{font-size:14px;font-weight:700;margin-bottom:16px;color:var(--dark)}
+  .toc ol{counter-reset:item}
+  .toc li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dotted var(--border);font-size:13px}
+  .toc li:last-child{border-bottom:none}
+  .toc li span{color:var(--muted);font-size:12px}
+  .toc a{text-decoration:none;color:var(--text)}
+  .toc a:hover{color:var(--primary)}
+
+  /* Objective list */
+  .obj-list{list-style:none;padding:0}
+  .obj-list li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .obj-list li:last-child{border-bottom:none}
+  .obj-list li .icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .obj-list li .txt{flex:1}
+  .obj-list li .txt strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+  .obj-list li .txt span{font-size:12.5px;color:var(--muted)}
+
+  /* Footer */
+  .doc-footer{text-align:center;padding:40px 0 20px;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ COVER -->
+<div class="cover">
+  <div class="cover-logo">📚</div>
+  <div class="cover-badge">Project Proposal</div>
+  <h1>Tuition<span>Media</span></h1>
+  <p class="tagline">A smart tuition matching platform connecting students with qualified tutors across Bangladesh</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><label>Project Type</label><span>Web Application</span></div>
+    <div class="cover-meta-item"><label>Technology</label><span>Django + PostgreSQL</span></div>
+    <div class="cover-meta-item"><label>Target Market</label><span>Bangladesh</span></div>
+    <div class="cover-meta-item"><label>Document Version</label><span>1.0 — 2026</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ MAIN -->
+<div class="container">
+
+  <!-- Table of Contents -->
+  <section>
+    <div class="toc">
+      <h3>📋 Table of Contents</h3>
+      <ol>
+        <li><a href="#executive">1. Executive Summary</a><span>pg 2</span></li>
+        <li><a href="#problem">2. Problem Statement</a><span>pg 2</span></li>
+        <li><a href="#objectives">3. Project Objectives</a><span>pg 3</span></li>
+        <li><a href="#scope">4. Scope &amp; Boundaries</a><span>pg 3</span></li>
+        <li><a href="#solution">5. Proposed Solution</a><span>pg 4</span></li>
+        <li><a href="#tech">6. Technology Stack</a><span>pg 5</span></li>
+        <li><a href="#stakeholders">7. Stakeholders</a><span>pg 5</span></li>
+        <li><a href="#timeline">8. Project Timeline</a><span>pg 6</span></li>
+        <li><a href="#budget">9. Budget Estimate</a><span>pg 6</span></li>
+        <li><a href="#risks">10. Risk Analysis</a><span>pg 7</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 1. Executive Summary -->
+  <section id="executive">
+    <div class="section-label">Section 01</div>
+    <h2>Executive Summary</h2>
+    <blockquote>
+      TuitionMedia is a full-stack web platform that digitises the private tutoring ecosystem in Bangladesh — reducing dependency on intermediaries, accelerating tutor-student matching, and providing a trustworthy environment backed by profile verification and commission management.
+      <strong>— Project Vision Statement</strong>
+    </blockquote>
+    <p>
+      Private tutoring is a multi-billion BDT industry in Bangladesh, yet the matching process between students and tutors remains largely manual, slow, and trust-deficient. Parents spend days posting on social media groups and calling friends, while qualified tutors have no reliable way to showcase their credentials.
+    </p>
+    <p>
+      TuitionMedia addresses this gap by providing a centralised, verified marketplace where students post tuition requirements, tutors apply with complete profiles, and administrators oversee the platform's integrity. The system is further enhanced with an <strong>AI-powered assistant (Guru)</strong> for smart matching, a built-in messaging system, and integration with local payment gateways (bKash and Nagad) for transparent financial transactions.
+    </p>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="stat-box"><div class="num">3</div><div class="lbl">User Roles</div></div>
+      <div class="stat-box"><div class="num">8+</div><div class="lbl">Core Modules</div></div>
+      <div class="stat-box"><div class="num">2</div><div class="lbl">Payment Gateways</div></div>
+    </div>
+  </section>
+
+  <!-- 2. Problem Statement -->
+  <section id="problem">
+    <div class="section-label">Section 02</div>
+    <h2>Problem Statement</h2>
+    <p>The current private tutoring landscape in Bangladesh suffers from several interconnected problems:</p>
+    <div class="card card-accent">
+      <h3 style="margin-top:0">🔍 Lack of Discovery</h3>
+      <p style="margin:0">Students and tutors rely on word-of-mouth, Facebook groups, and physical notice boards. There is no single, structured platform where verified profiles are discoverable.</p>
+    </div>
+    <div class="card card-accent">
+      <h3 style="margin-top:0">🛡️ Absence of Verification</h3>
+      <p style="margin:0">Anyone can claim to be an expert tutor. Without ID verification and academic credential checks, families cannot make informed, safe hiring decisions.</p>
+    </div>
+    <div class="card card-accent">
+      <h3 style="margin-top:0">💬 Communication Gaps</h3>
+      <p style="margin:0">Negotiations happen on untracked, external channels (WhatsApp, phone calls). There is no record of conversations, no dispute mechanism, and no structured request flow.</p>
+    </div>
+    <div class="card card-accent">
+      <h3 style="margin-top:0">💰 Opaque Financial Transactions</h3>
+      <p style="margin:0">Commission and fee payments are cash-only and untracked. Agencies take large cuts with no digital receipt or accountability trail.</p>
+    </div>
+  </section>
+
+  <!-- 3. Objectives -->
+  <section id="objectives">
+    <div class="section-label">Section 03</div>
+    <h2>Project Objectives</h2>
+    <ul class="obj-list">
+      <li>
+        <div class="icon">🎯</div>
+        <div class="txt">
+          <strong>Build a Verified Marketplace</strong>
+          <span>Create a platform where student and tutor profiles are manually reviewed and approved by administrators before becoming publicly visible.</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">⚡</div>
+        <div class="txt">
+          <strong>Accelerate Tutor-Student Matching</strong>
+          <span>Provide structured post and application flows so both parties can find and evaluate each other in minutes rather than days.</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">🤖</div>
+        <div class="txt">
+          <strong>AI-Assisted Discovery via Guru</strong>
+          <span>Integrate the Gemini/Groq-powered Guru assistant to recommend tutors, answer questions, and provide platform insights to admins.</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">💳</div>
+        <div class="txt">
+          <strong>Digitise Financial Transactions</strong>
+          <span>Integrate bKash and Nagad payment gateways to handle contact-unlock fees and tutor commission payments with full audit trails.</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">🔔</div>
+        <div class="txt">
+          <strong>Real-time Notifications &amp; Messaging</strong>
+          <span>Enable in-platform chat with unread badge tracking, push notifications via VAPID/Web Push, and SMS OTP for secure authentication.</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">🛡️</div>
+        <div class="txt">
+          <strong>Comprehensive Admin Control</strong>
+          <span>Give administrators tools to approve/reject profiles and posts, ban bad actors, track commissions, and communicate directly with any user.</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- 4. Scope -->
+  <section id="scope">
+    <div class="section-label">Section 04</div>
+    <h2>Scope &amp; Boundaries</h2>
+    <div class="grid-2">
+      <div class="card card-green">
+        <h3 style="margin-top:0;color:var(--green)">✅ In Scope</h3>
+        <ul>
+          <li>User registration with phone + OTP</li>
+          <li>Role-based dashboards (Student / Tutor / Admin)</li>
+          <li>Tuition post creation, approval, browsing</li>
+          <li>Tutor profile creation, approval, browsing</li>
+          <li>Tuition request send/accept/reject workflow</li>
+          <li>In-platform messaging (admin + users)</li>
+          <li>bKash &amp; Nagad payment integration</li>
+          <li>Commission tracking &amp; proof upload</li>
+          <li>Push notification system (VAPID)</li>
+          <li>Guru AI assistant (Gemini / Groq)</li>
+          <li>Admin panel: approvals, bans, reporting</li>
+          <li>REST API for all core resources</li>
+        </ul>
+      </div>
+      <div class="card card-orange">
+        <h3 style="margin-top:0;color:var(--orange)">❌ Out of Scope</h3>
+        <ul>
+          <li>Video/audio tutoring sessions</li>
+          <li>Automated tutor background checks (3rd party)</li>
+          <li>Mobile native apps (iOS / Android)</li>
+          <li>Multi-language interface (Bangla UI)</li>
+          <li>Automated salary disbursement to tutors</li>
+          <li>Review &amp; rating system</li>
+          <li>Subscription-based premium tiers</li>
+          <li>Multi-city/international expansion logic</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Proposed Solution -->
+  <section id="solution">
+    <div class="section-label">Section 05</div>
+    <h2>Proposed Solution</h2>
+    <p>TuitionMedia is architected as a <strong>monolithic Django web application</strong> with a well-structured set of decoupled apps, each owning its domain. A supplementary REST API (Django REST Framework) serves mobile/third-party clients.</p>
+
+    <h3>Core Modules</h3>
+    <table>
+      <thead><tr><th>Module</th><th>Responsibility</th><th>Key Features</th></tr></thead>
+      <tbody>
+        <tr><td><strong>accounts</strong></td><td>Identity &amp; Auth</td><td>Phone login, OTP, profile, roles, push subscriptions, notifications</td></tr>
+        <tr><td><strong>posts</strong></td><td>Tuition Listings</td><td>Create/edit posts, admin approval, browse tutors &amp; posts</td></tr>
+        <tr><td><strong>tuitions</strong></td><td>Engagement Flow</td><td>Tuition requests, active tuition management, salary tracking</td></tr>
+        <tr><td><strong>payments</strong></td><td>Transactions</td><td>bKash/Nagad integration, contact unlock, commission payment</td></tr>
+        <tr><td><strong>chat</strong></td><td>Messaging</td><td>Permission-gated messages, admin inbox, unread counts, AJAX polling</td></tr>
+        <tr><td><strong>guru</strong></td><td>AI Assistant</td><td>Gemini/Groq-powered chatbot, admin analytics mode</td></tr>
+        <tr><td><strong>admin_panel</strong></td><td>Administration</td><td>Approvals, user management, payment confirmation, reporting</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Revenue Model</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div class="badge badge-blue" style="margin-bottom:10px">Contact Unlock Fee</div>
+        <p style="margin:0;font-size:13px">Students pay a flat fee to unlock a tutor's phone number and address, creating a pay-per-lead monetisation model.</p>
+      </div>
+      <div class="card">
+        <div class="badge badge-purple" style="margin-bottom:10px">30% Commission</div>
+        <p style="margin:0;font-size:13px">Tutors pay a 30% commission from their first month's salary upon starting an engagement, trackable via proof upload or direct payment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Tech Stack -->
+  <section id="tech">
+    <div class="section-label">Section 06</div>
+    <h2>Technology Stack</h2>
+    <table>
+      <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Backend Framework</td><td>Django 6.0.4</td><td>MVC, ORM, admin, auth, migrations</td></tr>
+        <tr><td>API Layer</td><td>Django REST Framework 3.17.1</td><td>RESTful API + JWT authentication</td></tr>
+        <tr><td>Database</td><td>PostgreSQL 16</td><td>Primary relational data store</td></tr>
+        <tr><td>Frontend</td><td>Django Templates + Vanilla JS</td><td>SSR with dynamic AJAX interactions</td></tr>
+        <tr><td>AI Integration</td><td>Google Gemini API + Groq</td><td>Guru AI assistant</td></tr>
+        <tr><td>Payment Gateway</td><td>bKash Tokenized API + Nagad API</td><td>Local payment processing</td></tr>
+        <tr><td>SMS / OTP</td><td>Twilio, BulkSMSBD, SSL Wireless</td><td>Phone number OTP verification</td></tr>
+        <tr><td>Push Notifications</td><td>VAPID / Web Push</td><td>Browser push notifications</td></tr>
+        <tr><td>Static Files</td><td>WhiteNoise</td><td>Efficient static file serving</td></tr>
+        <tr><td>Production Server</td><td>Gunicorn WSGI</td><td>Application server</td></tr>
+        <tr><td>Hosting</td><td>Replit / Render</td><td>Cloud deployment</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 7. Stakeholders -->
+  <section id="stakeholders">
+    <div class="section-label">Section 07</div>
+    <h2>Stakeholders</h2>
+    <table>
+      <thead><tr><th>Stakeholder</th><th>Role</th><th>Primary Interest</th></tr></thead>
+      <tbody>
+        <tr><td>👩‍🎓 Students / Parents</td><td>End User</td><td>Finding verified tutors quickly, safely, affordably</td></tr>
+        <tr><td>👨‍🏫 Tutors</td><td>End User</td><td>Gaining students, showcasing credentials, tracking income</td></tr>
+        <tr><td>🛡️ Platform Admin</td><td>Operator</td><td>Ensuring quality, managing approvals, collecting revenue</td></tr>
+        <tr><td>💳 Payment Providers</td><td>Integration Partner</td><td>Transaction volume (bKash, Nagad)</td></tr>
+        <tr><td>📡 SMS Providers</td><td>Integration Partner</td><td>OTP message delivery</td></tr>
+        <tr><td>🤖 AI Providers</td><td>Integration Partner</td><td>API usage (Google, Groq)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 8. Timeline -->
+  <section id="timeline">
+    <div class="section-label">Section 08</div>
+    <h2>Project Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>Phase 1 — Foundation (Weeks 1–3)</h4>
+        <p>Project setup, user authentication (phone + OTP), role-based access, basic profile management, database schema.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Phase 2 — Core Matching (Weeks 4–6)</h4>
+        <p>Tuition post creation, admin approval workflow, browse tutors/posts, tuition request send/accept/reject, basic dashboard.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Phase 3 — Payments &amp; Transactions (Weeks 7–9)</h4>
+        <p>bKash/Nagad integration, contact unlock payment, commission payment and proof upload, payment history views.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Phase 4 — Communication (Weeks 10–11)</h4>
+        <p>In-platform messaging with permission gates, admin inbox, AJAX polling, push notification system with VAPID.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Phase 5 — Intelligence &amp; Polish (Weeks 12–13)</h4>
+        <p>Guru AI integration (Gemini/Groq), admin analytics mode, notifications panel, REST API completion, responsive UI polish.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Phase 6 — Testing &amp; Deployment (Week 14)</h4>
+        <p>End-to-end testing, security hardening, static file collection, production deployment to Render/Gunicorn.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Budget -->
+  <section id="budget">
+    <div class="section-label">Section 09</div>
+    <h2>Budget Estimate</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Type</th><th>Estimated Cost</th></tr></thead>
+      <tbody>
+        <tr><td>Cloud Hosting (Render/Replit)</td><td>Monthly</td><td>$0 – $25 / month</td></tr>
+        <tr><td>PostgreSQL Database</td><td>Included / Managed</td><td>$0 (Replit built-in)</td></tr>
+        <tr><td>Google Gemini API</td><td>Per-request</td><td>Free tier / Pay-as-you-go</td></tr>
+        <tr><td>Groq API</td><td>Per-request</td><td>Free tier available</td></tr>
+        <tr><td>bKash Integration</td><td>% per transaction</td><td>1.5% + MFS charges</td></tr>
+        <tr><td>Nagad Integration</td><td>% per transaction</td><td>1.5% + MFS charges</td></tr>
+        <tr><td>SMS (BulkSMSBD)</td><td>Per SMS</td><td>~0.40 BDT / SMS</td></tr>
+        <tr><td>Domain Name</td><td>Annual</td><td>~$10 / year</td></tr>
+        <tr><td>SSL Certificate</td><td>Included with hosting</td><td>$0</td></tr>
+        <tr><td><strong>Total Operational (Year 1)</strong></td><td></td><td><strong>~$300 – $600</strong></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 10. Risk Analysis -->
+  <section id="risks">
+    <div class="section-label">Section 10</div>
+    <h2>Risk Analysis</h2>
+    <table>
+      <thead><tr><th>Risk</th><th>Probability</th><th>Impact</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Payment gateway API changes</td>
+          <td><span class="badge badge-orange">Medium</span></td>
+          <td><span class="badge badge-red">High</span></td>
+          <td>Abstract payment layer; monitor bKash/Nagad changelogs</td>
+        </tr>
+        <tr>
+          <td>AI API rate limits / cost spikes</td>
+          <td><span class="badge badge-orange">Medium</span></td>
+          <td><span class="badge badge-orange">Medium</span></td>
+          <td>Dual-provider strategy (Gemini + Groq fallback)</td>
+        </tr>
+        <tr>
+          <td>Fraudulent tutor profiles</td>
+          <td><span class="badge badge-red">High</span></td>
+          <td><span class="badge badge-red">High</span></td>
+          <td>Admin approval gate + ID document upload requirement</td>
+        </tr>
+        <tr>
+          <td>SMS OTP delivery failures</td>
+          <td><span class="badge badge-orange">Medium</span></td>
+          <td><span class="badge badge-orange">Medium</span></td>
+          <td>Configurable SMS backends with console fallback</td>
+        </tr>
+        <tr>
+          <td>Database performance under scale</td>
+          <td><span class="badge badge-green">Low</span></td>
+          <td><span class="badge badge-orange">Medium</span></td>
+          <td>DB indexes on FK fields; query optimisation via select_related</td>
+        </tr>
+        <tr>
+          <td>User data privacy breach</td>
+          <td><span class="badge badge-green">Low</span></td>
+          <td><span class="badge badge-red">High</span></td>
+          <td>HTTPS only, CSRF protection, secure cookies in production</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="doc-footer">
+    <p>TuitionMedia — Project Proposal · Version 1.0 · 2026</p>
+    <p style="margin-top:4px">Prepared for academic and development purposes</p>
+  </div>
+
+</div>
+</body>
+</html>
