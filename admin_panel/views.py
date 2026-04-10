@@ -83,9 +83,17 @@ def approve_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     action = request.POST.get('action')
 
+    if action == 'approve':
+        post.status = 'active'
+    else:
+        post.status = 'rejected'
 
-    # ------------------------------
-# All Posts (Admin View)
+    post.save()
+    return redirect('admin_panel:posts_approval')
+
+
+# ------------------------------
+# All Posts (Admin - Delete)
 # ------------------------------
 @admin_required
 def all_posts(request):
@@ -95,17 +103,10 @@ def all_posts(request):
 
 @admin_required
 def delete_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-    post.delete()
+    if request.method == 'POST':
+        post = get_object_or_404(Post, pk=post_id)
+        post.delete()
     return redirect('admin_panel:all_posts')
-
-    if action == 'approve':
-        post.status = 'active'
-    else:
-        post.status = 'rejected'
-
-    post.save()
-    return redirect('admin_panel:posts_approval')
 
 
 # ------------------------------
@@ -247,3 +248,4 @@ def admin_send_message(request):
         return redirect(f'/admin-panel/inbox/?with={receiver.pk}')
 
     return redirect('admin_panel:admin_inbox')
+    
