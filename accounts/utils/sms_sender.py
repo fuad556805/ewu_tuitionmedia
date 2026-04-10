@@ -5,7 +5,8 @@ Supports:
   2. BulkSMSBD        — local BD provider (bulk SMS)
   3. SSL Wireless     — popular local BD provider
   4. Mock/Console     — for development (logs OTP to console)
-Configured via SMS_BACKEND setting or SMS_BACKEND env var.
+
+Fallback chain: configured backend → fallback backends → console
 """
 import logging
 from django.conf import settings
@@ -46,7 +47,7 @@ def _send_bulksmsbd(phone: str, message: str):
             'api_key':  settings.BULKSMSBD_API_KEY,
             'type':     'text',
             'number':   phone,
-            'senderid': settings.BULKSMSBD_SENDER_ID,
+            'senderid': getattr(settings, 'BULKSMSBD_SENDER_ID', ''),
             'message':  message,
         },
         timeout=10,
@@ -88,33 +89,60 @@ _BACKENDS = {
     'console':     _send_console,
 }
 
+
+# ──────────────────── Fallback chain ────────────────────
+
+def _get_fallback_chain(primary: str) -> list:
+    """
+    Returns ordered list of backends to try.
+    Primary backend first, then SMS_FALLBACKS list, then console.
+    """
+    fallbacks = getattr(settings, 'SMS_FALLBACKS', [])
+    chain = [primary] + [f for f in fallbacks if f != primary]
+
+    # console সবসময় শেষে থাকবে (last resort)
+    if 'console' not in chain:
+        chain.append('console')
+
+    return chain
+
+
 # ──────────────────── Public interface ────────────────────
 
 def send_otp_sms(phone: str, otp: str):
     """
     Send an OTP SMS to the given phone number.
-    Uses the backend configured in settings.SMS_BACKEND.
-    Args:
-        phone: any BD phone format (01X, 801X, +801X)
-        otp:   6-digit OTP string
+    Tries primary backend first, then fallbacks on failure.
     """
-    # Normalize to E.164 for all backends
     phone = _normalize_bd_phone(phone)
-
     message = (
         f"Your TuitionMedia OTP is: {otp}\n"
         f"Do not share it with anyone. Valid for 2 minutes."
     )
 
-    # Read fresh from settings (not module-level cache)
-    backend = getattr(settings, 'SMS_BACKEND', 'console').lower()
-    sender  = _BACKENDS.get(backend)
+    primary = getattr(settings, 'SMS_BACKEND', 'console').lower()
+    chain   = _get_fallback_chain(primary)
 
-    if sender is None:
-        raise ValueError(
-            f"Unknown SMS_BACKEND: '{backend}'. "
-            f"Choose from: {list(_BACKENDS.keys())}"
-        )
+    last_error = None
+    for backend_name in chain:
+        sender = _BACKENDS.get(backend_name)
+        if sender is None:
+            logger.warning("Unknown SMS backend: '%s', skipping.", backend_name)
+            continue
 
-    logger.info("Sending OTP via %s to %s", backend, phone)
-    sender(phone, message)
+        try:
+            logger.info("Trying SMS via %s to %s", backend_name, phone)
+            sender(phone, message)
+            if backend_name != primary:
+                logger.warning("Primary backend '%s' failed — sent via fallback '%s'", primary, backend_name)
+            return  # সফল হলে বের হয়ে যাও
+
+        except Exception as exc:
+            last_error = exc
+            logger.warning("SMS backend '%s' failed: %s", backend_name, exc)
+            continue  # পরের backend try করো
+
+    # সব backend fail হলে
+    raise RuntimeError(
+        f"All SMS backends failed. Last error: {last_error}"
+    )
