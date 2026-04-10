@@ -209,6 +209,10 @@
       <main class="main-content">{% block content %}{% endblock %}</main>
     </div>
 
+    {% if request.user.is_authenticated and request.user.role == 'admin' %}
+    <button class="guru-fab" onclick="window.location='{% url 'admin_guru' %}'" title="Guru AI — Admin Analytics">🦉</button>
+    {% endif %}
+
     {% if request.user.is_authenticated and request.user.role != 'admin' %}
     <button class="guru-fab" id="guruFab" title="Ask Guru AI">🦉</button>
     <div class="guru-panel glass" id="guruPanel">
