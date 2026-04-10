@@ -144,6 +144,11 @@
             >📋 Posts Approval</a
           >
           <a
+            href="{% url 'admin_panel:all_posts' %}"
+            class="nav-link {% if 'all-posts' in request.path %}active{% endif %}"
+            >🗂️ All Posts</a
+          >
+          <a
             href="{% url 'admin_panel:all_requests' %}"
             class="nav-link {% if 'requests' in request.path %}active{% endif %}"
             >🔗 All Requests</a
@@ -367,4 +372,5 @@
     </script>
     {% endif %}
   </body>
-</html>
+  </html>
+  
