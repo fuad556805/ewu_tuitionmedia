@@ -1,99 +1,194 @@
 {% extends 'base.html' %}
 {% block title %}Messages — TuitionMedia{% endblock %}
+
 {% block content %}
 <div style="animation:slideIn 0.4s ease">
-  <div style="font-family:var(--font-head);font-size:22px;font-weight:700;margin-bottom:18px">Messages</div>
+
+  <!-- Page title -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:20px">Messages</div>
+      <div style="color:var(--muted);font-size:13px">Your conversations</div>
+    </div>
+    {% if active_user %}
+    <a href="{% url 'public_profile' active_user.pk %}"
+       class="btn btn-secondary btn-sm">👤 View Profile</a>
+    {% endif %}
+  </div>
 
   {% if active_user %}
   <input type="hidden" id="chatOtherUserId" value="{{ active_user.pk }}">
   {% endif %}
   <input type="hidden" id="myUserId" value="{{ request.user.pk }}">
 
-  <!-- Mobile: back button when in chat view -->
-  <button id="chatBackBtn"
-          onclick="showChatContacts()"
-          style="display:none;margin-bottom:12px"
-          class="btn btn-secondary btn-sm">
+  <!-- Mobile back button -->
+  <button id="chatBackBtn" onclick="showChatContacts()"
+          style="display:none;margin-bottom:10px" class="btn btn-secondary btn-sm">
     ← Back to Contacts
   </button>
 
-  <div class="chat-layout glass" style="border-radius:var(--radius)" id="chatLayout">
-    <!-- Contacts sidebar -->
-    <div class="chat-sidebar glass" id="chatContactsPanel"
-         style="border-radius:var(--radius) 0 0 var(--radius);border-right:1px solid var(--glass-border)">
-      <div style="padding:10px 12px 8px;border-bottom:1px solid var(--glass-border);font-size:11px;font-weight:600;color:var(--muted)">USERS</div>
-      <div style="overflow-y:auto;flex:1">
+  <div class="chat-layout" id="chatLayout">
+
+    <!-- ── Sidebar / Contacts ── -->
+    <div class="chat-sidebar" id="chatContactsPanel">
+
+      <div class="chat-sidebar-header">
+        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:10px">
+          Contacts
+          <span style="color:var(--muted);font-weight:400;font-size:12px">({{ contacts.count }})</span>
+        </div>
+        <input
+          class="chat-search"
+          id="contactSearch"
+          placeholder="🔍  Search by name..."
+          oninput="filterContacts(this.value)"
+        />
+      </div>
+
+      <div class="chat-contacts-list" id="contactsList">
         {% for u in contacts %}
-          <a href="?with={{ u.pk }}"
-             class="chat-contact {% if active_user.pk == u.pk %}active{% endif %}"
-             style="text-decoration:none;color:var(--text)"
-             onclick="onContactClick(event)">
-            <div class="avatar avatar-sm" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">{{ u.first_name|first }}</div>
-            <div>
-              <div style="font-weight:600;font-size:12px">{{ u.get_full_name|truncatechars:14 }}</div>
-              <div style="color:var(--muted);font-size:10px;text-transform:capitalize">{{ u.role }}</div>
-            </div>
-          </a>
+        <a href="?with={{ u.pk }}"
+           class="chat-contact {% if active_user and active_user.pk == u.pk %}active{% endif %}"
+           id="contact-{{ u.pk }}"
+           data-name="{{ u.get_full_name|lower }}"
+           onclick="onContactClick(event)">
+
+          <!-- Clickable avatar → public profile -->
+          <div class="chat-contact-avatar">
+            <a href="{% url 'public_profile' u.pk %}"
+               title="View {{ u.get_full_name }}'s profile"
+               onclick="event.stopPropagation()">
+              {% if u.profile_image %}
+                <img src="{{ u.profile_image.url }}" alt="{{ u.get_full_name }}"
+                     style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--glass-border);display:block">
+              {% else %}
+                <div class="avatar avatar-sm"
+                     style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% elif u.role == 'admin' %}#ffcb47,#ff9f47{% else %}#ff6b9d,#ff3a5c{% endif %});width:38px;height:38px;font-size:15px;flex-shrink:0">
+                  {{ u.first_name|first|upper }}
+                </div>
+              {% endif %}
+            </a>
+          </div>
+
+          <div class="chat-contact-info">
+            <div class="chat-contact-name">{{ u.get_full_name|truncatechars:18 }}</div>
+            <div class="chat-contact-role">{{ u.role }}</div>
+          </div>
+        </a>
         {% empty %}
-          <div style="padding:14px;color:var(--muted);font-size:13px">No conversations yet.</div>
+        <div style="padding:30px 14px;color:var(--muted);font-size:13px;text-align:center">
+          <div style="font-size:28px;margin-bottom:6px">🤝</div>
+          No contacts yet.<br>Accept a tuition request to start chatting.
+        </div>
         {% endfor %}
+
+        <div id="noContactsMsg" style="display:none;padding:20px 14px;color:var(--muted);font-size:13px;text-align:center">
+          No results found.
+        </div>
       </div>
     </div>
 
-    <!-- Chat area -->
+    <!-- ── Chat Main ── -->
     <div class="chat-main" id="chatMainPanel">
       {% if active_user %}
-        <!-- Header -->
-        <div style="padding:13px 16px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;gap:10px">
-          <div class="avatar avatar-sm" style="background:linear-gradient(135deg,{% if active_user.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %})">{{ active_user.first_name|first }}</div>
-          <div>
-            <div style="font-weight:600">{{ active_user.get_full_name }}</div>
-            <div style="color:var(--muted);font-size:12px;text-transform:capitalize">{{ active_user.role }}</div>
-          </div>
-        </div>
 
-        <!-- Messages -->
-        <div class="chat-messages" id="chatMessages">
-          {% for msg in messages_list %}
-            <div class="msg-bubble {% if msg.sender == request.user %}mine{% else %}theirs{% endif %}" data-msg-id="{{ msg.pk }}">
-              {{ msg.text }}
-              <div class="msg-time">{{ msg.created_at|date:"H:i" }}</div>
-            </div>
-          {% empty %}
-            <div style="text-align:center;color:var(--muted);padding:30px 0;font-size:13px">Say hello! 👋</div>
-          {% endfor %}
+      <!-- Chat header -->
+      <div class="chat-header">
+        <div class="chat-header-avatar">
+          <a href="{% url 'public_profile' active_user.pk %}" title="View profile">
+            {% if active_user.profile_image %}
+              <img src="{{ active_user.profile_image.url }}" alt="{{ active_user.get_full_name }}"
+                   style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);display:block">
+            {% else %}
+              <div class="avatar avatar-sm"
+                   style="background:linear-gradient(135deg,{% if active_user.role == 'tutor' %}#7c6bff,#a06bff{% elif active_user.role == 'admin' %}#ffcb47,#ff9f47{% else %}#ff6b9d,#ff3a5c{% endif %});width:44px;height:44px;font-size:17px;flex-shrink:0">
+                {{ active_user.first_name|first|upper }}
+              </div>
+            {% endif %}
+          </a>
         </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:15px;font-family:var(--font-head)">
+            {{ active_user.get_full_name }}
+          </div>
+          <div style="color:var(--muted);font-size:12px;text-transform:capitalize">{{ active_user.role }}</div>
+        </div>
+        <a href="{% url 'public_profile' active_user.pk %}"
+           class="btn btn-secondary btn-sm" style="flex-shrink:0">
+          👤 Profile
+        </a>
+      </div>
 
-        {% if active_user.pk in contact_ids %}
-          <div class="chat-input-row">
-            <form id="chatForm" style="display:flex;gap:8px;width:100%">
-              {% csrf_token %}
-              <input class="form-control" id="chatInput" placeholder="Type a message..." style="border-radius:99px" autocomplete="off">
-              <button type="submit" class="btn btn-primary" style="border-radius:99px;padding:9px 18px">Send</button>
-            </form>
-          </div>
-        {% else %}
-          <div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">
-            You can only message accepted users.
-          </div>
-        {% endif %}
+      <!-- Messages -->
+      <div class="chat-messages" id="chatMessages">
+        {% for msg in messages_list %}
+        <div class="msg-bubble {% if msg.sender == request.user %}mine{% else %}theirs{% endif %}" data-msg-id="{{ msg.pk }}">
+          {{ msg.text }}
+          <div class="msg-time">{{ msg.created_at|date:"M d · H:i" }}</div>
+        </div>
+        {% empty %}
+        <div style="text-align:center;color:var(--muted);padding:40px 0;font-size:13px">
+          <div style="font-size:32px;margin-bottom:8px">👋</div>
+          Say hello to {{ active_user.first_name }}!
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if active_user.pk in contact_ids %}
+      <div class="chat-input-row">
+        <form id="chatForm" style="display:flex;gap:10px;width:100%">
+          {% csrf_token %}
+          <input class="form-control" id="chatInput" placeholder="Type a message…"
+                 style="border-radius:99px;flex:1" autocomplete="off">
+          <button type="submit" class="btn btn-primary" style="border-radius:99px;padding:9px 22px;flex-shrink:0">
+            Send ➤
+          </button>
+        </form>
+      </div>
+      {% else %}
+      <div style="text-align:center;color:var(--muted);padding:16px;font-size:13px;border-top:1px solid var(--glass-border)">
+        You can only message accepted contacts.
+      </div>
+      {% endif %}
 
       {% else %}
-        <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted)">
-          <div style="font-size:32px">💬</div>
-          <div>Select a user to start chatting</div>
-        </div>
+
+      <!-- Empty state -->
+      <div class="chat-empty-state">
+        <div style="font-size:48px;opacity:0.4">💬</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:16px">No conversation selected</div>
+        <div style="font-size:13px">Choose a contact from the left to start chatting.</div>
+      </div>
+
       {% endif %}
     </div>
   </div>
 </div>
 
 <script>
-// Mobile chat: show main panel when contact selected
+// ── Contact search ──
+function filterContacts(query) {
+  const q = query.toLowerCase().trim();
+  const items = document.querySelectorAll('#contactsList .chat-contact');
+  let visible = 0;
+  items.forEach(function(el) {
+    const name = el.dataset.name || '';
+    const match = !q || name.includes(q);
+    el.style.display = match ? 'flex' : 'none';
+    if (match) visible++;
+  });
+  const noMsg = document.getElementById('noContactsMsg');
+  if (noMsg) noMsg.style.display = visible === 0 ? 'block' : 'none';
+}
+
+// ── Mobile panel switching ──
 function onContactClick(e) {
   if (window.innerWidth <= 768) {
-    // Let the link navigate — the page will reload with active_user set
-    // After reload, show main panel on mobile
+    const layout = document.getElementById('chatLayout');
+    const backBtn = document.getElementById('chatBackBtn');
+    layout.classList.add('chat-mobile-show-main');
+    layout.classList.remove('chat-mobile-show-contacts');
+    if (backBtn) backBtn.style.display = 'inline-flex';
   }
 }
 
@@ -109,21 +204,25 @@ function initChatMobile() {
   if (window.innerWidth > 768) return;
   const layout = document.getElementById('chatLayout');
   const backBtn = document.getElementById('chatBackBtn');
-  const hasActiveUser = document.getElementById('chatOtherUserId');
-
-  if (hasActiveUser) {
-    // Show main chat panel on mobile when a user is selected
+  const hasActive = !!document.getElementById('chatOtherUserId');
+  if (hasActive) {
     layout.classList.add('chat-mobile-show-main');
     layout.classList.remove('chat-mobile-show-contacts');
     if (backBtn) backBtn.style.display = 'inline-flex';
   } else {
     layout.classList.add('chat-mobile-show-contacts');
     layout.classList.remove('chat-mobile-show-main');
-    if (backBtn) backBtn.style.display = 'none';
   }
 }
 
-document.addEventListener('DOMContentLoaded', initChatMobile);
+document.addEventListener('DOMContentLoaded', function() {
+  // Scroll to bottom
+  const msgs = document.getElementById('chatMessages');
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+
+  initChatMobile();
+});
+
 window.addEventListener('resize', function() {
   if (window.innerWidth > 768) {
     const layout = document.getElementById('chatLayout');
@@ -132,5 +231,68 @@ window.addEventListener('resize', function() {
     if (backBtn) backBtn.style.display = 'none';
   }
 });
+
+// ── AJAX send & poll ──
+{% if active_user and active_user.pk in contact_ids %}
+const OTHER_ID = {{ active_user.pk }};
+const MY_ID = parseInt(document.getElementById('myUserId').value);
+let lastMsgId = 0;
+
+// Find last message id from existing messages
+document.querySelectorAll('.msg-bubble[data-msg-id]').forEach(function(el) {
+  const id = parseInt(el.dataset.msgId || 0);
+  if (id > lastMsgId) lastMsgId = id;
+});
+
+function appendBubble(text, isMine, time, msgId) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg-bubble ' + (isMine ? 'mine' : 'theirs');
+  if (msgId) div.dataset.msgId = msgId;
+  div.innerHTML = escapeHtml(text) + '<div class="msg-time">' + time + '</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  if (msgId > lastMsgId) lastMsgId = msgId;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Send via AJAX
+document.getElementById('chatForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  fetch('/chat/send/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+    body: 'csrfmiddlewaretoken=' + encodeURIComponent(csrf) +
+          '&receiver_id=' + OTHER_ID + '&text=' + encodeURIComponent(text)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.ok) appendBubble(data.text, true, data.time, data.id);
+  });
+});
+
+// Poll for new messages every 3s
+function pollMessages() {
+  fetch('/chat/messages/' + OTHER_ID + '/?after=' + lastMsgId, {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    (data.messages || []).forEach(function(m) {
+      appendBubble(m.text, m.sender_id === MY_ID, m.time, m.id);
+    });
+  });
+}
+setInterval(pollMessages, 3000);
+{% endif %}
 </script>
 {% endblock %}
