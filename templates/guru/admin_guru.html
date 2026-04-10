@@ -2,139 +2,151 @@
 {% block title %}Admin Guru AI — TuitionMedia{% endblock %}
 {% block content %}
 <div style="animation:slideIn 0.4s ease">
-  <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+  <div class="section-header">
     <div>
-      <h1 style="font-family:var(--font-head);font-size:22px;font-weight:700">🛡️ Admin Guru AI</h1>
-      <p style="color:var(--muted);margin-top:4px;font-size:13px">Website-এর সব statistics ও তথ্য জানুন AI-এর সাহায্যে</p>
+      <div class="section-title">🦉 Guru AI <span style="font-size:13px;background:rgba(239,68,68,0.15);color:#f87171;padding:3px 10px;border-radius:99px;font-weight:600;vertical-align:middle">Admin Mode</span></div>
+      <div class="section-sub">Website-এর সব statistics ও তথ্য জানুন AI-এর সাহায্যে</div>
     </div>
-    <a href="{% url 'admin_panel:overview' %}" class="btn btn-secondary" style="font-size:13px">← Dashboard</a>
   </div>
 
-  <!-- Stat pills -->
-  <div id="statPills" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px"></div>
-
-  <div class="glass" style="max-width:800px;margin:0 auto;display:flex;flex-direction:column;height:calc(100vh - 230px);overflow:hidden">
-    <!-- Header -->
-    <div style="padding:16px 20px;border-bottom:1px solid var(--glass-border);background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(168,85,247,0.10));display:flex;align-items:center;gap:12px">
-      <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#a855f7);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🤖</div>
+  <div class="glass" style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;height:calc(100vh - 200px);overflow:hidden">
+    <!-- Header — same as guru.html -->
+    <div style="padding:16px 20px;border-bottom:1px solid var(--glass-border);background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(99,102,241,0.1));display:flex;align-items:center;gap:12px">
+      <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px">🦉</div>
       <div>
-        <div style="font-family:var(--font-head);font-weight:700">Admin Guru</div>
-        <div style="color:#f87171;font-size:13px;display:flex;align-items:center;gap:6px">
-          <span class="pulse-dot" style="background:#ef4444"></span> Live data access — Admin only
+        <div style="font-family:var(--font-head);font-weight:700">Guru AI Assistant</div>
+        <div style="color:#c084fc;font-size:13px;display:flex;align-items:center;gap:6px">
+          <span class="pulse-dot" style="background:#4dffa6"></span> Admin Data Access Active
         </div>
       </div>
       <div style="margin-left:auto">
-        <span class="badge" style="background:rgba(239,68,68,0.2);color:#f87171;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600">🛡️ Admin Mode</span>
+        <span class="badge badge-guru">Powered by Gemini AI</span>
       </div>
     </div>
 
-    <!-- Messages -->
-    <div id="adminGuruMessages" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#a855f7);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🤖</div>
-        <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:0 16px 16px 16px;padding:12px 16px;font-size:14px;line-height:1.6;max-width:85%">
-          আমি Admin Guru! আমি TuitionMedia-এর সব live data দেখতে পাচ্ছি। 🛡️<br><br>
-          আপনি আমাকে জিজ্ঞেস করতে পারেন:<br>
-          • মোট কত user আছে?<br>
-          • কত BDT commission pending আছে?<br>
-          • এই সপ্তাহে কোনো নতুন tutor join করেছে?<br>
-          • কোন posts pending approval আছে?<br><br>
-          কী জানতে চান?
-        </div>
+    <!-- Messages — uses unique id to avoid conflict with main.js -->
+    <div class="guru-messages" id="adminMsgs" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px">
+      <div class="guru-msg">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🦉</div>
+        <div class="guru-bubble bot" style="font-size:14px">আমি Guru — আপনার TuitionMedia Admin AI সহায়ক! 🛡️&#10;&#10;আমি আপনাকে দিতে পারি:&#10;• Platform-এর সব live statistics&#10;• Users, posts, tuitions-এর details&#10;• Commission ও payment তথ্য&#10;• যেকোনো admin প্রশ্নের উত্তর&#10;&#10;কী জানতে চান?</div>
       </div>
     </div>
 
     <!-- Quick prompts -->
-    <div style="padding:10px 18px 0;display:flex;flex-wrap:wrap;gap:7px">
-      <button class="quick-btn admin-quick" onclick="sendAdminMsg('মোট users ও platform statistics দাও')">📊 Platform Stats</button>
-      <button class="quick-btn admin-quick" onclick="sendAdminMsg('কত commission pending আছে? Details দাও')">💰 Commission Status</button>
-      <button class="quick-btn admin-quick" onclick="sendAdminMsg('সাম্প্রতিক নতুন users কারা?')">👥 New Users</button>
-      <button class="quick-btn admin-quick" onclick="sendAdminMsg('কোন tuitions active আছে এবং তাদের details কী?')">📚 Active Tuitions</button>
-      <button class="quick-btn admin-quick" onclick="sendAdminMsg('Platform-এর overall health report দাও')">🏥 Health Report</button>
+    <div class="guru-quick" style="padding:10px 18px 0">
+      <button class="quick-btn ag-btn" data-msg="Platform-এর সব statistics দাও">📊 Platform Stats</button>
+      <button class="quick-btn ag-btn" data-msg="কত commission pending আছে?">💰 Commission</button>
+      <button class="quick-btn ag-btn" data-msg="সাম্প্রতিক নতুন users কারা?">👥 New Users</button>
+      <button class="quick-btn ag-btn" data-msg="Active tuitions-এর details দাও">📚 Active Tuitions</button>
+      <button class="quick-btn ag-btn" data-msg="Platform health report দাও">🏥 Health Report</button>
     </div>
 
-    <!-- Input -->
-    <div style="padding:14px 18px;border-top:1px solid var(--glass-border);display:flex;gap:10px">
-      <input class="form-control" id="adminGuruInput" placeholder="Admin question লিখুন (Bangla/English)..." style="border-radius:99px" onkeydown="if(event.key==='Enter')sendAdminMsg()">
-      <button class="btn" id="adminGuruSend" onclick="sendAdminMsg()" style="border-radius:99px;padding:10px 20px;background:linear-gradient(135deg,#ef4444,#a855f7);color:#fff;font-weight:600;white-space:nowrap">Send ↑</button>
+    <!-- Input — unique ids -->
+    <div class="guru-input-row" style="padding:14px 18px;border-top:1px solid var(--glass-border)">
+      <input class="form-control" id="adminInput" placeholder="Admin question লিখুন (Bangla/English)..." style="border-radius:99px">
+      <button class="btn btn-guru" id="adminSend" style="border-radius:99px;padding:10px 20px">Send</button>
+    </div>
+  </div>
+
+  <!-- Info tiles -->
+  <div style="max-width:720px;margin:16px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <div class="glass" style="padding:16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">📊</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Live Statistics</div>
+      <div style="color:var(--muted);font-size:12px">Users, posts, tuitions সব real-time data</div>
+    </div>
+    <div class="glass" style="padding:16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">💰</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Financial Overview</div>
+      <div style="color:var(--muted);font-size:12px">Commission pending, paid ও total summary</div>
+    </div>
+    <div class="glass" style="padding:16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">🛡️</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Admin Insights</div>
+      <div style="color:var(--muted);font-size:12px">Platform management ও actionable advice</div>
     </div>
   </div>
 </div>
 
 <script>
-const history = [];
-const messagesEl = document.getElementById('adminGuruMessages');
-const inputEl = document.getElementById('adminGuruInput');
-const sendBtn = document.getElementById('adminGuruSend');
+(function() {
+  var history = [];
+  var msgsEl  = document.getElementById('adminMsgs');
+  var inputEl = document.getElementById('adminInput');
+  var sendBtn = document.getElementById('adminSend');
 
-function appendMsg(role, text) {
-  const isBot = role === 'bot';
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'display:flex;gap:10px;align-items:flex-start' + (isBot ? '' : ';flex-direction:row-reverse');
-  const avatar = document.createElement('div');
-  avatar.style.cssText = 'width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;' +
-    (isBot ? 'background:linear-gradient(135deg,#ef4444,#a855f7)' : 'background:linear-gradient(135deg,#6366f1,#a855f7)');
-  avatar.textContent = isBot ? '🤖' : '🛡️';
-  const bubble = document.createElement('div');
-  bubble.style.cssText = 'border-radius:' + (isBot ? '0 16px 16px 16px' : '16px 0 16px 16px') +
-    ';padding:12px 16px;font-size:14px;line-height:1.6;max-width:85%;white-space:pre-wrap;' +
-    (isBot
-      ? 'background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2)'
-      : 'background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.25)');
-  bubble.textContent = text;
-  wrap.appendChild(avatar);
-  wrap.appendChild(bubble);
-  messagesEl.appendChild(wrap);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
+  function appendMsg(role, text) {
+    var isBot = role === 'bot';
+    var wrap = document.createElement('div');
+    wrap.className = 'guru-msg';
+    if (!isBot) wrap.style.flexDirection = 'row-reverse';
 
-function showTyping() {
-  const el = document.createElement('div');
-  el.id = 'typing';
-  el.style.cssText = 'display:flex;gap:10px;align-items:flex-start';
-  el.innerHTML = '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#a855f7);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🤖</div>' +
-    '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:0 16px 16px 16px;padding:12px 16px;font-size:14px;color:var(--muted)">বিশ্লেষণ করছি... ⏳</div>';
-  messagesEl.appendChild(el);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
+    var avatar = document.createElement('div');
+    avatar.style.cssText = 'width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0';
+    avatar.textContent = isBot ? '🦉' : '{{ request.user.first_name|first|upper }}';
 
-function removeTyping() {
-  const el = document.getElementById('typing');
-  if (el) el.remove();
-}
+    var bubble = document.createElement('div');
+    bubble.className = 'guru-bubble ' + (isBot ? 'bot' : 'user');
+    bubble.style.fontSize = '14px';
+    bubble.style.whiteSpace = 'pre-wrap';
+    bubble.textContent = text;
 
-async function sendAdminMsg(preset) {
-  const text = preset || inputEl.value.trim();
-  if (!text) return;
-  inputEl.value = '';
-  sendBtn.disabled = true;
-  appendMsg('user', text);
-  history.push({role: 'user', content: text});
-  showTyping();
-  try {
-    const res = await fetch("{% url 'admin_guru_ask' %}", {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
-      body: JSON.stringify({message: text, history: history.slice(-10)}),
-    });
-    const data = await res.json();
-    removeTyping();
-    const reply = data.reply || 'Error occurred.';
-    appendMsg('bot', reply);
-    history.push({role: 'assistant', content: reply});
-  } catch(e) {
-    removeTyping();
-    appendMsg('bot', 'Network error. Please try again.');
+    wrap.appendChild(avatar);
+    wrap.appendChild(bubble);
+    msgsEl.appendChild(wrap);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
   }
-  sendBtn.disabled = false;
-  inputEl.focus();
-}
 
-// Style quick buttons
-document.querySelectorAll('.admin-quick').forEach(btn => {
-  btn.style.background = 'rgba(239,68,68,0.12)';
-  btn.style.color = '#f87171';
-  btn.style.border = '1px solid rgba(239,68,68,0.25)';
-});
+  function showTypingAdmin() {
+    var el = document.createElement('div');
+    el.id = 'adminTyping';
+    el.className = 'guru-msg';
+    el.innerHTML = '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🦉</div>' +
+      '<div class="guru-bubble bot"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+    msgsEl.appendChild(el);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  function removeTypingAdmin() {
+    var el = document.getElementById('adminTyping');
+    if (el) el.remove();
+  }
+
+  async function sendMsg(preset) {
+    var text = preset || inputEl.value.trim();
+    if (!text) return;
+    inputEl.value = '';
+    sendBtn.disabled = true;
+    appendMsg('user', text);
+    history.push({role: 'user', content: text});
+    showTypingAdmin();
+    try {
+      var res = await fetch("{% url 'admin_guru_ask' %}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+        body: JSON.stringify({message: text, history: history.slice(-10)}),
+      });
+      var data = await res.json();
+      removeTypingAdmin();
+      var reply = data.reply || 'Error occurred.';
+      appendMsg('bot', reply);
+      history.push({role: 'assistant', content: reply});
+    } catch(e) {
+      removeTypingAdmin();
+      appendMsg('bot', 'Network error. Please try again.');
+    }
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+
+  sendBtn.addEventListener('click', function() { sendMsg(); });
+  inputEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+  });
+
+  document.querySelectorAll('.ag-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { sendMsg(btn.dataset.msg); });
+  });
+})();
 </script>
 {% endblock %}

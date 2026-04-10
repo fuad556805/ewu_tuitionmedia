@@ -163,6 +163,11 @@
             class="nav-link {% if 'inbox' in request.path %}active{% endif %}"
             >💬 Message Users</a
           >
+          <a
+            href="{% url 'admin_guru' %}"
+            class="nav-link {% if 'guru' in request.path %}active{% endif %}"
+            >🦉 Guru AI</a
+          >
           {% endif %}
         </nav>
 
