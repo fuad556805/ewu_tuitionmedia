@@ -159,18 +159,22 @@ NAGAD_MERCHANT_KEY  = os.getenv('NAGAD_MERCHANT_KEY', '')
 NAGAD_PUBLIC_KEY    = os.getenv('NAGAD_PUBLIC_KEY',   '')
 
 # ================= SMS =================
-SMS_BACKEND   = os.getenv('SMS_BACKEND', 'console')   # console | twilio | bulksmsbd | sslwireless
-SMS_FALLBACKS = os.getenv('SMS_FALLBACKS', 'bulksmsbd,console').split(',')  # fallback chain
+SMS_BACKEND   = os.getenv('SMS_BACKEND', 'console')   # console | stytch | twilio | bulksmsbd | sslwireless
+SMS_FALLBACKS = os.getenv('SMS_FALLBACKS', 'bulksmsbd,console').split(',')
+
+# Stytch
+STYTCH_PROJECT_ID = os.getenv('STYTCH_PROJECT_ID', '')
+STYTCH_SECRET     = os.getenv('STYTCH_SECRET', '')
 
 # Twilio
-TWILIO_ACCOUNT_SID  = os.getenv('TWILIO_ACCOUNT_SID', '')
-TWILIO_AUTH_TOKEN   = os.getenv('TWILIO_AUTH_TOKEN', '')
-TWILIO_FROM_NUMBER  = os.getenv('TWILIO_FROM_NUMBER', '')
-TWILIO_VERIFY_SERVICE_SID = os.getenv('TWILIO_VERIFY_SERVICE_SID', '') 
+TWILIO_ACCOUNT_SID        = os.getenv('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN         = os.getenv('TWILIO_AUTH_TOKEN', '')
+TWILIO_FROM_NUMBER        = os.getenv('TWILIO_FROM_NUMBER', '')
+TWILIO_VERIFY_SERVICE_SID = os.getenv('TWILIO_VERIFY_SERVICE_SID', '')
 
 # BulkSMSBD (local BD)
 BULKSMSBD_API_KEY   = os.getenv('BULKSMSBD_API_KEY', '')
-BULKSMSBD_SENDER_ID = os.getenv('BULKSMSBD_SENDER_ID', '')  # approved হলে দিন, নইলে খালি
+BULKSMSBD_SENDER_ID = os.getenv('BULKSMSBD_SENDER_ID', '')
 
 # SSL Wireless (local BD)
 SSLWIRELESS_USERNAME = os.getenv('SSLWIRELESS_USERNAME', '')
