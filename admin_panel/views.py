@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from django.http import JsonResponse
 from accounts.models import User, Notification
 from posts.models import Post
 from tuitions.models import Tuition, TuitionRequest
@@ -240,40 +241,99 @@ def user_profile(request, user_id):
 # ------------------------------
 @admin_required
 def admin_inbox(request):
-    from django.db.models import Q
-    contacts = User.objects.exclude(id=request.user.id)
+    from django.db.models import Q, Count
+    contacts = User.objects.exclude(id=request.user.id).order_by('first_name', 'last_name')
 
-    active_user = None
-    messages_list = []
+    # Build unread count map: {user_id: count}
+    unread_qs = Message.objects.filter(
+        receiver=request.user, read=False
+    ).values('sender_id').annotate(cnt=Count('id'))
+    unread_map = {row['sender_id']: row['cnt'] for row in unread_qs}
 
-    with_id = request.GET.get('with')
-    if with_id:
-        active_user = get_object_or_404(User, pk=with_id)
-        messages_list = Message.objects.filter(
-            Q(sender=request.user, receiver=active_user) |
-            Q(sender=active_user, receiver=request.user)
-        ).order_by('created_at')
-        messages_list.filter(receiver=request.user, read=False).update(read=True)
+    contacts_data = []
+    for u in contacts:
+        contacts_data.append({
+            'user': u,
+            'unread': unread_map.get(u.pk, 0),
+        })
+
+    total_unread = sum(unread_map.values())
 
     return render(request, 'admin_panel/admin_inbox.html', {
-        'contacts': contacts,
-        'active_user': active_user,
-        'messages_list': messages_list,
+        'contacts_data': contacts_data,
+        'total_unread': total_unread,
+    })
+
+
+@admin_required
+def admin_get_messages(request, user_id):
+    from django.db.models import Q
+    other = get_object_or_404(User, pk=user_id)
+    after_id = int(request.GET.get('after', 0))
+
+    msgs = Message.objects.filter(
+        Q(sender=request.user, receiver=other) |
+        Q(sender=other, receiver=request.user),
+        id__gt=after_id
+    ).order_by('created_at')
+
+    # Mark received messages as read
+    msgs.filter(receiver=request.user, read=False).update(read=True)
+
+    data = [{
+        'id': m.id,
+        'text': m.text,
+        'sender_id': m.sender_id,
+        'time': m.created_at.strftime('%b %d · %H:%M'),
+    } for m in msgs]
+
+    return JsonResponse({
+        'ok': True,
+        'messages': data,
+        'user': {
+            'id': other.pk,
+            'name': other.get_full_name(),
+            'role': other.role,
+            'avatar_url': other.profile_image.url if other.profile_image else '',
+            'profile_url': f'/admin-panel/users/{other.pk}/profile/',
+        }
     })
 
 
 @admin_required
 def admin_send_message(request):
     if request.method == 'POST':
-        receiver = get_object_or_404(User, pk=request.POST.get('receiver_id'))
+        receiver_id = request.POST.get('receiver_id')
         text = request.POST.get('text', '').strip()
-        if text:
-            Message.objects.create(
+        if receiver_id and text:
+            receiver = get_object_or_404(User, pk=receiver_id)
+            msg = Message.objects.create(
                 sender=request.user,
                 receiver=receiver,
                 text=text
             )
-        return redirect(f'/admin-panel/inbox/?with={receiver.pk}')
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'ok': True,
+                    'id': msg.id,
+                    'text': msg.text,
+                    'time': msg.created_at.strftime('%b %d · %H:%M'),
+                    'sender_id': request.user.id,
+                })
+            return redirect(f'/admin-panel/inbox/?with={receiver.pk}')
 
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Empty message'})
     return redirect('admin_panel:admin_inbox')
+
+
+@admin_required
+def admin_unread_counts(request):
+    from django.db.models import Count
+    unread_qs = Message.objects.filter(
+        receiver=request.user, read=False
+    ).values('sender_id').annotate(cnt=Count('id'))
+    counts = {str(row['sender_id']): row['cnt'] for row in unread_qs}
+    total = sum(counts.values())
+    return JsonResponse({'counts': counts, 'total': total})
     

@@ -1,21 +1,25 @@
 {% extends 'base.html' %}
-{% block title %}Admin Inbox{% endblock %}
+{% block title %}Admin Inbox — TuitionMedia{% endblock %}
 
 {% block content %}
-<div style="animation: slideIn 0.4s ease">
+<div style="animation:slideIn 0.4s ease">
 
-  <!-- Page title above the chat box -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+  <!-- Page Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
     <div>
-      <div style="font-family:var(--font-head);font-weight:700;font-size:20px">Inbox</div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px">
+        💬 Inbox
+        {% if total_unread > 0 %}
+        <span id="headerUnreadBadge" style="background:var(--accent);color:#fff;font-size:11px;padding:2px 9px;border-radius:99px;font-weight:700">{{ total_unread }}</span>
+        {% else %}
+        <span id="headerUnreadBadge" style="background:var(--accent);color:#fff;font-size:11px;padding:2px 9px;border-radius:99px;font-weight:700;display:none">0</span>
+        {% endif %}
+      </div>
       <div style="color:var(--muted);font-size:13px">Message any user directly</div>
     </div>
-    {% if active_user %}
-    <a href="{% url 'admin_panel:user_profile' active_user.pk %}"
-       class="btn btn-secondary btn-sm" style="gap:6px">
-      👤 View Profile
-    </a>
-    {% endif %}
+    <div id="activeUserActions" style="display:none">
+      <a id="viewProfileBtn" href="#" class="btn btn-secondary btn-sm" style="gap:6px">👤 View Profile</a>
+    </div>
   </div>
 
   <!-- Mobile back button -->
@@ -26,31 +30,25 @@
 
   <div class="chat-layout" id="chatLayout">
 
-    <!-- ── Sidebar / Contacts ── -->
+    <!-- ── Sidebar ── -->
     <div class="chat-sidebar" id="chatContactsPanel">
-
       <div class="chat-sidebar-header">
         <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:10px">
           All Users
-          <span style="color:var(--muted);font-weight:400;font-size:12px">({{ contacts.count }})</span>
+          <span style="color:var(--muted);font-weight:400;font-size:12px">({{ contacts_data|length }})</span>
         </div>
-        <input
-          class="chat-search"
-          id="contactSearch"
-          placeholder="🔍  Search by name..."
-          oninput="filterContacts(this.value)"
-        />
+        <input class="chat-search" id="contactSearch" placeholder="🔍  Search by name…" oninput="filterContacts(this.value)" />
       </div>
 
       <div class="chat-contacts-list" id="contactsList">
-        {% for u in contacts %}
-        <a href="?with={{ u.pk }}"
-           class="chat-contact {% if active_user and active_user.pk == u.pk %}active{% endif %}"
-           id="contact-{{ u.pk }}"
-           data-name="{{ u.get_full_name|lower }}"
-           onclick="onContactClick(event)">
+        {% for item in contacts_data %}
+        {% with u=item.user unread=item.unread %}
+        <div class="chat-contact"
+             id="contact-{{ u.pk }}"
+             data-userid="{{ u.pk }}"
+             data-name="{{ u.get_full_name|lower }}"
+             onclick="loadConversation({{ u.pk }}, this)">
 
-          <!-- Clickable avatar → profile -->
           <div class="chat-contact-avatar">
             <a href="{% url 'admin_panel:user_profile' u.pk %}"
                title="View {{ u.get_full_name }}'s profile"
@@ -71,138 +69,393 @@
             <div class="chat-contact-name">{{ u.get_full_name|truncatechars:18 }}</div>
             <div class="chat-contact-role">{{ u.role }}</div>
           </div>
-        </a>
+
+          {% if unread > 0 %}
+          <span class="unread-badge" id="badge-{{ u.pk }}"
+                style="background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;flex-shrink:0;min-width:20px;text-align:center">
+            {{ unread }}
+          </span>
+          {% else %}
+          <span class="unread-badge" id="badge-{{ u.pk }}"
+                style="background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;flex-shrink:0;min-width:20px;text-align:center;display:none">
+            0
+          </span>
+          {% endif %}
+        </div>
+        {% endwith %}
         {% empty %}
         <div style="padding:20px 14px;color:var(--muted);font-size:13px">No users found.</div>
         {% endfor %}
 
-        <div id="noContactsMsg" style="display:none;padding:20px 14px;color:var(--muted);font-size:13px;text-align:center">
-          No results found.
-        </div>
+        <div id="noContactsMsg" style="display:none;padding:20px 14px;color:var(--muted);font-size:13px;text-align:center">No results found.</div>
       </div>
     </div>
 
     <!-- ── Chat Main ── -->
     <div class="chat-main" id="chatMainPanel">
-      {% if active_user %}
 
-      <!-- Chat header -->
-      <div class="chat-header">
-        <div class="chat-header-avatar">
-          <a href="{% url 'admin_panel:user_profile' active_user.pk %}" title="View profile">
-            {% if active_user.profile_image %}
-              <img src="{{ active_user.profile_image.url }}" alt="{{ active_user.get_full_name }}"
-                   style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);display:block">
-            {% else %}
-              <div class="avatar avatar-sm"
-                   style="background:linear-gradient(135deg,{% if active_user.role == 'tutor' %}#7c6bff,#a06bff{% elif active_user.role == 'admin' %}#ffcb47,#ff9f47{% else %}#ff6b9d,#ff3a5c{% endif %});width:44px;height:44px;font-size:17px;flex-shrink:0">
-                {{ active_user.first_name|first|upper }}
-              </div>
-            {% endif %}
-          </a>
-        </div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:15px;font-family:var(--font-head)">
-            {{ active_user.get_full_name }}
+      <!-- Empty State (shown when no conversation selected) -->
+      <div class="chat-empty-state" id="chatEmptyState">
+        <div style="font-size:52px;opacity:0.3;margin-bottom:4px">💬</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:17px;opacity:0.7">No conversation selected</div>
+        <div style="font-size:13px;opacity:0.5">Choose a user from the left to start messaging</div>
+      </div>
+
+      <!-- Conversation Panel (hidden until user selected) -->
+      <div id="conversationPanel" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+
+        <!-- Chat Header -->
+        <div class="chat-header" id="chatHeader">
+          <div class="chat-header-avatar">
+            <a id="headerAvatarLink" href="#" title="View profile">
+              <div id="headerAvatarImg"></div>
+            </a>
           </div>
-          <div style="color:var(--muted);font-size:12px;text-transform:capitalize">{{ active_user.role }}</div>
+          <div style="flex:1;min-width:0">
+            <div id="headerName" style="font-weight:700;font-size:15px;font-family:var(--font-head)"></div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="pulse-dot" style="background:var(--success)"></span>
+              <span id="headerRole" style="color:var(--muted);font-size:12px;text-transform:capitalize"></span>
+            </div>
+          </div>
+          <a id="headerProfileBtn" href="#" class="btn btn-secondary btn-sm" style="flex-shrink:0">👤 Profile</a>
         </div>
-        <a href="{% url 'admin_panel:user_profile' active_user.pk %}"
-           class="btn btn-secondary btn-sm" style="flex-shrink:0">
-          👤 Profile
-        </a>
+
+        <!-- Messages Area -->
+        <div class="chat-messages" id="chatMessages">
+          <!-- Loading spinner shown while fetching -->
+          <div id="msgLoadingSpinner" style="display:flex;align-items:center;justify-content:center;flex:1;padding:40px 0">
+            <div class="typing-dots">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Send Message Row -->
+        <div class="chat-input-row">
+          <input class="form-control" id="msgInput"
+                 placeholder="Type a message…"
+                 style="border-radius:99px;flex:1"
+                 autocomplete="off"
+                 onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" />
+          <button class="btn btn-primary" id="sendBtn"
+                  onclick="sendMessage()"
+                  style="border-radius:99px;padding:9px 22px;flex-shrink:0;display:flex;align-items:center;gap:6px">
+            Send <span style="font-size:14px">➤</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Messages -->
-      <div class="chat-messages" id="chatMessages">
-        {% for m in messages_list %}
-        <div class="msg-bubble {% if m.sender == request.user %}mine{% else %}theirs{% endif %}">
-          {{ m.text }}
-          <div class="msg-time">{{ m.created_at|date:"M d · H:i" }}</div>
-        </div>
-        {% empty %}
-        <div style="text-align:center;color:var(--muted);padding:40px 0;font-size:13px">
-          <div style="font-size:32px;margin-bottom:8px">👋</div>
-          Say hello to {{ active_user.first_name }}!
-        </div>
-        {% endfor %}
-      </div>
-
-      <!-- Send message -->
-      <form method="post" action="{% url 'admin_panel:admin_send_message' %}" class="chat-input-row">
-        {% csrf_token %}
-        <input type="hidden" name="receiver_id" value="{{ active_user.pk }}">
-        <input class="form-control" name="text" placeholder="Type a message…"
-               style="border-radius:99px;flex:1" autocomplete="off" required>
-        <button type="submit" class="btn btn-primary" style="border-radius:99px;padding:9px 22px;flex-shrink:0">
-          Send ➤
-        </button>
-      </form>
-
-      {% else %}
-
-      <!-- Empty state -->
-      <div class="chat-empty-state">
-        <div style="font-size:48px;opacity:0.4">💬</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px">No conversation selected</div>
-        <div style="font-size:13px">Choose a user from the left to start messaging.</div>
-      </div>
-
-      {% endif %}
     </div>
   </div>
 </div>
 
-<script>
-function filterContacts(query) {
-  const q = query.toLowerCase().trim();
-  const items = document.querySelectorAll('#contactsList .chat-contact');
-  let visible = 0;
-  items.forEach(function(el) {
-    const name = el.dataset.name || '';
-    const match = !q || name.includes(q);
-    el.style.display = match ? 'flex' : 'none';
-    if (match) visible++;
-  });
-  const noMsg = document.getElementById('noContactsMsg');
-  if (noMsg) noMsg.style.display = visible === 0 ? 'block' : 'none';
-}
+<style>
+.chat-contact { cursor: pointer; }
+.chat-contact:hover .chat-contact-name { color: var(--accent); }
+.msg-time { font-size: 10.5px; opacity: 0.6; margin-top: 5px; }
+.msg-bubble.mine .msg-time { text-align: right; }
+#msgInput:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(124,107,255,0.15); }
+#sendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
 
-function onContactClick(e) {
-  if (window.innerWidth <= 768) {
-    const layout = document.getElementById('chatLayout');
-    const backBtn = document.getElementById('chatBackBtn');
+<script>
+(function() {
+  var ADMIN_ID   = {{ request.user.pk }};
+  var CSRF_TOKEN = '{{ csrf_token }}';
+  var SEND_URL   = '{% url "admin_panel:admin_send_message" %}';
+  var MSGS_BASE  = '/admin-panel/inbox/messages/';
+  var UNREAD_URL = '/admin-panel/inbox/unread-counts/';
+
+  var activeUserId   = null;
+  var lastMsgId      = 0;
+  var pollTimer      = null;
+  var unreadPollTimer = null;
+
+  // ── Sidebar filter ────────────────────────────────────────────────────
+  window.filterContacts = function(q) {
+    q = (q || '').toLowerCase().trim();
+    var items   = document.querySelectorAll('#contactsList .chat-contact');
+    var visible = 0;
+    items.forEach(function(el) {
+      var match = !q || (el.dataset.name || '').includes(q);
+      el.style.display = match ? 'flex' : 'none';
+      if (match) visible++;
+    });
+    var nm = document.getElementById('noContactsMsg');
+    if (nm) nm.style.display = visible === 0 ? 'block' : 'none';
+  };
+
+  // ── Mobile helpers ────────────────────────────────────────────────────
+  window.showChatContacts = function() {
+    var layout = document.getElementById('chatLayout');
+    var btn    = document.getElementById('chatBackBtn');
+    layout.classList.remove('chat-mobile-show-main');
+    layout.classList.add('chat-mobile-show-contacts');
+    if (btn) btn.style.display = 'none';
+  };
+
+  function showChatMain() {
+    if (window.innerWidth > 768) return;
+    var layout = document.getElementById('chatLayout');
+    var btn    = document.getElementById('chatBackBtn');
     layout.classList.add('chat-mobile-show-main');
     layout.classList.remove('chat-mobile-show-contacts');
-    if (backBtn) backBtn.style.display = 'inline-flex';
+    if (btn) btn.style.display = 'inline-flex';
   }
-}
 
-function showChatContacts() {
-  const layout = document.getElementById('chatLayout');
-  const backBtn = document.getElementById('chatBackBtn');
-  layout.classList.remove('chat-mobile-show-main');
-  layout.classList.add('chat-mobile-show-contacts');
-  if (backBtn) backBtn.style.display = 'none';
-}
-
-// Scroll to bottom of messages
-document.addEventListener('DOMContentLoaded', function() {
-  const msgs = document.getElementById('chatMessages');
-  if (msgs) msgs.scrollTop = msgs.scrollHeight;
-
-  // Mobile init
-  if (window.innerWidth <= 768) {
-    const layout = document.getElementById('chatLayout');
-    const backBtn = document.getElementById('chatBackBtn');
-    const hasActive = {% if active_user %}true{% else %}false{% endif %};
-    if (hasActive) {
-      layout.classList.add('chat-mobile-show-main');
-      if (backBtn) backBtn.style.display = 'inline-flex';
-    } else {
-      layout.classList.add('chat-mobile-show-contacts');
+  // ── Avatar HTML helper ────────────────────────────────────────────────
+  function buildAvatarHTML(userData, size) {
+    size = size || 44;
+    if (userData.avatar_url) {
+      return '<img src="' + userData.avatar_url + '" alt="' + escHtml(userData.name) + '" ' +
+             'style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);display:block">';
     }
+    var colors = {'tutor':'#7c6bff,#a06bff','admin':'#ffcb47,#ff9f47','student':'#ff6b9d,#ff3a5c'};
+    var grad   = colors[userData.role] || '#7c6bff,#a06bff';
+    var letter = (userData.name || '?')[0].toUpperCase();
+    return '<div class="avatar avatar-sm" style="background:linear-gradient(135deg,' + grad + ');width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size*0.4) + 'px;flex-shrink:0">' + letter + '</div>';
   }
-});
+
+  // ── Load conversation ─────────────────────────────────────────────────
+  window.loadConversation = function(userId, contactEl) {
+    if (activeUserId === userId) return;
+    activeUserId = userId;
+    lastMsgId    = 0;
+
+    // Highlight contact
+    document.querySelectorAll('#contactsList .chat-contact').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    if (contactEl) contactEl.classList.add('active');
+
+    // Update URL without reload
+    history.pushState(null, '', '?with=' + userId);
+
+    // Show conversation panel, hide empty state
+    document.getElementById('chatEmptyState').style.display      = 'none';
+    var panel = document.getElementById('conversationPanel');
+    panel.style.display = 'flex';
+
+    // Show loading spinner, clear old messages
+    var msgsEl = document.getElementById('chatMessages');
+    msgsEl.innerHTML = '<div id="msgLoadingSpinner" style="display:flex;align-items:center;justify-content:center;flex:1;padding:40px 0"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+
+    // Clear badge for this user
+    clearBadge(userId);
+
+    // Mobile
+    showChatMain();
+
+    // Fetch messages
+    fetch(MSGS_BASE + userId + '/', {credentials: 'same-origin'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data.ok) return;
+        renderConversationHeader(data.user);
+        renderMessages(data.messages, true);
+        startPolling();
+      })
+      .catch(function() {
+        document.getElementById('chatMessages').innerHTML =
+          '<div style="text-align:center;color:var(--muted);padding:40px 0;font-size:13px">Failed to load messages.</div>';
+      });
+  };
+
+  function renderConversationHeader(userData) {
+    document.getElementById('headerName').textContent     = userData.name;
+    document.getElementById('headerRole').textContent     = userData.role;
+    document.getElementById('headerAvatarImg').innerHTML  = buildAvatarHTML(userData, 44);
+    document.getElementById('headerAvatarLink').href      = userData.profile_url;
+    document.getElementById('headerProfileBtn').href      = userData.profile_url;
+
+    // Top-right profile link
+    var topBtn = document.getElementById('viewProfileBtn');
+    if (topBtn) { topBtn.href = userData.profile_url; }
+    var actions = document.getElementById('activeUserActions');
+    if (actions) actions.style.display = 'block';
+  }
+
+  function renderMessages(msgs, replaceAll) {
+    var msgsEl = document.getElementById('chatMessages');
+
+    if (replaceAll) {
+      msgsEl.innerHTML = '';
+      if (msgs.length === 0) {
+        msgsEl.innerHTML =
+          '<div style="text-align:center;color:var(--muted);padding:40px 0;font-size:13px">' +
+          '<div style="font-size:36px;margin-bottom:10px">👋</div>' +
+          'No messages yet. Say hello!</div>';
+        return;
+      }
+    }
+
+    msgs.forEach(function(m) {
+      var isMine = m.sender_id === ADMIN_ID;
+      var bubble = document.createElement('div');
+      bubble.className = 'msg-bubble ' + (isMine ? 'mine' : 'theirs');
+      bubble.innerHTML = escHtml(m.text) +
+        '<div class="msg-time">' + escHtml(m.time) + '</div>';
+      msgsEl.appendChild(bubble);
+      if (m.id > lastMsgId) lastMsgId = m.id;
+    });
+
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  // ── Send message ─────────────────────────────────────────────────────
+  window.sendMessage = function() {
+    if (!activeUserId) return;
+    var input   = document.getElementById('msgInput');
+    var sendBtn = document.getElementById('sendBtn');
+    var text    = (input.value || '').trim();
+    if (!text) return;
+
+    input.value      = '';
+    sendBtn.disabled = true;
+
+    var fd = new FormData();
+    fd.append('receiver_id', activeUserId);
+    fd.append('text', text);
+    fd.append('csrfmiddlewaretoken', CSRF_TOKEN);
+
+    fetch(SEND_URL, {
+      method: 'POST',
+      headers: {'X-Requested-With': 'XMLHttpRequest'},
+      body: fd,
+      credentials: 'same-origin'
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      sendBtn.disabled = false;
+      if (data.ok) {
+        var msgsEl = document.getElementById('chatMessages');
+        // Remove "no messages" placeholder if present
+        var placeholder = msgsEl.querySelector('div[style*="No messages yet"]');
+        if (placeholder) placeholder.remove();
+
+        var bubble = document.createElement('div');
+        bubble.className = 'msg-bubble mine';
+        bubble.innerHTML = escHtml(data.text) +
+          '<div class="msg-time">' + escHtml(data.time) + '</div>';
+        msgsEl.appendChild(bubble);
+        if (data.id > lastMsgId) lastMsgId = data.id;
+        msgsEl.scrollTop = msgsEl.scrollHeight;
+      }
+    })
+    .catch(function() {
+      sendBtn.disabled = false;
+      input.value = text;
+    });
+
+    input.focus();
+  };
+
+  // ── Polling for new messages ──────────────────────────────────────────
+  function startPolling() {
+    stopPolling();
+    pollTimer = setInterval(pollNewMessages, 3000);
+  }
+
+  function stopPolling() {
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  }
+
+  function pollNewMessages() {
+    if (!activeUserId) return;
+    fetch(MSGS_BASE + activeUserId + '/?after=' + lastMsgId, {credentials: 'same-origin'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok && data.messages && data.messages.length > 0) {
+          // Remove placeholder if needed
+          var msgsEl = document.getElementById('chatMessages');
+          var ph = msgsEl.querySelector('div[style*="No messages yet"]');
+          if (ph) ph.remove();
+          renderMessages(data.messages, false);
+        }
+      })
+      .catch(function() {});
+  }
+
+  // ── Polling for unread counts (sidebar badges) ────────────────────────
+  function pollUnreadCounts() {
+    fetch(UNREAD_URL, {credentials: 'same-origin'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var counts = data.counts || {};
+        var total  = data.total  || 0;
+
+        // Update per-contact badges
+        document.querySelectorAll('.unread-badge').forEach(function(badge) {
+          var userId = badge.id.replace('badge-', '');
+          var cnt    = counts[userId] || 0;
+          // Don't show badge for the currently active conversation
+          if (parseInt(userId) === activeUserId) cnt = 0;
+          if (cnt > 0) {
+            badge.textContent    = cnt;
+            badge.style.display  = 'inline-block';
+          } else {
+            badge.style.display  = 'none';
+          }
+        });
+
+        // Update header badge
+        var hb = document.getElementById('headerUnreadBadge');
+        if (hb) {
+          if (total > 0) { hb.textContent = total; hb.style.display = 'inline-block'; }
+          else           { hb.style.display = 'none'; }
+        }
+      })
+      .catch(function() {});
+  }
+
+  function clearBadge(userId) {
+    var badge = document.getElementById('badge-' + userId);
+    if (badge) badge.style.display = 'none';
+  }
+
+  // ── Utility ───────────────────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  // ── Init on page load ─────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-load conversation from ?with= URL param
+    var params = new URLSearchParams(window.location.search);
+    var withId = params.get('with');
+    if (withId) {
+      var contactEl = document.getElementById('contact-' + withId);
+      loadConversation(parseInt(withId), contactEl);
+    }
+
+    // Mobile init
+    if (window.innerWidth <= 768) {
+      var layout = document.getElementById('chatLayout');
+      if (withId) {
+        layout.classList.add('chat-mobile-show-main');
+        document.getElementById('chatBackBtn').style.display = 'inline-flex';
+      } else {
+        layout.classList.add('chat-mobile-show-contacts');
+      }
+    }
+
+    // Start unread badge polling every 8s
+    unreadPollTimer = setInterval(pollUnreadCounts, 8000);
+  });
+
+  // Cleanup on page leave
+  window.addEventListener('beforeunload', function() {
+    stopPolling();
+    if (unreadPollTimer) clearInterval(unreadPollTimer);
+  });
+
+})();
 </script>
 {% endblock %}

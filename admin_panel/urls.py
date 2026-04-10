@@ -20,4 +20,6 @@ urlpatterns = [
     path('users/<int:user_id>/profile/', views.user_profile, name='user_profile'),
     path('inbox/', views.admin_inbox, name='admin_inbox'),
     path('inbox/send/', views.admin_send_message, name='admin_send_message'),
+    path('inbox/messages/<int:user_id>/', views.admin_get_messages, name='admin_get_messages'),
+    path('inbox/unread-counts/', views.admin_unread_counts, name='admin_unread_counts'),
 ]
