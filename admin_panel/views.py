@@ -45,8 +45,23 @@ def overview(request):
 # ------------------------------
 @admin_required
 def profile_approvals(request):
-    pending = User.objects.filter(profile_approved=False)
-    return render(request, 'admin_panel/profile_approvals.html', {'pending': pending})
+    search = request.GET.get('q', '').strip()
+    pending_qs = User.objects.filter(profile_approved=False)
+    approved_qs = User.objects.filter(profile_approved=True).exclude(role='admin')
+
+    if search:
+        pending_qs = pending_qs.filter(
+            Q(first_name__icontains=search) | Q(last_name__icontains=search)
+        )
+        approved_qs = approved_qs.filter(
+            Q(first_name__icontains=search) | Q(last_name__icontains=search)
+        )
+
+    return render(request, 'admin_panel/profile_approvals.html', {
+        'pending': pending_qs,
+        'approved': approved_qs,
+        'search': search,
+    })
 
 
 @admin_required
@@ -69,12 +84,22 @@ def approve_profile(request, user_id):
 # ------------------------------
 @admin_required
 def posts_approval(request):
-    pending = Post.objects.filter(status='pending_approval')
-    approved = Post.objects.filter(status='active')
+    search = request.GET.get('q', '').strip()
+    pending_qs = Post.objects.filter(status='pending_approval').select_related('student')
+    approved_qs = Post.objects.filter(status='active').select_related('student')
+
+    if search:
+        pending_qs = pending_qs.filter(
+            Q(student__first_name__icontains=search) | Q(student__last_name__icontains=search)
+        )
+        approved_qs = approved_qs.filter(
+            Q(student__first_name__icontains=search) | Q(student__last_name__icontains=search)
+        )
 
     return render(request, 'admin_panel/posts_approval.html', {
-        'pending': pending,
-        'approved': approved
+        'pending': pending_qs,
+        'approved': approved_qs,
+        'search': search,
     })
 
 
@@ -106,6 +131,9 @@ def delete_post(request, post_id):
     if request.method == 'POST':
         post = get_object_or_404(Post, pk=post_id)
         post.delete()
+    next_url = request.POST.get('next', '')
+    if next_url == 'posts_approval':
+        return redirect('admin_panel:posts_approval')
     return redirect('admin_panel:all_posts')
 
 

@@ -5,22 +5,44 @@
   <div class="section-header">
     <div>
       <div class="section-title">Profile Approvals</div>
-      <div class="section-sub">Login works without approval — only profile edits need review</div>
+      <div class="section-sub">Review and approve pending user profiles</div>
     </div>
   </div>
 
+  <!-- Search Box -->
+  <form method="get" style="margin-bottom:20px">
+    <div style="display:flex;gap:10px;max-width:420px">
+      <input
+        type="text"
+        name="q"
+        value="{{ search }}"
+        class="form-control"
+        placeholder="Search by name..."
+        style="border-radius:var(--radius-sm)"
+      />
+      <button type="submit" class="btn btn-primary btn-sm" style="white-space:nowrap">🔍 Search</button>
+      {% if search %}
+      <a href="{% url 'admin_panel:profile_approvals' %}" class="btn btn-secondary btn-sm" style="white-space:nowrap">✕ Clear</a>
+      {% endif %}
+    </div>
+  </form>
+
+  <!-- Pending Profiles -->
+  <div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">
+    Pending Approval ({{ pending.count }})
+  </div>
+
   {% if not pending %}
-  <div class="glass" style="padding:40px;text-align:center">
+  <div class="glass" style="padding:36px;text-align:center;margin-bottom:24px">
     <div style="font-size:28px;margin-bottom:8px">✅</div>
     <div style="font-family:var(--font-head);font-weight:700">All profiles approved!</div>
     <div style="color:var(--muted);font-size:14px;margin-top:4px">No pending profile approvals.</div>
   </div>
   {% endif %}
 
-  <div style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px">
     {% for u in pending %}
     <div class="glass" style="padding:18px">
-      <!-- Top row: avatar + info + action buttons -->
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
         <div style="display:flex;gap:14px;align-items:center;flex:1;min-width:0">
           {% if u.profile_image %}
@@ -37,11 +59,12 @@
             </div>
             <div style="color:var(--muted);font-size:13px">📞 {{ u.phone }} · Joined {{ u.date_joined|date:"M d, Y" }}</div>
             {% if u.education %}<div style="color:var(--muted);font-size:13px">🎓 {{ u.education }}</div>{% endif %}
+            {% if u.university %}<div style="color:var(--muted);font-size:13px">🏫 {{ u.university }}</div>{% endif %}
             {% if u.location %}<div style="color:var(--muted);font-size:13px">📍 {{ u.location }}</div>{% endif %}
             {% if u.subjects %}<div style="color:var(--muted);font-size:13px">📚 {{ u.subjects }}</div>{% endif %}
           </div>
         </div>
-        <div style="display:flex;gap:8px;flex-shrink:0;align-items:center">
+        <div style="display:flex;gap:8px;flex-shrink:0;align-items:center;flex-wrap:wrap">
           <form method="post" action="{% url 'admin_panel:approve_profile' u.pk %}">
             {% csrf_token %}<input type="hidden" name="action" value="approve">
             <button class="btn btn-success btn-sm">✓ Approve</button>
@@ -53,7 +76,6 @@
         </div>
       </div>
 
-      <!-- ID Document preview -->
       {% if u.id_image %}
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--glass-border)">
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600">🪪 Identity Document</div>
@@ -71,5 +93,42 @@
     </div>
     {% endfor %}
   </div>
+
+  <!-- Approved Profiles -->
+  <div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">
+    Approved Profiles ({{ approved.count }})
+  </div>
+
+  {% if not approved %}
+  <div class="glass" style="padding:30px;text-align:center">
+    <div style="color:var(--muted)">No approved profiles yet.</div>
+  </div>
+  {% else %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+    {% for u in approved %}
+    <div class="glass" style="padding:16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px">
+      {% if u.profile_image %}
+        <img src="{{ u.profile_image.url }}" alt="{{ u.get_full_name }}"
+             style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)">
+      {% else %}
+        <div class="avatar avatar-md" style="background:linear-gradient(135deg,{% if u.role == 'tutor' %}#7c6bff,#a06bff{% else %}#ff6b9d,#ff3a5c{% endif %}">{{ u.first_name|first|upper }}</div>
+      {% endif %}
+      <div>
+        <a href="{% url 'admin_panel:user_profile' u.pk %}"
+           style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--primary);text-decoration:none">
+          {{ u.get_full_name }}
+        </a>
+        {% if u.university %}
+        <div style="color:var(--muted);font-size:12px;margin-top:3px">🏫 {{ u.university }}</div>
+        {% endif %}
+      </div>
+      <a href="{% url 'admin_panel:admin_inbox' %}?with={{ u.pk }}"
+         class="btn btn-secondary btn-sm" style="width:100%;justify-content:center">
+        💬 Message
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

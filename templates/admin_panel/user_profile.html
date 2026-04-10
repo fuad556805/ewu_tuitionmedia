@@ -85,17 +85,12 @@
         {% endif %}
       </form>
 
-      <!-- Admin Message Form -->
+      <!-- Message Button -->
       <div style="margin-top: 10px; margin-bottom: 20px">
-        <form method="post">
-          {% csrf_token %}
-          <input type="hidden" name="receiver_id" value="{{ viewed_user.id }}">
-          <div class="form-group">
-            <label>Send Message</label>
-            <textarea class="form-control" name="text" rows="3" placeholder="Type your message..." required></textarea>
-          </div>
-          <button type="submit" name="action" value="send_message" class="btn btn-primary btn-sm">Send Message</button>
-        </form>
+        <a href="{% url 'admin_panel:admin_inbox' %}?with={{ viewed_user.pk }}"
+           class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px">
+          💬 Message {{ viewed_user.first_name }}
+        </a>
       </div>
       {% endif %}
 
