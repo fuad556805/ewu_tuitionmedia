@@ -1,6 +1,38 @@
 {% extends 'base.html' %}
 {% block title %}Admin Overview — TuitionMedia{% endblock %}
 {% block content %}
+<style>
+  .admin-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .admin-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 640px) {
+    .admin-two-col {
+      grid-template-columns: 1fr;
+    }
+    .admin-stat-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .admin-qa-card {
+      padding: 12px !important;
+      gap: 10px !important;
+    }
+    .admin-qa-icon {
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 15px !important;
+    }
+  }
+</style>
+
 <div style="animation:slideIn 0.4s ease">
 
   <!-- Header -->
@@ -15,39 +47,39 @@
   </div>
 
   <!-- Stat Cards -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px">
+  <div class="admin-stat-grid">
     <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:26px;margin-bottom:6px">👥</div>
+      <div style="font-size:24px;margin-bottom:6px">👥</div>
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Users</div>
       <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--accent)">{{ total_users }}</div>
       <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(168,85,247,0.08)"></div>
     </div>
     <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:26px;margin-bottom:6px">✅</div>
+      <div style="font-size:24px;margin-bottom:6px">✅</div>
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Profile Approvals</div>
       <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:{% if pending_profiles > 0 %}var(--warn){% else %}var(--success){% endif %}">{{ pending_profiles }}</div>
       <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(251,191,36,0.08)"></div>
     </div>
     <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:26px;margin-bottom:6px">📋</div>
+      <div style="font-size:24px;margin-bottom:6px">📋</div>
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Posts Pending</div>
       <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:{% if pending_posts > 0 %}var(--accent2){% else %}var(--success){% endif %}">{{ pending_posts }}</div>
       <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(236,72,153,0.08)"></div>
     </div>
     <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:26px;margin-bottom:6px">🎓</div>
+      <div style="font-size:24px;margin-bottom:6px">🎓</div>
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Active Tuitions</div>
       <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--success)">{{ active_tuitions }}</div>
       <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(77,255,166,0.08)"></div>
     </div>
     <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:26px;margin-bottom:6px">💰</div>
+      <div style="font-size:24px;margin-bottom:6px">💰</div>
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pending Commission</div>
       <div style="font-size:20px;font-weight:800;font-family:var(--font-head);color:var(--accent2)">৳{{ pending_commission }}</div>
       <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(236,72,153,0.08)"></div>
     </div>
     <div class="glass" style="padding:18px 16px;border-radius:16px;position:relative;overflow:hidden">
-      <div style="font-size:26px;margin-bottom:6px">📄</div>
+      <div style="font-size:24px;margin-bottom:6px">📄</div>
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Posts</div>
       <div style="font-size:28px;font-weight:800;font-family:var(--font-head);color:var(--accent3)">{{ total_posts }}</div>
       <div style="position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(99,102,241,0.08)"></div>
@@ -55,19 +87,19 @@
   </div>
 
   <!-- Main Two-Col -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">
+  <div class="admin-two-col">
 
     <!-- Notifications -->
     <div class="glass" style="padding:22px;border-radius:18px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-        <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,rgba(168,85,247,0.25),rgba(99,102,241,0.15));display:flex;align-items:center;justify-content:center;font-size:16px">🔔</div>
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(168,85,247,0.25),rgba(99,102,241,0.15));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🔔</div>
         <div style="font-family:var(--font-head);font-weight:700;font-size:15px">Admin Notifications</div>
       </div>
       {% for n in admin_notifs %}
-      <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--glass-border);align-items:center">
-        <span class="pulse-dot" style="flex-shrink:0;{% if n.read %}background:var(--muted);animation:none{% endif %}"></span>
-        <div style="flex:1;font-size:13px;line-height:1.4">{{ n.text }}</div>
-        <span style="color:var(--muted);font-size:11px;white-space:nowrap">{{ n.created_at|timesince }} ago</span>
+      <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--glass-border);align-items:flex-start">
+        <span class="pulse-dot" style="flex-shrink:0;margin-top:5px;{% if n.read %}background:var(--muted);animation:none{% endif %}"></span>
+        <div style="flex:1;font-size:13px;line-height:1.4;min-width:0">{{ n.text }}</div>
+        <span style="color:var(--muted);font-size:11px;white-space:nowrap;flex-shrink:0">{{ n.created_at|timesince }} ago</span>
       </div>
       {% empty %}
       <div style="color:var(--muted);font-size:13px;text-align:center;padding:24px 0">
@@ -80,62 +112,63 @@
     <!-- Quick Actions -->
     <div class="glass" style="padding:22px;border-radius:18px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-        <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(168,85,247,0.15));display:flex;align-items:center;justify-content:center;font-size:16px">⚡</div>
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(168,85,247,0.15));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">⚡</div>
         <div style="font-family:var(--font-head);font-weight:700;font-size:15px">Quick Actions</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
 
-        <a href="{% url 'admin_panel:profile_approvals' %}" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(168,85,247,0.16)'" onmouseout="this.style.background='rgba(168,85,247,0.08)'">
-          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✅</div>
+        <a href="{% url 'admin_panel:profile_approvals' %}" class="admin-qa-card" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='rgba(168,85,247,0.16)'" onmouseout="this.style.background='rgba(168,85,247,0.08)'">
+          <div class="admin-qa-icon" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✅</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:var(--text)">Profile Approvals</div>
             <div style="font-size:11px;color:var(--muted)">Review pending tutor profiles</div>
           </div>
-          {% if pending_profiles > 0 %}<span style="background:rgba(251,191,36,0.2);color:#fbbf24;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap">{{ pending_profiles }} pending</span>{% endif %}
+          {% if pending_profiles > 0 %}<span style="background:rgba(251,191,36,0.2);color:#fbbf24;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0">{{ pending_profiles }} pending</span>{% endif %}
         </a>
 
-        <a href="{% url 'admin_panel:posts_approval' %}" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.2);text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(236,72,153,0.16)'" onmouseout="this.style.background='rgba(236,72,153,0.08)'">
-          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#ec4899,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📋</div>
+        <a href="{% url 'admin_panel:posts_approval' %}" class="admin-qa-card" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.2);text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='rgba(236,72,153,0.16)'" onmouseout="this.style.background='rgba(236,72,153,0.08)'">
+          <div class="admin-qa-icon" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ec4899,#f43f5e);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📋</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:var(--text)">Posts Approval</div>
             <div style="font-size:11px;color:var(--muted)">Approve or reject tuition posts</div>
           </div>
-          {% if pending_posts > 0 %}<span style="background:rgba(236,72,153,0.2);color:#f472b6;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap">{{ pending_posts }} pending</span>{% endif %}
+          {% if pending_posts > 0 %}<span style="background:rgba(236,72,153,0.2);color:#f472b6;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0">{{ pending_posts }} pending</span>{% endif %}
         </a>
 
-        <a href="{% url 'admin_panel:payments' %}" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(234,179,8,0.16)'" onmouseout="this.style.background='rgba(234,179,8,0.08)'">
-          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#eab308,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💰</div>
+        <a href="{% url 'admin_panel:payments' %}" class="admin-qa-card" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='rgba(234,179,8,0.16)'" onmouseout="this.style.background='rgba(234,179,8,0.08)'">
+          <div class="admin-qa-icon" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#eab308,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💰</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:var(--text)">Pending Payments</div>
             <div style="font-size:11px;color:var(--muted)">Commission tracking & confirmation</div>
           </div>
-          {% if pending_commission > 0 %}<span style="background:rgba(234,179,8,0.2);color:#fbbf24;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap">৳{{ pending_commission }}</span>{% endif %}
+          {% if pending_commission > 0 %}<span style="background:rgba(234,179,8,0.2);color:#fbbf24;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0">৳{{ pending_commission }}</span>{% endif %}
         </a>
 
-        <a href="{% url 'admin_panel:all_users' %}" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(99,102,241,0.16)'" onmouseout="this.style.background='rgba(99,102,241,0.08)'">
-          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#818cf8);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👥</div>
+        <a href="{% url 'admin_panel:all_users' %}" class="admin-qa-card" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='rgba(99,102,241,0.16)'" onmouseout="this.style.background='rgba(99,102,241,0.08)'">
+          <div class="admin-qa-icon" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#818cf8);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👥</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:var(--text)">Manage Users</div>
             <div style="font-size:11px;color:var(--muted)">View, ban or approve users</div>
           </div>
-          <span style="background:rgba(99,102,241,0.2);color:#818cf8;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap">{{ total_users }} total</span>
+          <span style="background:rgba(99,102,241,0.2);color:#818cf8;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0">{{ total_users }} total</span>
         </a>
 
-        <a href="{% url 'admin_panel:admin_inbox' %}" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.2);text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(20,184,166,0.16)'" onmouseout="this.style.background='rgba(20,184,166,0.08)'">
-          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#14b8a6,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💬</div>
+        <a href="{% url 'admin_panel:admin_inbox' %}" class="admin-qa-card" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.2);text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='rgba(20,184,166,0.16)'" onmouseout="this.style.background='rgba(20,184,166,0.08)'">
+          <div class="admin-qa-icon" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💬</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:var(--text)">Message Users</div>
             <div style="font-size:11px;color:var(--muted)">Direct inbox with all users</div>
           </div>
         </a>
 
-        <a href="{% url 'admin_guru' %}" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(168,85,247,0.08));border:1px solid rgba(168,85,247,0.25);text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.16),rgba(168,85,247,0.16))'" onmouseout="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.08),rgba(168,85,247,0.08))'">
-          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#ef4444,#a855f7);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🦉</div>
+        <!-- Admin Guru AI — same circular owl logo as Guru AI page -->
+        <a href="{% url 'admin_guru' %}" class="admin-qa-card" style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(168,85,247,0.08));border:1px solid rgba(168,85,247,0.25);text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.16),rgba(168,85,247,0.16))'" onmouseout="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.08),rgba(168,85,247,0.08))'">
+          <div class="admin-qa-icon" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🦉</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:var(--text)">Admin Guru AI</div>
             <div style="font-size:11px;color:var(--muted)">AI-powered platform analytics</div>
           </div>
-          <span style="background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(168,85,247,0.2));color:#c084fc;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap">AI ✨</span>
+          <span style="background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(99,102,241,0.2));color:#c084fc;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0">AI ✨</span>
         </a>
 
       </div>
