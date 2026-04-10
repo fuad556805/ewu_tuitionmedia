@@ -1,0 +1,50 @@
+2026-04-10T06:35:43.134372081Z Using cached packaging-26.0-py3-none-any.whl (74 kB)
+2026-04-10T06:35:43.268921722Z Installing collected packages: whitenoise, urllib3, tzdata, sqlparse, python-dotenv, pyjwt, pycparser, psycopg2-binary, propcache, pillow, packaging, multidict, idna, frozenlist, charset-normalizer, certifi, attrs, asgiref, aiohappyeyeballs, yarl, requests, gunicorn, Django, cffi, aiosignal, djangorestframework, cryptography, aiohttp, py-vapid, http-ece, djangorestframework-simplejwt, aiohttp-retry, twilio, pywebpush
+2026-04-10T06:35:49.976244194Z 
+2026-04-10T06:35:49.979781381Z Successfully installed Django-6.0.4 aiohappyeyeballs-2.6.1 aiohttp-3.13.5 aiohttp-retry-2.9.1 aiosignal-1.4.0 asgiref-3.11.1 attrs-26.1.0 certifi-2026.2.25 cffi-2.0.0 charset-normalizer-3.4.7 cryptography-46.0.7 djangorestframework-3.17.1 djangorestframework-simplejwt-5.5.0 frozenlist-1.8.0 gunicorn-25.3.0 http-ece-1.2.1 idna-3.11 multidict-6.7.1 packaging-26.0 pillow-12.2.0 propcache-0.4.1 psycopg2-binary-2.9.11 py-vapid-1.9.4 pycparser-3.0 pyjwt-2.9.0 python-dotenv-1.2.2 pywebpush-2.3.0 requests-2.33.1 sqlparse-0.5.5 twilio-9.4.4 tzdata-2026.1 urllib3-2.6.3 whitenoise-6.12.0 yarl-1.23.0
+2026-04-10T06:35:49.985067501Z 
+2026-04-10T06:35:49.985077271Z [notice] A new release of pip is available: 25.3 -> 26.0.1
+2026-04-10T06:35:49.985080281Z [notice] To update, run: pip install --upgrade pip
+2026-04-10T06:36:00.112031278Z Operations to perform:
+2026-04-10T06:36:00.112060779Z   Apply all migrations: accounts, admin, auth, chat, contenttypes, payments, posts, sessions, tuitions
+2026-04-10T06:36:00.112066979Z Running migrations:
+2026-04-10T06:36:00.112070379Z   No migrations to apply.
+2026-04-10T06:36:00.596099201Z 
+2026-04-10T06:36:00.596122812Z 157 static files copied to '/opt/render/project/src/staticfiles', 3 unmodified.
+2026-04-10T06:36:02.425343658Z ==> Uploading build...
+2026-04-10T06:36:20.035370348Z ==> Uploaded in 13.5s. Compression took 4.1s
+2026-04-10T06:36:20.13174277Z ==> Build successful 🎉
+2026-04-10T06:36:22.142002997Z ==> Deploying...
+2026-04-10T06:36:22.205757038Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-04-10T06:36:51.847536957Z ==> Running 'gunicorn tuitionmedia.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --preload'
+2026-04-10T06:37:01.556432875Z [2026-04-10 01:37:01 -0500] [56] [INFO] Starting gunicorn 25.3.0
+2026-04-10T06:37:01.642390711Z [2026-04-10 01:37:01 -0500] [56] [INFO] Listening at: http://0.0.0.0:10000 (56)
+2026-04-10T06:37:01.642414922Z [2026-04-10 01:37:01 -0500] [56] [INFO] Using worker: sync
+2026-04-10T06:37:01.6467156Z [2026-04-10 01:37:01 -0500] [57] [INFO] Booting worker with pid: 57
+2026-04-10T06:37:01.742411516Z [2026-04-10 01:37:01 -0500] [56] [INFO] Control socket listening at /opt/render/.gunicorn/gunicorn.ctl
+2026-04-10T06:37:03.443074868Z ==> Your service is live 🎉
+2026-04-10T06:37:03.574079915Z ==> 
+2026-04-10T06:37:03.576966001Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:37:03.5795377Z ==> 
+2026-04-10T06:37:03.582182213Z ==> Available at your primary URL https://ewu-tuitionmedia.onrender.com
+2026-04-10T06:37:03.585567348Z ==> 
+2026-04-10T06:37:03.588631725Z ==> ///////////////////////////////////////////////////////////
+2026-04-10T06:37:07.145049833Z 127.0.0.1 - - [10/Apr/2026:01:37:07 -0500] "HEAD / HTTP/1.1" 200 8464 "-" "Go-http-client/1.1"
+2026-04-10T06:37:08.929423859Z 127.0.0.1 - - [10/Apr/2026:01:37:08 -0500] "GET / HTTP/1.1" 200 8464 "-" "Go-http-client/2.0"
+2026-04-10T06:37:10.725078484Z 127.0.0.1 - - [10/Apr/2026:01:37:10 -0500] "HEAD / HTTP/1.1" 200 8464 "-" "Go-http-client/1.1"
+2026-04-10T06:37:38.981625958Z 127.0.0.1 - - [10/Apr/2026:01:37:38 -0500] "GET / HTTP/1.1" 200 8464 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:37:39.334429673Z 127.0.0.1 - - [10/Apr/2026:01:37:39 -0500] "GET /static/js/main.js HTTP/1.1" 200 0 "https://ewu-tuitionmedia.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:37:39.335597748Z 127.0.0.1 - - [10/Apr/2026:01:37:39 -0500] "GET /static/css/main.css HTTP/1.1" 200 0 "https://ewu-tuitionmedia.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:37:41.082469391Z 127.0.0.1 - - [10/Apr/2026:01:37:41 -0500] "GET /accounts/signup/ HTTP/1.1" 200 13155 "https://ewu-tuitionmedia.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+2026-04-10T06:37:59.662833316Z SMS backend 'stytch' failed: Stytch error: {'status_code': 404, 'request_id': 'request-id-live-4f2602c2-9e3c-424d-be7c-65c73c75ac1f', 'error_type': 'project_not_found', 'error_message': 'Project could not be found.', 'error_url': 'https://stytch.com/docs/api/errors/404#project_not_found'}
+2026-04-10T06:37:59.662855357Z [DEV SMS] To: +8801338136424 | Message: Your TuitionMedia OTP is: 683761
+2026-04-10T06:37:59.662860608Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:37:59.662872438Z Primary backend 'stytch' failed — sent via fallback 'console'
+2026-04-10T06:37:59.664533796Z 
+2026-04-10T06:37:59.664548617Z ==================================================
+2026-04-10T06:37:59.664553547Z [OTP SMS] To: +8801338136424
+2026-04-10T06:37:59.664557917Z Your TuitionMedia OTP is: 683761
+2026-04-10T06:37:59.664562428Z Do not share it with anyone. Valid for 2 minutes.
+2026-04-10T06:37:59.664566828Z ==================================================
+2026-04-10T06:37:59.664570948Z 
+2026-04-10T06:37:59.664577319Z 127.0.0.1 - - [10/Apr/2026:01:37:59 -0500] "POST /api/auth/send-otp/ HTTP/1.1" 200 81 "https://ewu-tuitionmedia.onrender.com/accounts/signup/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
