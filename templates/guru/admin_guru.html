@@ -10,7 +10,7 @@
   </div>
 
   <div class="glass" style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;height:calc(100vh - 200px);overflow:hidden">
-    <!-- Header — same as guru.html -->
+    <!-- Header -->
     <div style="padding:16px 20px;border-bottom:1px solid var(--glass-border);background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(99,102,241,0.1));display:flex;align-items:center;gap:12px">
       <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:22px">🦉</div>
       <div>
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <!-- Messages — uses unique id to avoid conflict with main.js -->
+    <!-- Messages -->
     <div class="guru-messages" id="adminMsgs" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px">
       <div class="guru-msg">
         <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🦉</div>
@@ -41,29 +41,10 @@
       <button class="quick-btn ag-btn" data-msg="Platform health report দাও">🏥 Health Report</button>
     </div>
 
-    <!-- Input — unique ids -->
+    <!-- Input -->
     <div class="guru-input-row" style="padding:14px 18px;border-top:1px solid var(--glass-border)">
       <input class="form-control" id="adminInput" placeholder="Admin question লিখুন (Bangla/English)..." style="border-radius:99px">
       <button class="btn btn-guru" id="adminSend" style="border-radius:99px;padding:10px 20px">Send</button>
-    </div>
-  </div>
-
-  <!-- Info tiles -->
-  <div style="max-width:720px;margin:16px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-    <div class="glass" style="padding:16px;text-align:center">
-      <div style="font-size:24px;margin-bottom:6px">📊</div>
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Live Statistics</div>
-      <div style="color:var(--muted);font-size:12px">Users, posts, tuitions সব real-time data</div>
-    </div>
-    <div class="glass" style="padding:16px;text-align:center">
-      <div style="font-size:24px;margin-bottom:6px">💰</div>
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Financial Overview</div>
-      <div style="color:var(--muted);font-size:12px">Commission pending, paid ও total summary</div>
-    </div>
-    <div class="glass" style="padding:16px;text-align:center">
-      <div style="font-size:24px;margin-bottom:6px">🛡️</div>
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Admin Insights</div>
-      <div style="color:var(--muted);font-size:12px">Platform management ও actionable advice</div>
     </div>
   </div>
 </div>
