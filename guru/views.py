@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.conf import settings
 from accounts.models import User
 from posts.models import Post
+from tuitions.models import Tuition, TuitionRequest
 import logging
 import requests
 import json
@@ -177,3 +178,188 @@ def guru_ask(request):
     # ── 3. সব fail ──────────────────────────────────────────────────
     logger.error("All Groq and Gemini keys/models failed.")
     return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে। Please try again later.'})
+
+
+# ═══════════════════════════════════════════════════════════
+#  ADMIN GURU
+# ═══════════════════════════════════════════════════════════
+
+def _admin_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated or request.user.role != 'admin':
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+@_admin_required
+def admin_guru_page(request):
+    return render(request, 'guru/admin_guru.html')
+
+
+@_admin_required
+def admin_guru_ask(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    data = json.loads(request.body)
+    user_message = data.get('message', '').strip()
+    history = data.get('history', [])
+
+    if not user_message:
+        return JsonResponse({'error': 'Empty message'}, status=400)
+
+    # ── Gather all site statistics ──────────────────────────
+    total_students     = User.objects.filter(role='student').count()
+    total_tutors       = User.objects.filter(role='tutor').count()
+    banned_users       = User.objects.filter(banned=True).count()
+    pending_profiles   = User.objects.filter(profile_approved=False).count()
+
+    total_posts        = Post.objects.count()
+    active_posts       = Post.objects.filter(status='active').count()
+    pending_posts      = Post.objects.filter(status='pending_approval').count()
+    rejected_posts     = Post.objects.filter(status='rejected').count()
+
+    total_requests     = TuitionRequest.objects.count()
+    pending_requests   = TuitionRequest.objects.filter(status='pending').count()
+    accepted_requests  = TuitionRequest.objects.filter(status='accepted').count()
+
+    active_tuitions    = Tuition.objects.filter(status='active').count()
+    completed_tuitions = Tuition.objects.filter(status='completed').count()
+    cancelled_tuitions = Tuition.objects.filter(status='cancelled').count()
+
+    all_paid_tuitions  = list(Tuition.objects.filter(salary__gt=0))
+    total_commission   = sum(t.commission for t in all_paid_tuitions)
+    paid_commission    = sum(t.commission for t in all_paid_tuitions if t.commission_status == 'paid')
+    pending_commission = sum(t.commission for t in all_paid_tuitions if t.commission_status in ('pending', 'proof_uploaded'))
+    proof_uploaded     = Tuition.objects.filter(commission_status='proof_uploaded').count()
+
+    recent_users = list(
+        User.objects.exclude(role='admin').order_by('-date_joined').values(
+            'first_name', 'last_name', 'role', 'phone', 'date_joined'
+        )[:10]
+    )
+    recent_users_fmt = [
+        f"{u['first_name']} {u['last_name']} ({u['role']}) — joined {u['date_joined'].strftime('%d %b %Y')}"
+        for u in recent_users
+    ]
+
+    recent_tuitions = list(
+        Tuition.objects.select_related('tutor', 'student').order_by('-created_at')[:8]
+    )
+    recent_tuitions_fmt = [
+        f"{t.tutor.get_full_name()} teaches {t.student.get_full_name()} | {t.subject} | salary: {t.salary} BDT | commission: {t.commission} BDT ({t.commission_status})"
+        for t in recent_tuitions
+    ]
+
+    system_prompt = (
+        f"You are Admin Guru — the intelligent AI assistant exclusively for the TuitionMedia admin dashboard.\n"
+        f"You have FULL access to all platform data and statistics. You are like a smart data analyst + ops assistant for the admin.\n\n"
+
+        f"## PLATFORM OVERVIEW (Live Data)\n"
+        f"### Users\n"
+        f"- Total Students: {total_students}\n"
+        f"- Total Tutors: {total_tutors}\n"
+        f"- Banned Users: {banned_users}\n"
+        f"- Pending Profile Approvals: {pending_profiles}\n\n"
+
+        f"### Posts\n"
+        f"- Total Posts: {total_posts}\n"
+        f"- Active Posts: {active_posts}\n"
+        f"- Pending Approval: {pending_posts}\n"
+        f"- Rejected: {rejected_posts}\n\n"
+
+        f"### Tuition Requests\n"
+        f"- Total Requests: {total_requests}\n"
+        f"- Pending: {pending_requests}\n"
+        f"- Accepted: {accepted_requests}\n\n"
+
+        f"### Tuitions\n"
+        f"- Active Tuitions: {active_tuitions}\n"
+        f"- Completed: {completed_tuitions}\n"
+        f"- Cancelled: {cancelled_tuitions}\n\n"
+
+        f"### Financials (Commission)\n"
+        f"- Total Commission (all time): {total_commission} BDT\n"
+        f"- Paid Commission: {paid_commission} BDT\n"
+        f"- Pending Commission: {pending_commission} BDT\n"
+        f"- Proof Uploaded (awaiting confirmation): {proof_uploaded}\n\n"
+
+        f"### Recent Users (last 10 joined)\n"
+        f"{chr(10).join(recent_users_fmt) or 'None'}\n\n"
+
+        f"### Recent Tuitions\n"
+        f"{chr(10).join(recent_tuitions_fmt) or 'None'}\n\n"
+
+        f"## YOUR ROLE\n"
+        f"- Answer any admin question about the platform: stats, trends, specific users/tuitions, pending actions.\n"
+        f"- Give actionable insights: e.g. 'X profiles need approval', 'Y BDT commission pending'.\n"
+        f"- If asked about something not in the data, say so honestly.\n"
+        f"- You can also advise on platform management best practices.\n\n"
+
+        f"## LANGUAGE\n"
+        f"- Respond in Banglish (Bengali + English mix) by default.\n"
+        f"- Be concise, professional, and data-driven.\n"
+        f"- Use numbers and facts from the live data above.\n"
+    )
+
+    # ── Reuse same LLM fallback chain ───────────────────────
+    groq_keys = [k for k in [
+        getattr(settings, 'GROQ_API_KEY', ''),
+        getattr(settings, 'GROQ_API_KEY_2', ''),
+    ] if k]
+
+    groq_models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768']
+
+    messages = [{"role": "system", "content": system_prompt}]
+    for h in history[-10:]:
+        messages.append({"role": h['role'], "content": h['content']})
+    messages.append({"role": "user", "content": user_message})
+
+    for groq_key in groq_keys:
+        for model in groq_models:
+            try:
+                response = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                    json={"model": model, "messages": messages, "max_tokens": 600, "temperature": 0.5},
+                    timeout=30,
+                )
+                result = response.json()
+                if response.status_code == 200 and 'choices' in result:
+                    return JsonResponse({'reply': result['choices'][0]['message']['content']})
+            except Exception as exc:
+                logger.error("Admin Guru Groq %s error: %s", model, exc)
+
+    gemini_keys = [k for k in [
+        getattr(settings, 'GEMINI_API_KEY_2', ''),
+        getattr(settings, 'GEMINI_API_KEY', ''),
+    ] if k]
+
+    gemini_models = ['gemini-2.0-flash', 'gemini-2.0-flash-lite']
+    contents = []
+    for h in history[-10:]:
+        role = 'user' if h['role'] == 'user' else 'model'
+        contents.append({'role': role, 'parts': [{'text': h['content']}]})
+    contents.append({'role': 'user', 'parts': [{'text': user_message}]})
+
+    for gemini_key in gemini_keys:
+        for model in gemini_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+            try:
+                response = requests.post(
+                    url,
+                    json={
+                        'system_instruction': {'parts': [{'text': system_prompt}]},
+                        'contents': contents,
+                        'generationConfig': {'maxOutputTokens': 600, 'temperature': 0.5},
+                    },
+                    timeout=30,
+                )
+                result = response.json()
+                if response.status_code == 200 and 'candidates' in result:
+                    return JsonResponse({'reply': result['candidates'][0]['content']['parts'][0]['text']})
+            except Exception as exc:
+                logger.error("Admin Guru Gemini %s error: %s", model, exc)
+
+    return JsonResponse({'reply': 'দুঃখিত, AI সেবা সাময়িকভাবে বন্ধ আছে।'})
