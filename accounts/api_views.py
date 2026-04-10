@@ -118,7 +118,8 @@ class VerifyOTPView(APIView):
         Notification.objects.create(
             user=user,
             text='Welcome to TuitionMedia! Account created successfully.',
-            notif_type='success'
+            notif_type='success',
+            link='/dashboard/'
         )
 
         OTPVerification.objects.filter(phone=phone).delete()
@@ -335,7 +336,8 @@ class ForgotPasswordResetView(APIView):
         user.save(update_fields=['password'])
 
         Notification.objects.create(
-            user=user, text='Your password was reset successfully.', notif_type='success'
+            user=user, text='Your password was reset successfully.', notif_type='success',
+            link='/dashboard/'
         )
 
         OTPVerification.objects.filter(phone=phone).delete()
@@ -387,7 +389,8 @@ class ProfileUpdateView(APIView):
                 Notification.objects.create(
                     user=admin,
                     text=f'{user.get_full_name()} updated their profile (needs approval)',
-                    notif_type='warn'
+                    notif_type='warn',
+                    link='/admin-panel/profile-approvals/'
                 )
 
         return Response(UserProfileSerializer(user, context={'request': request}).data)

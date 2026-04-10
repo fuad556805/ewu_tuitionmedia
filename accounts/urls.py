@@ -12,6 +12,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('profile/', views.profile_view, name='profile'),
     path('notifications/', views.notifications_view, name='notifications'),
+    path('notifications/json/', views.notifications_json, name='notifications_json'),
     path('notifications/<int:pk>/read/', views.mark_notif_read, name='mark_notif_read'),
     path('set-theme/', views.set_theme, name='set_theme'),
     path('profile/<int:user_id>/', views.public_profile, name='public_profile'),

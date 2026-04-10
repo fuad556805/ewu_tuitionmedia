@@ -24,7 +24,7 @@ def create_post(request):
             post.save()
             # notify admins
             for admin in User.objects.filter(role='admin'):
-                Notification.objects.create(user=admin, text=f"New post by {request.user.get_full_name()}: {post.subject}", notif_type='warn')
+                Notification.objects.create(user=admin, text=f"New post by {request.user.get_full_name()}: {post.subject}", notif_type='warn', link='/admin-panel/posts-approval/')
             messages.success(request, "Post submitted for admin approval!")
         else:
             messages.error(request, "Please fix the errors.")
@@ -41,7 +41,7 @@ def edit_post(request, pk):
             post.status = 'pending_approval'
             post.save()
             for admin in User.objects.filter(role='admin'):
-                Notification.objects.create(user=admin, text=f"Post edited by {request.user.get_full_name()}: {post.subject}", notif_type='warn')
+                Notification.objects.create(user=admin, text=f"Post edited by {request.user.get_full_name()}: {post.subject}", notif_type='warn', link='/admin-panel/posts-approval/')
             messages.success(request, "Post updated. Awaiting admin approval.")
             return redirect('my_posts')
     else:

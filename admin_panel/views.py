@@ -72,9 +72,9 @@ def approve_profile(request, user_id):
     if action == 'approve':
         user.profile_approved = True
         user.save()
-        Notification.objects.create(user=user, text="Profile approved!", notif_type='success')
+        Notification.objects.create(user=user, text="Profile approved!", notif_type='success', link='/profile/')
     else:
-        Notification.objects.create(user=user, text="Profile rejected!", notif_type='danger')
+        Notification.objects.create(user=user, text="Profile rejected!", notif_type='danger', link='/profile/')
 
     return redirect('admin_panel:profile_approvals')
 

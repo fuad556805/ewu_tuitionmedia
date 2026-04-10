@@ -268,6 +268,7 @@ body {
 .badge-muted { background: rgba(255, 255, 255, 0.08); color: var(--muted); }
 .badge-pink { background: rgba(255, 107, 157, 0.15); color: var(--accent2); }
 .badge-guru { background: rgba(168, 85, 247, 0.18); color: #c084fc; }
+.notif-badge { background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; margin-left: 6px; vertical-align: middle; display: inline-block; min-width: 18px; text-align: center; line-height: 16px; }
 
 /* ── Buttons ── */
 .btn {

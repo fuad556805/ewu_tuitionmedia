@@ -82,6 +82,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'tuitionmedia.context_processors.vapid_key',
+                'tuitionmedia.context_processors.unread_notif_count',
             ],
         },
     },

@@ -57,7 +57,8 @@ class SendMessageView(APIView):
         Notification.objects.create(
             user=receiver,
             text=f"New message from {request.user.get_full_name()}",
-            notif_type='info'
+            notif_type='info',
+            link='/chat/'
         )
 
         return Response(MessageSerializer(msg).data, status=status.HTTP_201_CREATED)
@@ -154,7 +155,8 @@ class ChatRequestListView(APIView):
         Notification.objects.create(
             user=receiver,
             text=f"{request.user.get_full_name()} sent you a chat request.",
-            notif_type='info'
+            notif_type='info',
+            link='/chat/'
         )
 
         return Response(ChatRequestSerializer(req).data, status=status.HTTP_201_CREATED)
@@ -183,7 +185,8 @@ class ChatRequestRespondView(APIView):
         Notification.objects.create(
             user=req.sender,
             text=f"{request.user.get_full_name()} {req.status} your chat request.",
-            notif_type='success' if req.status == 'accepted' else 'danger'
+            notif_type='success' if req.status == 'accepted' else 'danger',
+            link='/chat/'
         )
 
         return Response(ChatRequestSerializer(req).data)

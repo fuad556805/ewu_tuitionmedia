@@ -21,7 +21,8 @@ def send_request(request, tutor_id):
             Notification.objects.create(
                 user=tutor,
                 text=f"{request.user.get_full_name()} sent you a tuition request!",
-                notif_type='accent'
+                notif_type='accent',
+                link=f'/profile/{request.user.pk}/'
             )
             messages.success(request, f"Request sent to {tutor.get_full_name()}!")
         else:
@@ -44,7 +45,8 @@ def apply_to_post(request, post_id):
             Notification.objects.create(
                 user=post.student,
                 text=f"{request.user.get_full_name()} applied to your post: {post.subject}",
-                notif_type='accent'
+                notif_type='accent',
+                link=f'/profile/{request.user.pk}/'
             )
             messages.success(request, f"Applied to {post.subject}!")
         else:
@@ -68,14 +70,16 @@ def accept_request(request, req_id):
         Notification.objects.create(
             user=req.tutor,
             text=f"{request.user.get_full_name()} accepted your request for {req.subject}!",
-            notif_type='success'
+            notif_type='success',
+            link='/tuitions/my/'
         )
         # notify admins
         for admin in User.objects.filter(role='admin'):
             Notification.objects.create(
                 user=admin,
                 text=f"New tuition confirmed: {req.tutor.get_full_name()} + {request.user.get_full_name()}",
-                notif_type='accent'
+                notif_type='accent',
+                link='/admin-panel/requests/'
             )
         messages.success(request, "Request accepted! Tuition started.")
     return redirect('dashboard')
@@ -97,13 +101,15 @@ def tutor_accept_request(request, req_id):
         Notification.objects.create(
             user=req.student,
             text=f"{request.user.get_full_name()} accepted your tuition request for {req.subject}!",
-            notif_type='success'
+            notif_type='success',
+            link='/dashboard/'
         )
         for admin in User.objects.filter(role='admin'):
             Notification.objects.create(
                 user=admin,
                 text=f"New tuition confirmed: {request.user.get_full_name()} + {req.student.get_full_name()}",
-                notif_type='accent'
+                notif_type='accent',
+                link='/admin-panel/requests/'
             )
         messages.success(request, "Request accepted! Tuition started.")
     return redirect('dashboard')
@@ -119,7 +125,8 @@ def tutor_reject_request(request, req_id):
         Notification.objects.create(
             user=req.student,
             text=f"{request.user.get_full_name()} declined your tuition request for {req.subject}.",
-            notif_type='danger'
+            notif_type='danger',
+            link='/dashboard/'
         )
         messages.warning(request, "Request declined.")
     return redirect('dashboard')
@@ -134,7 +141,8 @@ def reject_request(request, req_id):
         Notification.objects.create(
             user=req.tutor,
             text=f"{request.user.get_full_name()} rejected your request for {req.subject}.",
-            notif_type='danger'
+            notif_type='danger',
+            link='/dashboard/'
         )
         messages.warning(request, "Request rejected.")
     return redirect('dashboard')
@@ -174,7 +182,8 @@ def submit_proof(request, tuition_id):
             Notification.objects.create(
                 user=admin,
                 text=f"{request.user.get_full_name()} submitted commission proof for {tuition.student.get_full_name()} (BDT {tuition.commission})",
-                notif_type='warn'
+                notif_type='warn',
+                link='/admin-panel/payments/'
             )
         messages.success(request, "Proof submitted! Admin will verify.")
     return redirect('payments')

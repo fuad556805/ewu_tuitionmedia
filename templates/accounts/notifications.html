@@ -2,25 +2,15 @@
 {% block title %}Notifications — TuitionMedia{% endblock %}
 
 {% block content %}
-<!-- Header with bell icon and unread count -->
-<div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:20px">
-  <div id="notif-icon" style="position:relative;cursor:pointer;font-size:24px">
-    🔔
-    {% if unread_count > 0 %}
-    <span id="notif-count"
-          style="position:absolute;top:-6px;right:-6px;
-                 background:var(--accent);color:white;
-                 font-size:10px;padding:2px 5px;
-                 border-radius:50%;display:inline-block">
-      {{ unread_count }}
-    </span>
-    {% endif %}
-  </div>
-</div>
-
 <div style="animation:slideIn 0.4s ease">
   <div class="section-header">
-    <div class="section-title">Notifications</div>
+    <div>
+      <div class="section-title">🔔 Notifications</div>
+      <div class="section-sub">Your recent activity and updates</div>
+    </div>
+    {% if unread_count > 0 %}
+    <span style="background:var(--accent);color:#fff;font-size:13px;padding:4px 12px;border-radius:99px;font-weight:700">{{ unread_count }} unread</span>
+    {% endif %}
   </div>
 
   {% if not notifs %}
@@ -32,58 +22,67 @@
 
   <div style="display:flex;flex-direction:column;gap:8px">
     {% for n in notifs %}
-    <div class="glass notif-item {% if n.read %}read{% endif %}" data-id="{{ n.pk }}"
+    <div class="glass notif-item {% if n.read %}read{% endif %}"
+         data-id="{{ n.pk }}"
+         data-link="{{ n.link }}"
          style="padding:13px 18px;display:flex;align-items:center;gap:12px;
                 opacity:{% if n.read %}0.6{% else %}1{% endif %};
                 border-left:3px solid {% if not n.read %}var(--accent){% else %}transparent{% endif %};
-                cursor:{% if not n.read %}pointer{% else %}default{% endif %}">
+                cursor:pointer;transition:opacity 0.2s,border 0.2s,background 0.15s">
       {% if not n.read %}
       <span class="pulse-dot"></span>
       {% else %}
-      <span style="width:8px;height:8px;border-radius:50%;
-                   background:var(--muted);display:inline-block;flex-shrink:0"></span>
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block;flex-shrink:0"></span>
       {% endif %}
       <div style="flex:1">
         <div style="font-size:14px">{{ n.text }}</div>
         <div style="color:var(--muted);font-size:12px;margin-top:2px">{{ n.created_at|timesince }} ago</div>
       </div>
       {% if not n.read %}<span class="badge badge-accent">New</span>{% endif %}
+      {% if n.link %}<span style="color:var(--muted);font-size:16px">→</span>{% endif %}
     </div>
     {% endfor %}
   </div>
 </div>
 
 <script>
-  // Notification click mark as read
-  document.querySelectorAll('.notif-item').forEach(item => {
+  var _pageUnread = {{ unread_count|default:0 }};
+
+  document.querySelectorAll('.notif-item').forEach(function(item) {
+    item.addEventListener('mouseover', function(){ if(!this.classList.contains('read')) this.style.background='rgba(255,255,255,0.05)'; });
+    item.addEventListener('mouseout',  function(){ this.style.background=''; });
     item.addEventListener('click', function() {
-      if(this.classList.contains('read')) return;
-      const notifId = this.dataset.id;
-      fetch(`/notifications/${notifId}/read/`, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': '{{ csrf_token }}'
-        }
-      }).then(res => res.json()).then(data => {
-        if(data.ok){
-          this.classList.add('read');
-          this.style.opacity = 0.6;
-          this.style.borderLeft = '3px solid transparent';
-          const dot = this.querySelector('.pulse-dot');
-          if(dot) dot.style.background = 'var(--muted)';
-          // Update header count if exists
-          const bell = document.getElementById('notif-count');
-          if(bell){
-            let count = parseInt(bell.innerText) || 0;
-            count = Math.max(count-1,0);
-            if(count > 0){
-              bell.innerText = count;
-            } else {
-              bell.remove();
-            }
+      var notifId = this.dataset.id;
+      var link    = this.dataset.link;
+      var isRead  = this.classList.contains('read');
+
+      if (!isRead) {
+        var self = this;
+        fetch('/notifications/' + notifId + '/read/', {
+          method: 'POST',
+          headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        }).then(function(r){ return r.json(); }).then(function(d){
+          if (d.ok) {
+            self.classList.add('read');
+            self.style.opacity = '0.6';
+            self.style.borderLeft = '3px solid transparent';
+            var dot = self.querySelector('.pulse-dot');
+            if (dot) { dot.classList.remove('pulse-dot'); dot.style.background='var(--muted)'; }
+            var badge = self.querySelector('.badge-accent');
+            if (badge) badge.remove();
+            _pageUnread = Math.max(0, _pageUnread - 1);
+            document.querySelectorAll('.notif-badge').forEach(function(b){
+              if (_pageUnread > 0) { b.textContent = _pageUnread; b.style.display='inline-block'; }
+              else { b.style.display='none'; }
+            });
           }
-        }
-      });
+          if (link) window.location.href = link;
+        }).catch(function(){
+          if (link) window.location.href = link;
+        });
+      } else {
+        if (link) window.location.href = link;
+      }
     });
   });
 </script>

@@ -54,6 +54,7 @@ class TuitionCreateView(APIView):
                 user=admin,
                 text=f"New post by {request.user.get_full_name()}: {post.subject}",
                 notif_type='warn',
+                link='/admin-panel/posts-approval/'
             )
 
         logger.info("Post created: id=%s by user=%s", post.pk, request.user.pk)
@@ -96,6 +97,7 @@ class TuitionUpdateView(APIView):
                 user=admin,
                 text=f"Post edited by {request.user.get_full_name()}: {post.subject}",
                 notif_type='warn',
+                link='/admin-panel/posts-approval/'
             )
 
         return Response(PostSerializer(post).data)

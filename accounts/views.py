@@ -85,7 +85,8 @@ def signup_view(request):
             Notification.objects.create(
                 user=user,
                 text='Welcome to TuitionMedia! Account created successfully.',
-                notif_type='success'
+                notif_type='success',
+                link='/dashboard/'
             )
             login(request, user)
             return redirect('dashboard')
@@ -169,7 +170,8 @@ def forgot_password(request):
                 user.set_password(new_pass)
                 user.save()
                 Notification.objects.create(
-                    user=user, text='Your password was reset successfully.', notif_type='success'
+                    user=user, text='Your password was reset successfully.', notif_type='success',
+                    link='/dashboard/'
                 )
             for k in ['reset_step', 'reset_otp', 'reset_phone']:
                 request.session.pop(k, None)
@@ -243,7 +245,8 @@ def profile_view(request):
             Notification.objects.create(
                 user=admin,
                 text=f'{user.get_full_name()} updated their profile (needs approval)',
-                notif_type='warn'
+                notif_type='warn',
+                link='/admin-panel/profile-approvals/'
             )
         messages.success(request, 'Profile updated. Awaiting admin approval.')
         return redirect('profile')
@@ -259,7 +262,11 @@ def profile_view(request):
 @login_required
 def notifications_view(request):
     notifs = Notification.objects.filter(user=request.user)
-    return render(request, 'accounts/notifications.html', {'notifs': notifs})
+    unread_count = notifs.filter(read=False).count()
+    return render(request, 'accounts/notifications.html', {
+        'notifs': notifs,
+        'unread_count': unread_count,
+    })
 
 
 @login_required
@@ -268,6 +275,24 @@ def mark_notif_read(request, pk):
     n.read = True
     n.save()
     return JsonResponse({'ok': True})
+
+
+@login_required
+def notifications_json(request):
+    from django.utils.timesince import timesince
+    notifs = Notification.objects.filter(user=request.user)[:20]
+    unread_count = Notification.objects.filter(user=request.user, read=False).count()
+    data = []
+    for n in notifs:
+        data.append({
+            'id': n.pk,
+            'text': n.text,
+            'notif_type': n.notif_type,
+            'read': n.read,
+            'link': n.link,
+            'time_since': timesince(n.created_at),
+        })
+    return JsonResponse({'notifications': data, 'unread_count': unread_count})
 
 
 @login_required
