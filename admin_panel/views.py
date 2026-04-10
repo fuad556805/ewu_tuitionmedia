@@ -83,6 +83,22 @@ def approve_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     action = request.POST.get('action')
 
+
+    # ------------------------------
+# All Posts (Admin View)
+# ------------------------------
+@admin_required
+def all_posts(request):
+    posts = Post.objects.select_related('student').order_by('-created_at')
+    return render(request, 'admin_panel/all_posts.html', {'posts': posts})
+
+
+@admin_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    post.delete()
+    return redirect('admin_panel:all_posts')
+
     if action == 'approve':
         post.status = 'active'
     else:
