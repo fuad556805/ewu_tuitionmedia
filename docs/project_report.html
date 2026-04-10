@@ -5,127 +5,177 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>TuitionMedia — Full Project Report</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap');
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --primary:#4f46e5;--primary-light:#818cf8;--accent:#7c3aed;
-    --dark:#0f172a;--text:#1e293b;--muted:#64748b;
-    --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
-    --green:#059669;--orange:#d97706;--red:#dc2626;--blue:#2563eb;
-  }
-  body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);font-size:14px;line-height:1.75}
-  @media print{body{background:#fff;font-size:12px}@page{margin:2cm;size:A4}.no-print{display:none}.page-break{page-break-before:always}}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p1:#3b82f6;--p2:#6366f1;--p3:#8b5cf6;
+  --g1:#10b981;--o1:#f59e0b;--r1:#ef4444;--c1:#06b6d4;
+  --dark:#1e293b;--text:#334155;--muted:#64748b;
+  --border:#e2e8f0;--bg:#f0f6ff;--white:#ffffff;
+}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);font-size:14px;line-height:1.75}
+@media print{body{background:#fff;font-size:12px}@page{margin:2cm;size:A4}.page-break{page-break-before:always}}
 
-  /* Cover */
-  .cover{background:linear-gradient(160deg,#0f172a 0%,#1e1b4b 45%,#4c1d95 100%);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;position:relative;overflow:hidden}
-  .cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(99,102,241,0.35) 0%,transparent 55%),radial-gradient(ellipse at 80% 75%,rgba(168,85,247,0.25) 0%,transparent 50%)}
-  .cover-badge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:99px;padding:6px 20px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:28px;display:inline-block}
-  .cover h1{font-family:'Merriweather',serif;font-size:52px;font-weight:700;line-height:1.2;margin-bottom:12px}
-  .cover h1 span{color:#a5b4fc}
-  .cover .sub{font-size:16px;opacity:0.75;margin-bottom:10px;font-weight:300}
-  .cover .tagline{font-size:13px;opacity:0.55;max-width:480px;margin:0 auto 52px}
-  .cover-meta{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:24px 36px;display:inline-grid;grid-template-columns:repeat(3,1fr);gap:20px 48px;text-align:left;backdrop-filter:blur(8px)}
-  .cover-meta-item label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:0.55;margin-bottom:3px}
-  .cover-meta-item span{font-weight:600;font-size:13px}
-  .cover-logo{width:80px;height:80px;background:linear-gradient(135deg,#6366f1,#a855f7);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 28px;box-shadow:0 8px 40px rgba(99,102,241,0.45)}
+/* ── COVER ─────────────────────────────────────────── */
+.cover{background:linear-gradient(135deg,#dbeafe 0%,#ede9fe 50%,#e0f2fe 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 35%,rgba(99,102,241,0.12) 0%,transparent 60%),radial-gradient(ellipse at 75% 70%,rgba(59,130,246,0.1) 0%,transparent 55%)}
+.cover-badge{background:linear-gradient(135deg,var(--p2),var(--p1));color:#fff;border-radius:99px;padding:6px 22px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:24px;display:inline-block;box-shadow:0 4px 12px rgba(99,102,241,0.3)}
+.cover h1{font-family:'Merriweather',serif;font-size:52px;font-weight:700;line-height:1.15;color:var(--dark);margin-bottom:10px}
+.cover h1 span{color:var(--p2)}
+.cover .sub{font-size:16px;color:var(--muted);margin-bottom:8px;font-weight:400}
+.cover .tagline{font-size:12.5px;color:var(--muted);max-width:500px;margin:0 auto 48px}
+.cover-meta{background:rgba(255,255,255,0.8);border:1px solid rgba(99,102,241,0.2);border-radius:20px;padding:24px 36px;display:inline-grid;grid-template-columns:repeat(3,1fr);gap:18px 48px;text-align:left;backdrop-filter:blur(8px);box-shadow:0 8px 32px rgba(59,130,246,0.1)}
+.cover-meta-item label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px;font-weight:600}
+.cover-meta-item span{font-weight:700;font-size:13px;color:var(--dark)}
+.cover-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--p2),var(--p1));border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 28px;box-shadow:0 8px 32px rgba(99,102,241,0.35)}
 
-  /* Layout */
-  .container{max-width:860px;margin:0 auto;padding:48px 40px}
-  section{margin-bottom:60px}
+/* ── LAYOUT ─────────────────────────────────────────── */
+.container{max-width:900px;margin:0 auto;padding:52px 40px}
+section{margin-bottom:64px}
 
-  /* Typography */
-  .section-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
-  h2{font-family:'Merriweather',serif;font-size:24px;font-weight:700;color:var(--dark);margin-bottom:20px;padding-bottom:10px;border-bottom:3px solid var(--primary)}
-  h3{font-size:15px;font-weight:700;color:var(--dark);margin:28px 0 10px;display:flex;align-items:center;gap:8px}
-  h4{font-size:13px;font-weight:700;color:var(--dark);margin:16px 0 6px}
-  p{margin-bottom:14px;color:var(--text);font-size:13.5px}
+/* ── TYPOGRAPHY ─────────────────────────────────────── */
+.section-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:linear-gradient(135deg,var(--p2),var(--p1));color:#fff;border-radius:50%;font-size:13px;font-weight:800;margin-right:12px;flex-shrink:0}
+h2{font-family:'Merriweather',serif;font-size:24px;font-weight:700;color:var(--dark);margin-bottom:22px;display:flex;align-items:center;padding-bottom:14px;border-bottom:2px solid #dbeafe}
+h3{font-size:15px;font-weight:700;color:var(--dark);margin:28px 0 12px}
+h4{font-size:13px;font-weight:700;color:var(--dark);margin:14px 0 6px}
+p{margin-bottom:14px;font-size:13.5px;color:var(--text)}
 
-  /* Cards */
-  .card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
-  .card-accent{border-left:4px solid var(--primary)}
-  .card-green{border-left:4px solid var(--green)}
-  .card-red{border-left:4px solid var(--red)}
-  .card-orange{border-left:4px solid var(--orange)}
-  .card-blue{border-left:4px solid var(--blue)}
+/* ── CARDS ──────────────────────────────────────────── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:14px;box-shadow:0 2px 8px rgba(59,130,246,0.06)}
+.cl1{border-top:4px solid var(--p1)} .cl2{border-top:4px solid var(--p2)} .cl3{border-top:4px solid var(--g1)} .cl4{border-top:4px solid var(--o1)} .cl5{border-top:4px solid var(--r1)} .cl6{border-top:4px solid var(--c1)}
 
-  /* Table */
-  table{width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);margin-bottom:16px;font-size:13px}
-  th{background:var(--dark);color:#fff;padding:11px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
-  td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
-  tr:last-child td{border-bottom:none}
-  tr:nth-child(even) td{background:#f8fafc}
+/* ── TABLE ──────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(59,130,246,0.06);margin-bottom:16px;font-size:13px}
+th{background:linear-gradient(135deg,var(--p2),var(--p1));color:#fff;padding:11px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#f8fbff}
 
-  /* Grid */
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-  @media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr}}
+/* ── GRID ───────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:620px){.grid-2,.grid-3{grid-template-columns:1fr}}
 
-  /* Lists */
-  ul,ol{padding-left:20px;margin-bottom:14px}
-  li{margin-bottom:5px;font-size:13.5px}
-  ul.clean{list-style:none;padding:0}
-  ul.clean li{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;font-size:13px}
-  ul.clean li:last-child{border-bottom:none}
-  ul.clean li .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:5px}
+/* ── BADGE ──────────────────────────────────────────── */
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.b-blue{background:#dbeafe;color:#1d4ed8} .b-purple{background:#ede9fe;color:#6d28d9}
+.b-green{background:#d1fae5;color:#065f46} .b-orange{background:#fef3c7;color:#92400e}
+.b-red{background:#fee2e2;color:#991b1b}   .b-cyan{background:#cffafe;color:#155e75}
+.b-gray{background:#f1f5f9;color:#475569}
 
-  /* Badge */
-  .badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
-  .badge-blue{background:#eff6ff;color:#1d4ed8}
-  .badge-purple{background:#f5f3ff;color:#7c3aed}
-  .badge-green{background:#f0fdf4;color:#15803d}
-  .badge-orange{background:#fff7ed;color:#c2410c}
-  .badge-red{background:#fef2f2;color:#b91c1c}
-  .badge-gray{background:#f1f5f9;color:#475569}
+/* ── REQUIREMENTS ───────────────────────────────────── */
+.req{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #f1f5f9;align-items:flex-start}
+.req:last-child{border-bottom:none}
+.req .rid{font-family:'Courier New',monospace;font-size:11px;font-weight:800;padding:4px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.fr{background:#dbeafe;color:#1e40af} .nf{background:#ede9fe;color:#5b21b6}
+.req .rbody strong{display:block;font-size:13px;font-weight:700;margin-bottom:3px;color:var(--dark)}
+.req .rbody p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.5}
+.req .rpri{margin-left:auto;flex-shrink:0}
 
-  /* Diagram containers */
-  .diagram{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:28px;margin:16px 0;overflow-x:auto}
-  .diagram pre{font-family:'Courier New',monospace;font-size:11.5px;line-height:1.6;color:var(--dark);white-space:pre}
+/* ── STATS ──────────────────────────────────────────── */
+.stat{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(59,130,246,0.06)}
+.stat .num{font-size:32px;font-weight:800;line-height:1;background:linear-gradient(135deg,var(--p2),var(--p1));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat .lbl{font-size:11px;color:var(--muted);margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
 
-  /* Stat */
-  .stat-box{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
-  .stat-box .num{font-size:30px;font-weight:800;color:var(--primary);line-height:1}
-  .stat-box .lbl{font-size:11px;color:var(--muted);margin-top:5px;font-weight:600}
+/* ── TOC ─────────────────────────────────────────────  */
+.toc{background:var(--white);border:2px solid #dbeafe;border-radius:16px;padding:28px 32px;box-shadow:0 2px 12px rgba(59,130,246,0.08)}
+.toc-group{margin-bottom:12px}
+.toc-glabel{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--p2);margin-bottom:6px}
+.toc li{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dotted var(--border);font-size:12.5px;list-style:none}
+.toc li:last-child{border-bottom:none}
+.toc li span{color:var(--muted);font-size:11px}
+.toc a{text-decoration:none;color:var(--text);font-weight:500}
+.toc a:hover{color:var(--p2)}
 
-  /* TOC */
-  .toc{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:28px 32px}
-  .toc h3{font-size:14px;font-weight:700;margin-bottom:16px;color:var(--dark)}
-  .toc-group{margin-bottom:10px}
-  .toc-group .group-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  .toc li{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dotted var(--border);font-size:12.5px;list-style:none}
-  .toc li:last-child{border-bottom:none}
-  .toc li span{color:var(--muted);font-size:11px}
-  .toc a{text-decoration:none;color:var(--text)}
-  .toc a:hover{color:var(--primary)}
+/* ── SCENARIO ───────────────────────────────────────── */
+.scenario{background:linear-gradient(135deg,#f0f6ff,#f5f3ff);border:2px solid #dbeafe;border-radius:16px;padding:24px}
+.sc-step{display:flex;gap:14px;margin-bottom:14px}
+.sc-step:last-child{margin-bottom:0}
+.sc-step .sn{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--p2),var(--p1));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sc-step .sb strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px;color:var(--dark)}
+.sc-step .sb span{font-size:12.5px;color:var(--muted)}
 
-  /* Req numbering */
-  .req{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
-  .req:last-child{border-bottom:none}
-  .req .id{font-family:'Courier New',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;height:fit-content;flex-shrink:0;margin-top:2px}
-  .req .fr-id{background:#eff6ff;color:#1d4ed8}
-  .req .nf-id{background:#f5f3ff;color:#7c3aed}
-  .req .body strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
-  .req .body p{font-size:12.5px;color:var(--muted);margin:0}
-  .req .priority{margin-left:auto;flex-shrink:0;margin-top:2px}
+/* ── FOOTER ─────────────────────────────────────────── */
+.doc-footer{text-align:center;padding:40px 0 20px;color:var(--muted);font-size:12px;border-top:2px solid #dbeafe}
 
-  /* Scenario box */
-  .scenario{background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1px solid #c7d2fe;border-radius:12px;padding:24px}
-  .scenario-step{display:flex;gap:14px;margin-bottom:16px}
-  .scenario-step:last-child{margin-bottom:0}
-  .scenario-step .step-num{width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .scenario-step .step-body strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
-  .scenario-step .step-body span{font-size:12.5px;color:var(--muted)}
+/* ═══════════════════════════════════════════════════════
+   DIAGRAM STYLES
+═══════════════════════════════════════════════════════ */
 
-  /* Flow arrow */
-  .flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:16px 0}
-  .flow-box{background:var(--primary);color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;text-align:center}
-  .flow-box.green{background:var(--green)}
-  .flow-box.orange{background:var(--orange)}
-  .flow-box.red{background:var(--red)}
-  .flow-box.gray{background:#64748b}
-  .flow-arr{color:var(--muted);font-size:18px;padding:0 6px}
+/* diagram wrapper */
+.dg-wrap{background:var(--white);border:2px solid #dbeafe;border-radius:16px;padding:32px 28px;margin:18px 0;overflow-x:auto;box-shadow:0 4px 20px rgba(59,130,246,0.08)}
+.dg-title{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--p2);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.dg-title::after{content:'';flex:1;height:1px;background:#dbeafe}
 
-  /* Footer */
-  .doc-footer{text-align:center;padding:40px 0 20px;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
+/* ── ER / Class entity box */
+.er-grid{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;padding:8px 0}
+.er-entity{min-width:180px;border-radius:12px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,0.1);flex:0 0 auto}
+.er-head{padding:9px 14px;font-size:12px;font-weight:800;color:#fff;letter-spacing:0.5px;text-align:center}
+.er-body{background:#fff;padding:8px 12px}
+.er-field{font-size:11.5px;padding:3px 0;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:6px;color:var(--text)}
+.er-field:last-child{border-bottom:none}
+.er-pk{color:#f59e0b;font-weight:700;font-size:10px;flex-shrink:0}
+.er-fk{color:#6366f1;font-weight:700;font-size:10px;flex-shrink:0}
+.er-type{color:var(--muted);font-size:10px;margin-left:auto}
+
+/* ── ER relationship lines (CSS arrows) */
+.er-relations{display:flex;flex-direction:column;gap:6px;margin-top:20px;padding:12px 16px;background:#f8fbff;border-radius:10px}
+.er-rel{display:flex;align-items:center;gap:8px;font-size:12px}
+.er-rel .from{font-weight:700;color:var(--dark)}
+.er-rel .arrow{color:var(--p1);font-size:16px;flex-shrink:0}
+.er-rel .to{font-weight:700;color:var(--dark)}
+.er-rel .card{font-size:11px;color:var(--muted);margin-left:4px}
+.er-rel .type{font-size:11px;color:var(--p2);background:#ede9fe;padding:2px 7px;border-radius:6px;margin-left:auto}
+
+/* ── DFD elements */
+.dfd-wrap{display:flex;flex-direction:column;gap:24px}
+.dfd-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.dfd-ext{background:#dbeafe;border:2px solid var(--p1);border-radius:10px;padding:10px 18px;font-size:12px;font-weight:700;color:var(--p2);text-align:center;min-width:110px}
+.dfd-proc{background:linear-gradient(135deg,var(--p2),var(--p1));color:#fff;border-radius:50%;width:90px;height:90px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;text-align:center;line-height:1.3;flex-shrink:0;box-shadow:0 4px 14px rgba(99,102,241,0.35)}
+.dfd-store{background:#fff;border-top:3px solid var(--g1);border-bottom:3px solid var(--g1);padding:8px 16px;font-size:11.5px;font-weight:700;color:var(--g1);min-width:120px;text-align:center}
+.dfd-arr{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+.dfd-arr .line{width:40px;height:2px;background:var(--muted)}
+.dfd-arr .label{font-size:10px;color:var(--muted);white-space:nowrap}
+.dfd-arr .tip{color:var(--muted);font-size:14px}
+.dfd-section{background:#f8fbff;border-radius:12px;padding:16px 20px}
+.dfd-section-title{font-size:11px;font-weight:700;color:var(--p2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+
+/* ── Use Case elements */
+.uc-wrap{display:grid;grid-template-columns:140px 1fr;gap:0;border:2px solid #dbeafe;border-radius:16px;overflow:hidden}
+.uc-actor{background:linear-gradient(180deg,#ede9fe,#dbeafe);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 12px;gap:20px;border-right:2px solid #dbeafe}
+.uc-actor-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+.uc-actor-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.uc-actor-label{font-size:11px;font-weight:700;color:var(--dark);text-align:center}
+.uc-cases{background:var(--white);padding:20px}
+.uc-group{margin-bottom:16px}
+.uc-group-title{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.uc-list{display:flex;flex-wrap:wrap;gap:7px}
+.uc-case{border-radius:99px;padding:6px 14px;font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.uc-s{background:#dbeafe;color:#1d4ed8;border:1.5px solid #93c5fd}
+.uc-t{background:#d1fae5;color:#065f46;border:1.5px solid #6ee7b7}
+.uc-a{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+.uc-shared{background:#ede9fe;color:#5b21b6;border:1.5px solid #c4b5fd}
+
+/* ── Activity diagram */
+.act-wrap{display:flex;flex-direction:column;align-items:center;gap:0}
+.act-start{width:24px;height:24px;background:var(--dark);border-radius:50%}
+.act-end{width:24px;height:24px;background:var(--dark);border-radius:50%;box-shadow:0 0 0 4px rgba(30,41,59,0.2)}
+.act-step{background:var(--white);border:2px solid var(--p1);border-radius:10px;padding:9px 20px;font-size:12px;font-weight:600;color:var(--dark);text-align:center;min-width:240px;max-width:340px;box-shadow:0 2px 8px rgba(59,130,246,0.1)}
+.act-decision{background:#fef3c7;border:2px solid var(--o1);transform:rotate(0deg);border-radius:6px;padding:9px 20px;font-size:12px;font-weight:700;color:#92400e;text-align:center;min-width:200px;max-width:280px;position:relative}
+.act-decision::before{content:'◆';position:absolute;left:-18px;top:50%;transform:translateY(-50%);color:var(--o1);font-size:18px}
+.act-arrow{width:2px;height:22px;background:var(--muted);display:block;margin:0 auto}
+.act-row{display:flex;gap:16px;align-items:flex-start;justify-content:center}
+.act-branch{display:flex;flex-direction:column;align-items:center;gap:0}
+.act-branch-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-bottom:4px}
+.act-yes{background:#d1fae5;color:#065f46}
+.act-no{background:#fee2e2;color:#991b1b}
+.act-fork{width:160px;height:3px;background:var(--muted);margin:0 auto}
+
+/* ── Architecture layers */
+.arch-layer{border-radius:14px;padding:16px 20px;margin-bottom:8px;position:relative}
+.arch-label{position:absolute;left:-46px;top:50%;transform:translateY(-50%) rotate(-90deg);font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
+.arch-items{display:flex;flex-wrap:wrap;gap:8px}
+.arch-item{border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
 </style>
 </head>
 <body>
@@ -136,953 +186,831 @@
   <div class="cover-badge">Full Project Report</div>
   <h1>Tuition<span>Media</span></h1>
   <p class="sub">Smart Tuition Matching Platform</p>
-  <p class="tagline">Requirements Analysis · System Design · Data Flow · Use Cases · Activity Diagrams · Sample Scenarios</p>
+  <p class="tagline">Requirements Analysis · Class Diagram · DFD · Use Case · Activity Diagrams · Sample Scenarios</p>
   <div class="cover-meta">
     <div class="cover-meta-item"><label>Platform</label><span>Django 6.0.4 + PostgreSQL</span></div>
     <div class="cover-meta-item"><label>Target Region</label><span>Bangladesh</span></div>
     <div class="cover-meta-item"><label>Report Type</label><span>Full Technical Report</span></div>
     <div class="cover-meta-item"><label>Architecture</label><span>Monolithic MVC + REST API</span></div>
     <div class="cover-meta-item"><label>AI Integration</label><span>Gemini API + Groq</span></div>
-    <div class="cover-meta-item"><label>Document Version</label><span>1.0 — 2026</span></div>
+    <div class="cover-meta-item"><label>Version</label><span>1.0 — 2026</span></div>
   </div>
 </div>
 
-<!-- ═══════════════ BODY ═══════════════ -->
 <div class="container">
 
-  <!-- TOC -->
+  <!-- ─── TOC ─── -->
   <section>
     <div class="toc">
-      <h3>📋 Table of Contents</h3>
-      <div class="toc-group">
-        <div class="group-label">Part I — Project Overview</div>
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:18px;color:var(--dark)">📋 Table of Contents</h3>
+      <div class="toc-group"><div class="toc-glabel">Part I — Overview &amp; Requirements</div>
         <ul>
-          <li><a href="#intro">1. Introduction &amp; Background</a><span>§1</span></li>
-          <li><a href="#reqanalysis">2. Requirements Analysis</a><span>§2</span></li>
-          <li><a href="#func">3. Functional Requirements</a><span>§3</span></li>
-          <li><a href="#nonfunc">4. Non-Functional Requirements</a><span>§4</span></li>
+          <li><a href="#s1">1. Introduction &amp; Background</a><span>§1</span></li>
+          <li><a href="#s2">2. Requirements Analysis</a><span>§2</span></li>
+          <li><a href="#s3">3. Functional Requirements (FR)</a><span>§3</span></li>
+          <li><a href="#s4">4. Non-Functional Requirements (NFR)</a><span>§4</span></li>
         </ul>
       </div>
-      <div class="toc-group">
-        <div class="group-label">Part II — System Design</div>
+      <div class="toc-group"><div class="toc-glabel">Part II — System Design &amp; Diagrams</div>
         <ul>
-          <li><a href="#classdiag">5. Class Diagram</a><span>§5</span></li>
-          <li><a href="#dfd">6. Data Flow Diagram (DFD)</a><span>§6</span></li>
-          <li><a href="#usecase">7. Use Case Diagram</a><span>§7</span></li>
-          <li><a href="#activity">8. Activity Diagrams</a><span>§8</span></li>
+          <li><a href="#s5">5. Class Diagram (ER Style)</a><span>§5</span></li>
+          <li><a href="#s6">6. Data Flow Diagram (DFD)</a><span>§6</span></li>
+          <li><a href="#s7">7. Use Case Diagram</a><span>§7</span></li>
+          <li><a href="#s8">8. Activity Diagrams</a><span>§8</span></li>
         </ul>
       </div>
-      <div class="toc-group">
-        <div class="group-label">Part III — Implementation</div>
+      <div class="toc-group"><div class="toc-glabel">Part III — Implementation</div>
         <ul>
-          <li><a href="#arch">9. System Architecture</a><span>§9</span></li>
-          <li><a href="#scenario">10. Sample Usage Scenarios</a><span>§10</span></li>
-          <li><a href="#payment">11. Payment Flow Detail</a><span>§11</span></li>
-          <li><a href="#security">12. Security Design</a><span>§12</span></li>
-          <li><a href="#api">13. REST API Overview</a><span>§13</span></li>
-          <li><a href="#conclusion">14. Conclusion</a><span>§14</span></li>
+          <li><a href="#s9">9. System Architecture</a><span>§9</span></li>
+          <li><a href="#s10">10. Sample Usage Scenarios</a><span>§10</span></li>
+          <li><a href="#s11">11. Payment Flow</a><span>§11</span></li>
+          <li><a href="#s12">12. Security Design</a><span>§12</span></li>
+          <li><a href="#s13">13. REST API Overview</a><span>§13</span></li>
+          <li><a href="#s14">14. Conclusion</a><span>§14</span></li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §1 INTRODUCTION -->
-  <section id="intro">
-    <div class="section-label">Section 01</div>
-    <h2>Introduction &amp; Background</h2>
-    <p>Private tutoring is one of the most significant supplementary education markets in Bangladesh. Millions of students seek home tutors every year for school, college, and university subjects. Despite the scale of the market, the process of finding, verifying, and hiring a tutor remains largely informal — relying on word-of-mouth referrals, social media posts, or local middlemen.</p>
-    <p>These methods are slow, untrustworthy, and unscalable. Parents cannot verify a tutor's credentials, tutors cannot showcase their work, and no financial trail exists for commission or salary agreements. <strong>TuitionMedia</strong> is designed to solve all of these problems in a single, integrated web platform.</p>
-
-    <h3>🎯 Project Goals</h3>
-    <div class="grid-2">
-      <div class="card card-accent">
-        <h4>For Students</h4>
-        <ul>
-          <li>Post detailed tuition requirements</li>
-          <li>Browse and filter verified tutors</li>
-          <li>Unlock contact details via payment</li>
-          <li>Communicate directly in-platform</li>
-          <li>Track tuition and payment history</li>
-        </ul>
-      </div>
-      <div class="card card-accent">
-        <h4>For Tutors</h4>
-        <ul>
-          <li>Build a verified public profile</li>
-          <li>Browse and apply to student posts</li>
-          <li>Receive direct tuition requests</li>
-          <li>Manage active tuitions</li>
-          <li>Pay commissions digitally (bKash/Nagad)</li>
-        </ul>
-      </div>
+  <!-- ═══════════════ §1 INTRO ═══════════════ -->
+  <section id="s1">
+    <h2><span class="section-num">1</span>Introduction &amp; Background</h2>
+    <p>Private tutoring is one of the most significant supplementary education markets in Bangladesh. Millions of students seek home tutors for school, college, and university subjects every year. Despite the scale of the market, the process of finding, verifying, and hiring a tutor remains largely informal — relying on word-of-mouth, social media groups, or local middlemen.</p>
+    <p><strong>TuitionMedia</strong> digitises this ecosystem — bringing students, tutors, and administrators together on a single verified, transparent, and intelligent platform.</p>
+    <div class="grid-2" style="margin-top:18px">
+      <div class="card cl1"><h4>For Students</h4><ul style="margin-top:8px"><li>Post detailed tuition requirements</li><li>Browse &amp; filter verified tutors</li><li>Unlock tutor contact details</li><li>Track tuition history</li></ul></div>
+      <div class="card cl2"><h4>For Tutors</h4><ul style="margin-top:8px"><li>Build a verified public profile</li><li>Browse &amp; apply to student posts</li><li>Manage active tuitions</li><li>Pay commissions digitally</li></ul></div>
     </div>
     <div class="grid-3" style="margin-top:14px">
-      <div class="stat-box"><div class="num">3</div><div class="lbl">User Roles</div></div>
-      <div class="stat-box"><div class="num">7</div><div class="lbl">App Modules</div></div>
-      <div class="stat-box"><div class="num">25+</div><div class="lbl">REST Endpoints</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">User Roles</div></div>
+      <div class="stat"><div class="num">7</div><div class="lbl">App Modules</div></div>
+      <div class="stat"><div class="num">25+</div><div class="lbl">REST Endpoints</div></div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §2 REQUIREMENTS ANALYSIS -->
-  <section id="reqanalysis">
-    <div class="section-label">Section 02</div>
-    <h2>Requirements Analysis</h2>
-    <p>Requirements were elicited by analysing the target user group (students, parents, tutors in Bangladesh), studying existing informal processes, and reviewing comparable platforms. The analysis produced the following key findings:</p>
-
-    <h3>📌 Stakeholder Analysis</h3>
+  <!-- ═══════════════ §2 REQ ANALYSIS ═══════════════ -->
+  <section id="s2">
+    <h2><span class="section-num">2</span>Requirements Analysis</h2>
+    <p>Requirements were elicited by analysing target user groups (students, parents, tutors), studying existing informal processes, and reviewing comparable platforms.</p>
+    <h3>Stakeholder Analysis</h3>
     <table>
       <thead><tr><th>Stakeholder</th><th>Goal</th><th>Pain Point</th><th>Platform Role</th></tr></thead>
       <tbody>
-        <tr><td>Student / Parent</td><td>Find a reliable tutor fast</td><td>Can't verify credentials</td><td>Browse, unlock, request</td></tr>
-        <tr><td>Tutor</td><td>Acquire students, prove quality</td><td>No structured showcase</td><td>Profile, apply, tuition mgmt</td></tr>
-        <tr><td>Admin</td><td>Maintain quality &amp; revenue</td><td>Manual, error-prone approval</td><td>Full platform control panel</td></tr>
-        <tr><td>Payment Provider</td><td>Process transactions</td><td>Low digital adoption</td><td>API integration (bKash/Nagad)</td></tr>
-        <tr><td>AI Provider</td><td>API usage growth</td><td>—</td><td>Guru assistant backbone</td></tr>
+        <tr><td>Student / Parent</td><td>Find a reliable tutor quickly</td><td>Cannot verify credentials</td><td>Browse, unlock, request</td></tr>
+        <tr><td>Tutor</td><td>Acquire students, showcase quality</td><td>No structured showcase</td><td>Profile, apply, tuition management</td></tr>
+        <tr><td>Admin</td><td>Maintain quality &amp; revenue</td><td>Manual, error-prone approval</td><td>Full admin control panel</td></tr>
+        <tr><td>Payment Provider</td><td>Process digital transactions</td><td>Low digital adoption</td><td>API integration (gateway)</td></tr>
+        <tr><td>AI Provider</td><td>API usage growth</td><td>—</td><td>Guru AI assistant backbone</td></tr>
       </tbody>
     </table>
-
-    <h3>📐 System Boundary</h3>
-    <p>The system interacts with the following external entities:</p>
+    <h3>System Boundary</h3>
     <div class="grid-2">
-      <div class="card">
-        <strong>External Inputs</strong>
-        <ul style="margin-top:10px">
-          <li>User registrations and profile data</li>
-          <li>Tuition post details from students</li>
-          <li>Tuition applications from tutors</li>
-          <li>Payment callbacks from bKash / Nagad</li>
-          <li>AI responses from Gemini / Groq</li>
-          <li>OTP confirmations from SMS provider</li>
-        </ul>
+      <div class="card cl1"><strong style="display:block;margin-bottom:8px">External Inputs</strong>
+        <ul><li>User registrations &amp; profile data</li><li>Tuition post details from students</li><li>Tuition applications from tutors</li><li>Payment callbacks from gateway</li><li>AI responses from Gemini / Groq</li><li>OTP confirmations from SMS provider</li></ul>
       </div>
-      <div class="card">
-        <strong>External Outputs</strong>
-        <ul style="margin-top:10px">
-          <li>Verified tutor contact information</li>
-          <li>Payment receipts and history</li>
-          <li>Push / SMS notifications to users</li>
-          <li>Commission confirmation to tutors</li>
-          <li>Approval / rejection status updates</li>
-          <li>Guru AI responses to users</li>
-        </ul>
+      <div class="card cl2"><strong style="display:block;margin-bottom:8px">External Outputs</strong>
+        <ul><li>Verified tutor contact information</li><li>Payment receipts and history</li><li>Push / SMS notifications to users</li><li>Commission confirmation to tutors</li><li>Approval / rejection status updates</li><li>Guru AI responses to users</li></ul>
       </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §3 FUNCTIONAL REQUIREMENTS -->
-  <section id="func">
-    <div class="section-label">Section 03</div>
-    <h2>Functional Requirements</h2>
+  <!-- ═══════════════ §3 FUNCTIONAL REQUIREMENTS ═══════════════ -->
+  <section id="s3">
+    <h2><span class="section-num">3</span>Functional Requirements</h2>
 
-    <h3>👤 Authentication &amp; Accounts</h3>
-    <div>
-      <div class="req"><span class="id fr-id">FR-01</span><div class="body"><strong>Phone-based Registration</strong><p>The system shall allow users to register using a unique phone number and password, assigning a role of Student or Tutor.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-02</span><div class="body"><strong>OTP Password Reset</strong><p>The system shall provide a forgot-password flow using SMS OTP sent to the registered phone number.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-03</span><div class="body"><strong>Role-based Dashboard</strong><p>Upon login, users shall be redirected to a personalised dashboard based on their role (Student / Tutor / Admin).</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-04</span><div class="body"><strong>Profile Management</strong><p>Users shall be able to update personal details, upload a profile photo, and upload an ID document. Edits reset approval status.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id fr-id">FR-05</span><div class="body"><strong>Profile Approval Gate</strong><p>Admin must approve a tutor profile before it becomes publicly visible in search results.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+    <h3>Authentication &amp; Accounts</h3>
+    <div class="card" style="padding:0 20px">
+      <div class="req"><span class="rid fr">FR-01</span><div class="rbody"><strong>Phone-based Registration</strong><p>The system shall allow users to register using a unique phone number and password, assigning a role of Student or Tutor.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-02</span><div class="rbody"><strong>OTP Password Reset</strong><p>The system shall provide a forgot-password flow using SMS OTP sent to the registered phone number.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-03</span><div class="rbody"><strong>Role-based Dashboard</strong><p>Upon login, users shall be redirected to a personalised dashboard based on their role (Student / Tutor / Admin).</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-04</span><div class="rbody"><strong>Profile Management</strong><p>Users shall be able to update personal details, upload a profile photo, and upload an ID document. Profile edits reset approval status.</p></div><span class="rpri"><span class="badge b-orange">High</span></span></div>
+      <div class="req"><span class="rid fr">FR-05</span><div class="rbody"><strong>Profile Approval Gate</strong><p>Admin must approve a tutor profile before it becomes publicly visible in search results.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
     </div>
 
-    <h3>📋 Posts &amp; Matching</h3>
-    <div>
-      <div class="req"><span class="id fr-id">FR-06</span><div class="body"><strong>Create Tuition Post</strong><p>Students shall be able to create posts specifying subject, location, budget, schedule, and details. Posts require admin approval before being visible.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-07</span><div class="body"><strong>Browse Posts (Tutor View)</strong><p>Tutors shall be able to browse all active, approved tuition posts and apply to them with a single click.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-08</span><div class="body"><strong>Browse Tutors (Student View)</strong><p>Students shall be able to browse all approved tutor profiles, filter by subject and location, and initiate a tuition request.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-09</span><div class="body"><strong>Tuition Request Workflow</strong><p>Either party may send a TuitionRequest. The recipient can accept or reject. On acceptance, a Tuition record is automatically created.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
+    <h3>Posts &amp; Tuition Matching</h3>
+    <div class="card" style="padding:0 20px">
+      <div class="req"><span class="rid fr">FR-06</span><div class="rbody"><strong>Create Tuition Post</strong><p>Students shall create posts specifying subject, location, budget, schedule, and details. Posts require admin approval before being visible.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-07</span><div class="rbody"><strong>Browse Posts (Tutor View)</strong><p>Tutors shall browse all active, approved tuition posts and apply with a single click.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-08</span><div class="rbody"><strong>Browse Tutors (Student View)</strong><p>Students shall browse all approved tutor profiles, filter by subject and location, and initiate a tuition request.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-09</span><div class="rbody"><strong>Tuition Request Workflow</strong><p>Either party may send a TuitionRequest. The recipient can accept or reject. On acceptance, a Tuition record is automatically created.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
     </div>
 
-    <h3>💰 Payments</h3>
-    <div>
-      <div class="req"><span class="id fr-id">FR-10</span><div class="body"><strong>Contact Unlock Payment</strong><p>Students shall pay a platform fee (via bKash or Nagad) to unlock a tutor's full contact details (phone, address).</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-11</span><div class="body"><strong>Commission Payment</strong><p>Tutors shall pay a 30% commission on first-month salary. Payment can be made digitally or via manual proof upload.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-12</span><div class="body"><strong>Payment History</strong><p>All payment transactions shall be recorded and accessible by the payer and admin with full status and metadata.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id fr-id">FR-13</span><div class="body"><strong>Salary Entry by Admin</strong><p>Admins shall be able to set the confirmed salary amount for active tuitions to trigger commission calculation.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    <h3>Payments &amp; Transactions</h3>
+    <div class="card" style="padding:0 20px">
+      <div class="req"><span class="rid fr">FR-10</span><div class="rbody"><strong>Contact Unlock Payment</strong><p>Students shall pay a platform fee via digital payment gateway to unlock a tutor's full contact details (phone, address).</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-11</span><div class="rbody"><strong>Commission Payment</strong><p>Tutors shall pay a 30% commission on first-month salary, either digitally via payment gateway or by manual proof upload.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-12</span><div class="rbody"><strong>Payment History</strong><p>All payment transactions shall be recorded and accessible by the payer and admin with full status and metadata.</p></div><span class="rpri"><span class="badge b-orange">High</span></span></div>
+      <div class="req"><span class="rid fr">FR-13</span><div class="rbody"><strong>Salary Entry by Admin</strong><p>Admins shall set the confirmed salary amount for active tuitions to trigger commission calculation.</p></div><span class="rpri"><span class="badge b-orange">High</span></span></div>
     </div>
 
-    <h3>💬 Messaging &amp; Notifications</h3>
-    <div>
-      <div class="req"><span class="id fr-id">FR-14</span><div class="body"><strong>Permission-gated Messaging</strong><p>Users may only message each other if an accepted TuitionRequest exists between them. Admins can message anyone.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id fr-id">FR-15</span><div class="body"><strong>AJAX Real-time Chat</strong><p>The messaging interface shall update with new messages every 3 seconds without requiring a page reload.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id fr-id">FR-16</span><div class="body"><strong>Unread Message Badges</strong><p>Unread message counts shall be displayed per contact in the sidebar and as a total in the navbar, refreshed every 8 seconds.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
-      <div class="req"><span class="id fr-id">FR-17</span><div class="body"><strong>Push Notifications</strong><p>The system shall send browser push notifications for key events using VAPID Web Push. Users may opt in on first visit.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
-      <div class="req"><span class="id fr-id">FR-18</span><div class="body"><strong>In-app Notification Panel</strong><p>A slide-in panel shall show the user's recent notifications with read/unread status, time, and a link to the relevant resource.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    <h3>Messaging &amp; Notifications</h3>
+    <div class="card" style="padding:0 20px">
+      <div class="req"><span class="rid fr">FR-14</span><div class="rbody"><strong>Permission-gated Messaging</strong><p>Users may message each other only when an accepted TuitionRequest exists between them. Admins can message anyone.</p></div><span class="rpri"><span class="badge b-orange">High</span></span></div>
+      <div class="req"><span class="rid fr">FR-15</span><div class="rbody"><strong>AJAX Real-time Chat</strong><p>The messaging interface shall update with new messages every 3 seconds without a full page reload.</p></div><span class="rpri"><span class="badge b-orange">High</span></span></div>
+      <div class="req"><span class="rid fr">FR-16</span><div class="rbody"><strong>Unread Message Badges</strong><p>Unread message counts shall appear per contact in the sidebar and as a total in the navbar, refreshed every 8 seconds.</p></div><span class="rpri"><span class="badge b-blue">Medium</span></span></div>
+      <div class="req"><span class="rid fr">FR-17</span><div class="rbody"><strong>Push Notifications</strong><p>The system shall send browser push notifications for key events using VAPID Web Push. Users may opt in on first visit.</p></div><span class="rpri"><span class="badge b-blue">Medium</span></span></div>
+      <div class="req"><span class="rid fr">FR-18</span><div class="rbody"><strong>In-app Notification Panel</strong><p>A slide-in panel shall show recent notifications with read/unread status, time, and a link to the relevant resource.</p></div><span class="rpri"><span class="badge b-orange">High</span></span></div>
     </div>
 
-    <h3>🛡️ Administration</h3>
-    <div>
-      <div class="req"><span class="id fr-id">FR-19</span><div class="body"><strong>Profile &amp; Post Approvals</strong><p>Admins shall be able to approve or reject pending tutor profiles and student posts from a centralised approval panel.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-20</span><div class="body"><strong>User Management</strong><p>Admins shall be able to view all users, access individual profiles, and toggle ban status to restrict platform access.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id fr-id">FR-21</span><div class="body"><strong>Admin Inbox</strong><p>Admins shall have a dedicated inbox to message any user directly, with AJAX message loading, send, unread badges, and real-time polling.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id fr-id">FR-22</span><div class="body"><strong>Guru AI Admin Mode</strong><p>Admins shall have access to a Guru AI assistant with live platform statistics (users, commissions, pending tasks) for operational insights.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════ §4 NON-FUNCTIONAL REQUIREMENTS -->
-  <section id="nonfunc">
-    <div class="section-label">Section 04</div>
-    <h2>Non-Functional Requirements</h2>
-
-    <h3>⚡ Performance</h3>
-    <div>
-      <div class="req"><span class="id nf-id">NFR-01</span><div class="body"><strong>Page Load Time</strong><p>All template pages shall render within 1.5 seconds under normal load. Static files are served by WhiteNoise with compression enabled.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-02</span><div class="body"><strong>API Response Time</strong><p>REST API endpoints shall return responses within 300 ms for standard CRUD operations, excluding payment gateway callbacks.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-03</span><div class="body"><strong>Efficient Query Design</strong><p>The ORM shall use select_related() and prefetch_related() for all foreign key traversals. Unread counts shall use aggregated DB queries rather than in-Python loops.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-    </div>
-
-    <h3>🔒 Security</h3>
-    <div>
-      <div class="req"><span class="id nf-id">NFR-04</span><div class="body"><strong>CSRF Protection</strong><p>All state-changing POST requests (forms and AJAX) shall include a valid CSRF token validated by Django middleware.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-05</span><div class="body"><strong>Authentication Enforcement</strong><p>All views except landing, login, and signup shall require authentication. Admin views require role='admin' check.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-06</span><div class="body"><strong>Secure Cookies in Production</strong><p>SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE shall be True in non-debug environments.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-07</span><div class="body"><strong>Password Hashing</strong><p>All passwords shall be stored as PBKDF2 hashes using Django's built-in password hasher. Plaintext passwords shall never be persisted.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-08</span><div class="body"><strong>Secrets Management</strong><p>API keys, payment credentials, and JWT secrets shall be loaded exclusively from environment variables. No credentials shall appear in source code.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-    </div>
-
-    <h3>📱 Usability</h3>
-    <div>
-      <div class="req"><span class="id nf-id">NFR-09</span><div class="body"><strong>Responsive Design</strong><p>All pages shall be usable on desktop, tablet, and mobile (minimum 320px width) without horizontal scroll.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-10</span><div class="body"><strong>Theme Switching</strong><p>The system shall support three visual themes (Dark Purple, Ocean Blue, Sunset Gold) persisted per user account.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-11</span><div class="body"><strong>No Reload Interactions</strong><p>Message sending, loading conversations, and unread count polling shall not require full page reloads (AJAX/fetch API).</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-    </div>
-
-    <h3>🔧 Maintainability</h3>
-    <div>
-      <div class="req"><span class="id nf-id">NFR-12</span><div class="body"><strong>Modular App Structure</strong><p>Code shall be organised into independent Django apps (accounts, posts, tuitions, payments, chat, guru, admin_panel) with clear domain ownership.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-13</span><div class="body"><strong>Database Migrations</strong><p>All schema changes shall be managed through Django's migration system. No raw DDL shall be executed manually against production.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-14</span><div class="body"><strong>Configurable SMS Backend</strong><p>The SMS provider shall be swappable via a single environment variable (console, twilio, bulksmsbd, sslwireless) without code changes.</p></div><span class="priority"><span class="badge badge-green">Medium</span></span></div>
-    </div>
-
-    <h3>📈 Scalability &amp; Reliability</h3>
-    <div>
-      <div class="req"><span class="id nf-id">NFR-15</span><div class="body"><strong>Gunicorn Production Server</strong><p>The production deployment shall use Gunicorn as the WSGI server with configurable worker count to handle concurrent requests.</p></div><span class="priority"><span class="badge badge-red">Critical</span></span></div>
-      <div class="req"><span class="id nf-id">NFR-16</span><div class="body"><strong>AI Fallback Strategy</strong><p>The Guru AI module shall support a dual-provider strategy (Gemini primary, Groq fallback) to maintain availability during API outages.</p></div><span class="priority"><span class="badge badge-orange">High</span></span></div>
+    <h3>Administration</h3>
+    <div class="card" style="padding:0 20px">
+      <div class="req"><span class="rid fr">FR-19</span><div class="rbody"><strong>Profile &amp; Post Approvals</strong><p>Admins shall approve or reject pending tutor profiles and student posts from a centralised approval panel.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-20</span><div class="rbody"><strong>User Management</strong><p>Admins shall view all users, access individual profiles, and toggle ban status to restrict platform access.</p></div><span class="rpri"><span class="badge b-red">Critical</span></span></div>
+      <div class="req"><span class="rid fr">FR-21</span><div class="rbody"><strong>Admin Inbox</strong><p>Admins shall have a dedicated inbox to message any user, with AJAX conversation loading, send, unread badges, and polling.</p></div><span class="rpri"><span class="badge b-orange">High</span></span></div>
+      <div class="req"><span class="rid fr">FR-22</span><div class="rbody"><strong>Guru AI Admin Mode</strong><p>Admins shall access a Guru AI assistant with live platform statistics for operational insights.</p></div><span class="rpri"><span class="badge b-blue">Medium</span></span></div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §5 CLASS DIAGRAM -->
+  <!-- ═══════════════ §4 NON-FUNCTIONAL REQUIREMENTS ═══════════════ -->
+  <section id="s4">
+    <h2><span class="section-num">4</span>Non-Functional Requirements</h2>
+    <div class="grid-2">
+      <div class="card cl1">
+        <h4>⚡ Performance</h4>
+        <div style="padding:0"><div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-01</span><div class="rbody"><strong>Page Load ≤ 1.5s</strong><p>All pages under normal load via WhiteNoise compression.</p></div></div>
+        <div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-02</span><div class="rbody"><strong>API Response ≤ 300ms</strong><p>All standard CRUD endpoints.</p></div></div>
+        <div class="req" style="padding:8px 0;border:none"><span class="rid nf" style="font-size:10px">NFR-03</span><div class="rbody"><strong>Efficient ORM Queries</strong><p>Use select_related() &amp; aggregated DB queries.</p></div></div></div>
+      </div>
+      <div class="card cl2">
+        <h4>🔒 Security</h4>
+        <div style="padding:0"><div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-04</span><div class="rbody"><strong>CSRF Protection</strong><p>All POST requests validated by Django middleware.</p></div></div>
+        <div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-05</span><div class="rbody"><strong>Authentication Enforcement</strong><p>All views require login; admin views require role check.</p></div></div>
+        <div class="req" style="padding:8px 0;border:none"><span class="rid nf" style="font-size:10px">NFR-06</span><div class="rbody"><strong>PBKDF2 Password Hashing</strong><p>No plaintext passwords ever persisted.</p></div></div></div>
+      </div>
+      <div class="card cl3">
+        <h4>📱 Usability</h4>
+        <div style="padding:0"><div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-07</span><div class="rbody"><strong>Fully Responsive</strong><p>Usable on desktop, tablet, and mobile (≥320px).</p></div></div>
+        <div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-08</span><div class="rbody"><strong>Theme Switching</strong><p>3 visual themes persisted per user account.</p></div></div>
+        <div class="req" style="padding:8px 0;border:none"><span class="rid nf" style="font-size:10px">NFR-09</span><div class="rbody"><strong>AJAX Interactions</strong><p>No full reloads for messaging or notifications.</p></div></div></div>
+      </div>
+      <div class="card cl4">
+        <h4>🔧 Maintainability &amp; Scalability</h4>
+        <div style="padding:0"><div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-10</span><div class="rbody"><strong>Modular App Structure</strong><p>7 independent Django apps with clear ownership.</p></div></div>
+        <div class="req" style="padding:8px 0"><span class="rid nf" style="font-size:10px">NFR-11</span><div class="rbody"><strong>Migration-managed Schema</strong><p>All DB changes via Django migrations only.</p></div></div>
+        <div class="req" style="padding:8px 0;border:none"><span class="rid nf" style="font-size:10px">NFR-12</span><div class="rbody"><strong>Gunicorn Production Server</strong><p>Configurable worker count for concurrent requests.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ §5 CLASS DIAGRAM ═══════════════ -->
   <div class="page-break"></div>
-  <section id="classdiag">
-    <div class="section-label">Section 05</div>
-    <h2>Class Diagram</h2>
-    <p>The following class diagram shows all primary entities, their attributes, visibility, and relationships. Associations are annotated with cardinality.</p>
-    <div class="diagram">
-      <pre>
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                              CLASS DIAGRAM — TuitionMedia                        │
-└──────────────────────────────────────────────────────────────────────────────────┘
+  <section id="s5">
+    <h2><span class="section-num">5</span>Class Diagram (ER Style)</h2>
+    <p>Each coloured entity box represents a Django model. Field prefixes: <span class="badge b-orange">PK</span> primary key &nbsp; <span class="badge b-purple">FK</span> foreign key &nbsp; <span class="badge b-cyan">1:1</span> one-to-one.</p>
 
-┌───────────────────────────┐          ┌───────────────────────────┐
-│          «model»          │          │          «model»          │
-│           User            │          │      OTPVerification      │
-├───────────────────────────┤          ├───────────────────────────┤
-│ + id : BigInt (PK)        │          │ + id : BigInt (PK)        │
-│ + phone : varchar(15) UK  │          │ + phone : varchar(20) UK  │
-│ + username : varchar(150) │          │ + otp_hash : varchar(128) │
-│ + first_name : varchar    │          │ + expires_at : DateTime   │
-│ + last_name : varchar     │          │ + attempts : SmallInt     │
-│ + role : enum             │          │ + is_verified : bool      │
-│   [student|tutor|admin]   │          │ + created_at : DateTime   │
-│ + gender : varchar        │          └───────────────────────────┘
-│ + profile_image : Image   │
-│ + school : varchar        │          ┌───────────────────────────┐
-│ + college : varchar       │          │          «model»          │
-│ + university : varchar    │          │      PushSubscription     │
-│ + department : varchar    │          ├───────────────────────────┤
-│ + subjects : varchar      │◄─────────│ + user : FK(User)         │
-│ + location : varchar      │ 1    *   │ + endpoint : TextField    │
-│ + id_image : Image        │          │ + p256dh : TextField      │
-│ + profile_approved : bool │          │ + auth : TextField        │
-│ + banned : bool           │          │ + created_at : DateTime   │
-│ + theme : varchar         │          └───────────────────────────┘
-└─────────────┬─────────────┘
-              │ 1                       ┌───────────────────────────┐
-    ┌─────────┼─────────┐               │          «model»          │
-    │         │         │               │       Notification        │
-    * 1..n    * 1..n    * 1..n          ├───────────────────────────┤
-    │         │         └───────────────│ + user : FK(User)         │
-    │         │                         │ + text : TextField        │
-    │         │                         │ + notif_type : varchar    │
-    │         │                         │ + link : varchar          │
-    │         │                         │ + read : bool             │
-    │         │                         │ + created_at : DateTime   │
-    │         │                         └───────────────────────────┘
-    │         │
-    │    ┌────▼────────────────────────┐
-    │    │          «model»            │
-    │    │           Post              │
-    │    ├─────────────────────────────┤
-    │    │ + id : BigInt (PK)          │
-    │    │ + student : FK(User)        │
-    │    │ + subject : varchar         │
-    │    │ + location : varchar        │
-    │    │ + budget : varchar          │
-    │    │ + classes : varchar         │
-    │    │ + schedule : varchar        │
-    │    │ + details : TextField       │
-    │    │ + status : enum             │
-    │    │   [pending_approval|active  │
-    │    │    |rejected|closed]        │
-    │    │ + request_count : Int       │
-    │    │ + created_at : DateTime     │
-    │    └─────────────────────────────┘
-    │
-    │    ┌─────────────────────────────┐
-    └───►│          «model»            │
-    *   1│       TuitionRequest        │
-         ├─────────────────────────────┤
-         │ + id : BigInt (PK)          │
-         │ + tutor : FK(User)          │
-         │ + student : FK(User)        │
-         │ + post : FK(Post) nullable  │◄────── optional
-         │ + subject : varchar         │
-         │ + status : enum             │
-         │   [pending|accepted|rejected│
-         │ + created_at : DateTime     │
-         └──────────────┬──────────────┘
-                        │ 1 (on accept)
-                        │
-                        ▼
-         ┌─────────────────────────────┐
-         │          «model»            │
-         │          Tuition            │
-         ├─────────────────────────────┤
-         │ + id : BigInt (PK)          │
-         │ + tutor : FK(User)          │
-         │ + student : FK(User)        │
-         │ + subject : varchar         │
-         │ + salary : Int              │
-         │ + commission : Int          │
-         │ + commission_status : enum  │
-         │   [pending|proof_uploaded   │
-         │    |paid]                   │
-         │ + month : varchar           │
-         │ + status : enum             │
-         │   [active|completed|cancel] │
-         │ + proof_image : Image       │
-         └──────────────┬──────────────┘
-                        │ 1
-                        │
-                        ▼ 1
-         ┌─────────────────────────────┐
-         │          «model»            │
-         │        Commission           │
-         ├─────────────────────────────┤
-         │ + id : BigInt (PK)          │
-         │ + tutor : FK(User)          │
-         │ + tuition : OneToOne        │
-         │ + amount : Decimal          │
-         │ + payment : OneToOne(opt.)  │
-         │ + paid : bool               │
-         └─────────────────────────────┘
+    <div class="dg-wrap">
+      <div class="dg-title">Core Entities</div>
+      <div class="er-grid">
 
-         ┌─────────────────────────────┐      ┌────────────────────────────┐
-         │          «model»            │      │          «model»           │
-         │          Payment            │      │       ContactUnlock        │
-         ├─────────────────────────────┤      ├────────────────────────────┤
-         │ + id : BigInt (PK)          │      │ + id : BigInt (PK)         │
-         │ + user : FK(User)           │      │ + student : FK(User)       │
-         │ + amount : Decimal          │      │ + tutor : FK(User)         │
-         │ + method : enum[bkash|nagad]│      │ + payment : OneToOne       │
-         │ + status : enum             │◄─────│ + created_at : DateTime    │
-         │ + purpose : enum            │      └────────────────────────────┘
-         │ + transaction_id : varchar  │
-         │ + payment_id : varchar      │
-         │ + raw_response : JSON       │
-         │ + created_at : DateTime     │
-         └─────────────────────────────┘
+        <!-- User -->
+        <div class="er-entity" style="min-width:200px">
+          <div class="er-head" style="background:linear-gradient(135deg,#3b82f6,#6366f1)">👤 User</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field">phone<span class="er-type">varchar UNIQUE</span></div>
+            <div class="er-field">username<span class="er-type">varchar</span></div>
+            <div class="er-field">first_name / last_name<span class="er-type">varchar</span></div>
+            <div class="er-field">role<span class="er-type">student|tutor|admin</span></div>
+            <div class="er-field">gender / location<span class="er-type">varchar</span></div>
+            <div class="er-field">profile_image<span class="er-type">Image</span></div>
+            <div class="er-field">subjects<span class="er-type">varchar CSV</span></div>
+            <div class="er-field">profile_approved<span class="er-type">bool</span></div>
+            <div class="er-field">banned<span class="er-type">bool</span></div>
+            <div class="er-field">theme<span class="er-type">varchar</span></div>
+          </div>
+        </div>
 
-         ┌─────────────────────────────┐      ┌────────────────────────────┐
-         │          «model»            │      │          «model»           │
-         │          Message            │      │        ChatRequest         │
-         ├─────────────────────────────┤      ├────────────────────────────┤
-         │ + id : BigInt (PK)          │      │ + id : BigInt (PK)         │
-         │ + sender : FK(User)         │      │ + sender : FK(User)        │
-         │ + receiver : FK(User)       │      │ + receiver : FK(User)      │
-         │ + text : TextField          │      │ + status : enum            │
-         │ + read : bool               │      │   [pending|accepted|       │
-         │ + created_at : DateTime     │      │    rejected]               │
-         └─────────────────────────────┘      │ + created_at : DateTime    │
-                                              └────────────────────────────┘
-      </pre>
+        <!-- Post -->
+        <div class="er-entity">
+          <div class="er-head" style="background:linear-gradient(135deg,#10b981,#059669)">📋 Post</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field"><span class="er-fk">FK</span> student → User<span class="er-type"></span></div>
+            <div class="er-field">subject<span class="er-type">varchar</span></div>
+            <div class="er-field">location<span class="er-type">varchar</span></div>
+            <div class="er-field">budget<span class="er-type">varchar</span></div>
+            <div class="er-field">schedule<span class="er-type">varchar</span></div>
+            <div class="er-field">details<span class="er-type">TextField</span></div>
+            <div class="er-field">status<span class="er-type">enum</span></div>
+            <div class="er-field">request_count<span class="er-type">Int</span></div>
+          </div>
+        </div>
+
+        <!-- TuitionRequest -->
+        <div class="er-entity">
+          <div class="er-head" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">🔗 TuitionRequest</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field"><span class="er-fk">FK</span> tutor → User</div>
+            <div class="er-field"><span class="er-fk">FK</span> student → User</div>
+            <div class="er-field"><span class="er-fk">FK</span> post → Post <span class="er-type">nullable</span></div>
+            <div class="er-field">subject<span class="er-type">varchar</span></div>
+            <div class="er-field">status<span class="er-type">pending|accepted|rejected</span></div>
+            <div class="er-field">created_at<span class="er-type">DateTime</span></div>
+          </div>
+        </div>
+
+        <!-- Tuition -->
+        <div class="er-entity">
+          <div class="er-head" style="background:linear-gradient(135deg,#f59e0b,#d97706)">🎓 Tuition</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field"><span class="er-fk">FK</span> tutor → User</div>
+            <div class="er-field"><span class="er-fk">FK</span> student → User</div>
+            <div class="er-field">subject<span class="er-type">varchar</span></div>
+            <div class="er-field">salary<span class="er-type">Int</span></div>
+            <div class="er-field">commission<span class="er-type">Int (30%)</span></div>
+            <div class="er-field">commission_status<span class="er-type">enum</span></div>
+            <div class="er-field">status<span class="er-type">active|completed|cancelled</span></div>
+            <div class="er-field">proof_image<span class="er-type">Image</span></div>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="er-entity">
+          <div class="er-head" style="background:linear-gradient(135deg,#ef4444,#dc2626)">💳 Payment</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field"><span class="er-fk">FK</span> user → User</div>
+            <div class="er-field">amount<span class="er-type">Decimal</span></div>
+            <div class="er-field">method<span class="er-type">varchar</span></div>
+            <div class="er-field">status<span class="er-type">initiated|completed|failed</span></div>
+            <div class="er-field">purpose<span class="er-type">unlock|commission</span></div>
+            <div class="er-field">transaction_id<span class="er-type">varchar</span></div>
+            <div class="er-field">raw_response<span class="er-type">JSON</span></div>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="er-entity">
+          <div class="er-head" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">💬 Message</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field"><span class="er-fk">FK</span> sender → User</div>
+            <div class="er-field"><span class="er-fk">FK</span> receiver → User</div>
+            <div class="er-field">text<span class="er-type">TextField</span></div>
+            <div class="er-field">read<span class="er-type">bool</span></div>
+            <div class="er-field">created_at<span class="er-type">DateTime</span></div>
+          </div>
+        </div>
+
+        <!-- ContactUnlock -->
+        <div class="er-entity">
+          <div class="er-head" style="background:linear-gradient(135deg,#ec4899,#be185d)">🔓 ContactUnlock</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field"><span class="er-fk">FK</span> student → User</div>
+            <div class="er-field"><span class="er-fk">FK</span> tutor → User</div>
+            <div class="er-field"><span class="er-type" style="margin:0">1:1</span> payment → Payment</div>
+            <div class="er-field">created_at<span class="er-type">DateTime</span></div>
+          </div>
+        </div>
+
+        <!-- Notification -->
+        <div class="er-entity">
+          <div class="er-head" style="background:linear-gradient(135deg,#64748b,#475569)">🔔 Notification</div>
+          <div class="er-body">
+            <div class="er-field"><span class="er-pk">PK</span> id<span class="er-type">BigInt</span></div>
+            <div class="er-field"><span class="er-fk">FK</span> user → User</div>
+            <div class="er-field">text<span class="er-type">TextField</span></div>
+            <div class="er-field">notif_type<span class="er-type">success|danger|info</span></div>
+            <div class="er-field">link<span class="er-type">varchar</span></div>
+            <div class="er-field">read<span class="er-type">bool</span></div>
+          </div>
+        </div>
+
+      </div><!-- er-grid -->
+
+      <!-- Relationships -->
+      <div class="er-relations" style="margin-top:24px">
+        <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Relationships</div>
+        <div class="er-rel"><span class="from">User</span><span class="arrow">─────</span><span class="to">Post</span><span class="card">1 student can create many posts (1:N)</span><span class="type">has many</span></div>
+        <div class="er-rel"><span class="from">User (tutor)</span><span class="arrow">─────</span><span class="to">TuitionRequest</span><span class="card">1 tutor can send many requests (1:N)</span><span class="type">has many</span></div>
+        <div class="er-rel"><span class="from">TuitionRequest</span><span class="arrow">─────</span><span class="to">Tuition</span><span class="card">1 accepted request creates 1 tuition (1:1)</span><span class="type">creates</span></div>
+        <div class="er-rel"><span class="from">Tuition</span><span class="arrow">─────</span><span class="to">Payment</span><span class="card">1 tuition linked to 1 commission payment (1:1)</span><span class="type">has one</span></div>
+        <div class="er-rel"><span class="from">User</span><span class="arrow">─────</span><span class="to">Message</span><span class="card">1 user can send many messages (1:N sender/receiver)</span><span class="type">sends</span></div>
+        <div class="er-rel"><span class="from">User</span><span class="arrow">─────</span><span class="to">Notification</span><span class="card">1 user has many notifications (1:N)</span><span class="type">receives</span></div>
+        <div class="er-rel"><span class="from">ContactUnlock</span><span class="arrow">─────</span><span class="to">Payment</span><span class="card">Each unlock is linked to exactly 1 payment (1:1)</span><span class="type">references</span></div>
+      </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §6 DATA FLOW DIAGRAM -->
-  <section id="dfd">
-    <div class="section-label">Section 06</div>
-    <h2>Data Flow Diagram (DFD)</h2>
+  <!-- ═══════════════ §6 DFD ═══════════════ -->
+  <section id="s6">
+    <h2><span class="section-num">6</span>Data Flow Diagram (DFD)</h2>
 
-    <h3>Level 0 — Context Diagram</h3>
-    <div class="diagram">
-      <pre>
-                    ┌────────────────────────────────────────────────────┐
-                    │                                                    │
-   ┌──────────┐     │                  ╔════════════╗                   │
-   │ Student  │────►│ tuition posts    ║            ║  OTP / alerts     │
-   │ / Parent │◄────│ contact data     ║ TuitionMedia║─────────────────►│ SMS Provider
-   └──────────┘     │                  ║   System   ║                   │ (BulkSMS etc.)
-                    │                  ║            ║                   │
-   ┌──────────┐     │ applications     ║            ║  push messages   │
-   │  Tutor   │────►│ commission proof ║            ║─────────────────►│ Push (VAPID)
-   │          │◄────│ salary info      ╚════════════╝                   │
-   └──────────┘     │                       ▲  │                       │
-                    │                       │  │ transactions          │
-   ┌──────────┐     │ approvals/bans        │  ▼                       │
-   │  Admin   │────►│ salary amounts        │  ┌──────────────────┐   │
-   │          │◄────│ reports              ─┘  │  bKash / Nagad   │   │
-   └──────────┘     │                         │  Payment Gateway  │   │
-                    │                         └──────────────────┘   │
-                    │                               ▲  │              │
-                    │                    queries    │  │  responses  │
-                    │                         ┌────┴──▼────────┐     │
-                    │                         │  Gemini / Groq │     │
-                    │                         │   (Guru AI)    │     │
-                    └─────────────────────────└────────────────┘─────┘
-      </pre>
+    <div class="dg-wrap">
+      <div class="dg-title">Level 0 — Context Diagram</div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
+        <!-- Left actors -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="dfd-ext">👩‍🎓 Student<br><span style="font-size:10px;opacity:0.7">Post, Browse, Request</span></div>
+          <div class="dfd-ext">👨‍🏫 Tutor<br><span style="font-size:10px;opacity:0.7">Profile, Apply, Pay</span></div>
+          <div class="dfd-ext">🛡️ Admin<br><span style="font-size:10px;opacity:0.7">Approve, Ban, Manage</span></div>
+        </div>
+        <!-- Centre process -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div class="dfd-proc" style="width:110px;height:110px;font-size:13px;font-weight:800">TuitionMedia<br>System</div>
+        </div>
+        <!-- Right external systems -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="dfd-ext" style="border-color:var(--g1);background:#d1fae5;color:#065f46">🤖 Gemini / Groq<br><span style="font-size:10px;opacity:0.7">AI Responses</span></div>
+          <div class="dfd-ext" style="border-color:var(--o1);background:#fef3c7;color:#92400e">💳 Payment Gateway<br><span style="font-size:10px;opacity:0.7">Transactions</span></div>
+          <div class="dfd-ext" style="border-color:var(--c1);background:#cffafe;color:#155e75">📱 SMS Provider<br><span style="font-size:10px;opacity:0.7">OTP Delivery</span></div>
+        </div>
+      </div>
     </div>
 
-    <h3>Level 1 — Expanded Data Flow</h3>
-    <div class="diagram">
-      <pre>
-  ┌──────────┐  phone+pw   ┌─────────────┐  session     ┌───────────────┐
-  │  User    │────────────►│  P1: Auth   │─────────────►│  Session DB   │
-  │ (any)    │◄────────────│  Module     │◄─────────────│               │
-  └────┬─────┘  JWT token  └─────────────┘  session data└───────────────┘
-       │
-       ├──── student ─────►┌─────────────┐  post data   ┌───────────────┐
-       │                   │  P2: Posts  │─────────────►│  posts table  │
-       │                   │  Module     │◄─────────────│               │
-       │                   └──────┬──────┘  post list   └───────────────┘
-       │                          │ pending approval
-       │                          ▼
-       │                   ┌─────────────┐  decision    ┌───────────────┐
-       │◄── admin ─────────│  P3: Admin  │─────────────►│  posts table  │
-       │                   │  Approval   │              │  users table  │
-       │                   └──────┬──────┘              └───────────────┘
-       │                          │ notification
-       │                          ▼
-       │                   ┌─────────────┐  notif data  ┌───────────────┐
-       │◄──────────────────│ P4: Notify  │─────────────►│ notifications │
-       │                   │  Engine     │              │    table      │
-       │                   └─────────────┘              └───────────────┘
-       │
-       ├── tuition request►┌─────────────┐  req data    ┌───────────────┐
-       │                   │ P5: Tuition │─────────────►│  tuition_req  │
-       │◄── accept/reject ─│ Matching    │              │  tuition      │
-       │                   └──────┬──────┘              └───────────────┘
-       │                          │ accepted
-       │                          ▼
-       ├── payment init ──►┌─────────────┐  txn data    ┌───────────────┐
-       │                   │ P6: Payment │─────────────►│ payments table│
-       │◄── receipt ───────│  Gateway    │──────────────►  bKash/Nagad  │
-       │                   └─────────────┘  callback    └───────────────┘
-       │
-       ├── message ───────►┌─────────────┐  msg data    ┌───────────────┐
-       │◄── messages ──────│ P7: Chat    │─────────────►│ messages table│
-       │                   │  Module     │              └───────────────┘
-       │                   └─────────────┘
-       │
-       └── AI question ───►┌─────────────┐  API call    ┌───────────────┐
-           AI response ◄───│ P8: Guru AI │─────────────►│ Gemini / Groq │
-                           └─────────────┘              └───────────────┘
-      </pre>
+    <div class="dg-wrap" style="margin-top:16px">
+      <div class="dg-title">Level 1 — Process Decomposition</div>
+      <div class="dfd-wrap">
+
+        <div class="dfd-section">
+          <div class="dfd-section-title">P1: Authentication Flow</div>
+          <div class="dfd-row">
+            <div class="dfd-ext">User</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">phone+pw →<br>← JWT</div>
+            <div class="dfd-proc" style="width:80px;height:80px;font-size:10px">P1<br>Auth</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→ session<br>→ OTP req</div>
+            <div class="dfd-store">sessions DB</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→</div>
+            <div class="dfd-store" style="border-color:var(--c1)">SMS / OTP</div>
+          </div>
+        </div>
+
+        <div class="dfd-section">
+          <div class="dfd-section-title">P2: Tuition Matching Flow</div>
+          <div class="dfd-row">
+            <div class="dfd-ext">Student</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">post data →</div>
+            <div class="dfd-proc" style="width:80px;height:80px;font-size:10px;background:linear-gradient(135deg,#10b981,#059669)">P2<br>Posts</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→ pending<br>← approved</div>
+            <div class="dfd-proc" style="width:80px;height:80px;font-size:10px;background:linear-gradient(135deg,#ef4444,#dc2626)">P3<br>Admin<br>Approval</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→</div>
+            <div class="dfd-store">posts DB</div>
+          </div>
+        </div>
+
+        <div class="dfd-section">
+          <div class="dfd-section-title">P3: Payment Flow</div>
+          <div class="dfd-row">
+            <div class="dfd-ext">User</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">pay req →</div>
+            <div class="dfd-proc" style="width:80px;height:80px;font-size:10px;background:linear-gradient(135deg,#f59e0b,#d97706)">P4<br>Payment</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→ txn<br>← callback</div>
+            <div class="dfd-ext" style="border-color:var(--o1);background:#fef3c7;color:#92400e">💳 Gateway</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→</div>
+            <div class="dfd-store" style="border-color:var(--o1)">payments DB</div>
+          </div>
+        </div>
+
+        <div class="dfd-section">
+          <div class="dfd-section-title">P4: Chat &amp; AI Flow</div>
+          <div class="dfd-row">
+            <div class="dfd-ext">User</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">message →</div>
+            <div class="dfd-proc" style="width:80px;height:80px;font-size:10px;background:linear-gradient(135deg,#06b6d4,#0891b2)">P5<br>Chat</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→</div>
+            <div class="dfd-store" style="border-color:var(--c1)">messages DB</div>
+            <div style="width:32px"></div>
+            <div class="dfd-proc" style="width:80px;height:80px;font-size:10px;background:linear-gradient(135deg,#8b5cf6,#6d28d9)">P6<br>Guru AI</div>
+            <div style="text-align:center;font-size:11px;color:var(--muted)">→</div>
+            <div class="dfd-ext" style="border-color:var(--g1);background:#d1fae5;color:#065f46">🤖 AI API</div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §7 USE CASE DIAGRAM -->
+  <!-- ═══════════════ §7 USE CASE ═══════════════ -->
+  <section id="s7">
+    <h2><span class="section-num">7</span>Use Case Diagram</h2>
+    <div class="dg-wrap">
+      <div class="dg-title">System Use Cases by Actor</div>
+      <div class="uc-wrap">
+        <!-- Actors column -->
+        <div class="uc-actor">
+          <div class="uc-actor-item">
+            <div class="uc-actor-icon" style="background:#dbeafe">👩‍🎓</div>
+            <div class="uc-actor-label">Student</div>
+          </div>
+          <div style="height:2px;background:#dbeafe;width:60%;border-radius:99px"></div>
+          <div class="uc-actor-item">
+            <div class="uc-actor-icon" style="background:#d1fae5">👨‍🏫</div>
+            <div class="uc-actor-label">Tutor</div>
+          </div>
+          <div style="height:2px;background:#dbeafe;width:60%;border-radius:99px"></div>
+          <div class="uc-actor-item">
+            <div class="uc-actor-icon" style="background:#fee2e2">🛡️</div>
+            <div class="uc-actor-label">Admin</div>
+          </div>
+        </div>
+        <!-- Use cases -->
+        <div class="uc-cases">
+          <div class="uc-group">
+            <div class="uc-group-title">Shared (All Users)</div>
+            <div class="uc-list">
+              <div class="uc-case uc-shared">🔐 Register / Login with Phone</div>
+              <div class="uc-case uc-shared">👤 Manage Profile</div>
+              <div class="uc-case uc-shared">🔔 View Notifications</div>
+            </div>
+          </div>
+          <div class="uc-group">
+            <div class="uc-group-title">Student Use Cases</div>
+            <div class="uc-list">
+              <div class="uc-case uc-s">📋 Create Tuition Post</div>
+              <div class="uc-case uc-s">🔍 Browse Verified Tutors</div>
+              <div class="uc-case uc-s">📨 Send Tuition Request</div>
+              <div class="uc-case uc-s">🔓 Unlock Tutor Contact</div>
+              <div class="uc-case uc-s">💬 Chat with Tutor</div>
+              <div class="uc-case uc-s">💰 View Payment History</div>
+            </div>
+          </div>
+          <div class="uc-group">
+            <div class="uc-group-title">Tutor Use Cases</div>
+            <div class="uc-list">
+              <div class="uc-case uc-t">📄 Browse Student Posts</div>
+              <div class="uc-case uc-t">✉️ Apply to Post</div>
+              <div class="uc-case uc-t">✅ Accept / Reject Request</div>
+              <div class="uc-case uc-t">🎓 Manage Active Tuitions</div>
+              <div class="uc-case uc-t">💳 Pay Commission</div>
+              <div class="uc-case uc-t">📸 Upload Proof</div>
+              <div class="uc-case uc-t">🤖 Ask Guru AI</div>
+            </div>
+          </div>
+          <div class="uc-group">
+            <div class="uc-group-title">Admin Use Cases</div>
+            <div class="uc-list">
+              <div class="uc-case uc-a">✅ Approve / Reject Profiles</div>
+              <div class="uc-case uc-a">📋 Approve / Reject Posts</div>
+              <div class="uc-case uc-a">🚫 Ban / Unban Users</div>
+              <div class="uc-case uc-a">💰 Set Salary &amp; Confirm Pay</div>
+              <div class="uc-case uc-a">💬 Message Any User</div>
+              <div class="uc-case uc-a">🦉 Guru AI Analytics</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:10px 14px;background:#f8fbff;border-radius:10px">
+            <div style="font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Include / Extend</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:12px">
+              <span>🔓 Unlock Contact <span style="color:var(--p2)">«includes»</span> Payment Gateway</span>
+              <span>·</span>
+              <span>💳 Pay Commission <span style="color:var(--p2)">«includes»</span> Payment Gateway</span>
+              <span>·</span>
+              <span>📨 Send Request <span style="color:var(--g1)">«extends»</span> Unlock Chat</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ §8 ACTIVITY DIAGRAMS ═══════════════ -->
   <div class="page-break"></div>
-  <section id="usecase">
-    <div class="section-label">Section 07</div>
-    <h2>Use Case Diagram</h2>
-    <div class="diagram">
-      <pre>
-  ╔═══════════════════════════════════════════════════════════════════════════╗
-  ║                     TuitionMedia — Use Case Diagram                      ║
-  ╠═══════════════════════════════════════════════════════════════════════════╣
-  ║                                                                           ║
-  ║  ┌──────────┐     (UC-01) Register / Login with Phone                    ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │  STUDENT │     (UC-02) Create Tuition Post                            ║
-  ║  │ / PARENT │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-03) Browse Verified Tutors                         ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-04) Send Tuition Request                           ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-05) Unlock Tutor Contact (Pay)                     ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-06) Chat with Connected Tutor                      ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-07) View Notifications                             ║
-  ║  └──────────┘ ───────────────────────────────────────────►  (         )  ║
-  ║                                                                           ║
-  ║  ┌──────────┐     (UC-01) Register / Login with Phone                    ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │  TUTOR   │     (UC-08) Create / Update Profile + ID Doc               ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-09) Browse Student Posts                           ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-10) Apply to Tuition Post                          ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-11) Manage Active Tuitions                         ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-12) Upload Commission Proof / Pay Online           ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-06) Chat with Connected Student                    ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-13) Ask Guru AI                                    ║
-  ║  └──────────┘ ───────────────────────────────────────────►  (         )  ║
-  ║                                                                           ║
-  ║  ┌──────────┐     (UC-14) Approve / Reject Profiles                      ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │  ADMIN   │     (UC-15) Approve / Reject Tuition Posts                 ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-16) Ban / Unban Users                              ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-17) Set Salary &amp; Confirm Payments                  ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-18) Message Any User (Admin Inbox)                 ║
-  ║  │          │ ───────────────────────────────────────────►  (         )  ║
-  ║  │          │     (UC-19) Use Admin Guru AI Analytics                    ║
-  ║  └──────────┘ ───────────────────────────────────────────►  (         )  ║
-  ║                                                                           ║
-  ╚═══════════════════════════════════════════════════════════════════════════╝
+  <section id="s8">
+    <h2><span class="section-num">8</span>Activity Diagrams</h2>
 
-  Extends / Includes:
-  ─────────────────────────────────────────────────────────────────────────
-  UC-05 (Unlock Contact) ─── «include» ─── UC-P1: Initiate bKash/Nagad
-  UC-12 (Pay Commission) ─── «include» ─── UC-P1: Initiate bKash/Nagad
-  UC-04 (Send Request)   ─── «extend»  ─── UC-06 (Chat unlocked on accept)
-  UC-14 (Approve Profile)─── «extend»  ─── UC-07 (Notif sent to user)
-      </pre>
+    <!-- Activity 1 -->
+    <div class="dg-wrap">
+      <div class="dg-title">Activity 1 — Tutor Registration &amp; Profile Approval</div>
+      <div class="act-wrap">
+        <div class="act-start"></div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Tutor fills sign-up form (name, phone, password, role=tutor)</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">System creates User record · profile_approved = False</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Tutor logs in → redirected to dashboard</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Tutor fills profile: university, subjects, location · uploads ID image</div>
+        <div class="act-arrow"></div>
+        <div class="act-step" style="border-color:var(--o1);background:#fef3c7">Admin notified · Reviews profile in Admin Panel</div>
+        <div class="act-arrow"></div>
+        <div class="act-decision">Admin Decision?</div>
+        <div class="act-arrow"></div>
+        <div class="act-row">
+          <div class="act-branch">
+            <div class="act-branch-label act-yes">✓ Approve</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--g1);min-width:180px">profile_approved = True<br>Notification: "Approved!"</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--g1);min-width:180px">Tutor visible in Browse Tutors</div>
+          </div>
+          <div class="act-branch">
+            <div class="act-branch-label act-no">✗ Reject</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--r1);min-width:180px">Notification: "Profile rejected"<br>Tutor revises &amp; resubmits</div>
+          </div>
+        </div>
+        <div class="act-arrow"></div>
+        <div class="act-end"></div>
+      </div>
+    </div>
+
+    <!-- Activity 2 -->
+    <div class="dg-wrap">
+      <div class="dg-title">Activity 2 — Student Posts Tuition &amp; Tutor Applies</div>
+      <div class="act-wrap">
+        <div class="act-start"></div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Student creates Post: subject, location, budget, schedule</div>
+        <div class="act-arrow"></div>
+        <div class="act-step" style="border-color:var(--o1);background:#fef3c7">Post status = pending_approval · Admin notified</div>
+        <div class="act-arrow"></div>
+        <div class="act-decision">Admin Approves Post?</div>
+        <div class="act-arrow"></div>
+        <div class="act-row">
+          <div class="act-branch">
+            <div class="act-branch-label act-yes">✓ Approve</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--g1);min-width:200px">status = active<br>Visible to tutors</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="min-width:200px">Tutor applies → TuitionRequest (pending)</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="min-width:200px">Student notified · Reviews request</div>
+            <div class="act-arrow"></div>
+            <div class="act-decision" style="min-width:180px">Student Accepts?</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--g1);min-width:200px">Tuition record created<br>Chat unlocked between both</div>
+          </div>
+          <div class="act-branch">
+            <div class="act-branch-label act-no">✗ Reject</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--r1);min-width:160px">status = rejected<br>Student notified</div>
+          </div>
+        </div>
+        <div class="act-arrow"></div>
+        <div class="act-end"></div>
+      </div>
+    </div>
+
+    <!-- Activity 3 -->
+    <div class="dg-wrap">
+      <div class="dg-title">Activity 3 — Contact Unlock Payment Flow</div>
+      <div class="act-wrap">
+        <div class="act-start"></div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Student views tutor profile · contact info is hidden</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Student clicks "Unlock Contact" → Payment page</div>
+        <div class="act-arrow"></div>
+        <div class="act-step" style="border-color:var(--o1)">System creates Payment record (status = initiated)</div>
+        <div class="act-arrow"></div>
+        <div class="act-step" style="border-color:var(--o1)">System calls Payment Gateway API · Redirect student</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Student completes payment on gateway</div>
+        <div class="act-arrow"></div>
+        <div class="act-step" style="border-color:var(--p2)">Gateway sends callback to server · System verifies</div>
+        <div class="act-arrow"></div>
+        <div class="act-decision">Payment Verified?</div>
+        <div class="act-arrow"></div>
+        <div class="act-row">
+          <div class="act-branch">
+            <div class="act-branch-label act-yes">✓ Success</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--g1);min-width:190px">Payment = completed<br>ContactUnlock record created</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--g1);min-width:190px">Student sees tutor phone + address</div>
+          </div>
+          <div class="act-branch">
+            <div class="act-branch-label act-no">✗ Fail</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--r1);min-width:170px">Payment = failed<br>Error shown to student</div>
+          </div>
+        </div>
+        <div class="act-arrow"></div>
+        <div class="act-end"></div>
+      </div>
+    </div>
+
+    <!-- Activity 4 -->
+    <div class="dg-wrap">
+      <div class="dg-title">Activity 4 — Admin Inbox AJAX Messaging</div>
+      <div class="act-wrap">
+        <div class="act-start"></div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Admin opens /admin-panel/inbox/</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Page loads: contact list + per-contact unread badges</div>
+        <div class="act-arrow"></div>
+        <div class="act-decision">?with=user_id in URL?</div>
+        <div class="act-arrow"></div>
+        <div class="act-row">
+          <div class="act-branch">
+            <div class="act-branch-label act-yes">✓ Yes</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="min-width:190px">Auto-load conversation via fetch()</div>
+          </div>
+          <div class="act-branch">
+            <div class="act-branch-label act-no">✗ No</div>
+            <div class="act-arrow"></div>
+            <div class="act-step" style="border-color:var(--muted);min-width:190px">Show "No conversation selected"</div>
+          </div>
+        </div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Render chat bubbles · Mark messages as read</div>
+        <div class="act-arrow"></div>
+        <div class="act-step" style="border-color:var(--p2)">Set poll interval: fetch new messages every 3s</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Admin types message + clicks Send</div>
+        <div class="act-arrow"></div>
+        <div class="act-step" style="border-color:var(--g1)">AJAX POST → server creates Message → returns JSON<br>Bubble appended instantly · No page reload</div>
+        <div class="act-arrow"></div>
+        <div class="act-step">Every 8s: fetch unread counts → update badges</div>
+        <div class="act-arrow"></div>
+        <div class="act-end"></div>
+      </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §8 ACTIVITY DIAGRAMS -->
-  <section id="activity">
-    <div class="section-label">Section 08</div>
-    <h2>Activity Diagrams</h2>
-
-    <h3>Activity 1 — Tuitor Registration &amp; Profile Approval</h3>
-    <div class="diagram">
-      <pre>
-  ●  START
-  │
-  ▼
-  [Tutor fills sign-up form: name, phone, password, role=tutor]
-  │
-  ▼
-  [System creates User record; profile_approved = False]
-  │
-  ▼
-  [Tutor logs in → redirected to dashboard]
-  │
-  ▼
-  [Tutor fills profile: university, subjects, location, uploads ID]
-  │
-  ▼
-  [System sets profile_approved = False; notifies admin]
-  │
-  ▼
-  ┌────────────────────────────────────────┐
-  │       Admin Reviews Profile            │
-  └────────────────────────────────────────┘
-  │
-  ┌──────────────┴──────────────┐
-  │ Approve                     │ Reject
-  ▼                             ▼
-  [profile_approved = True]   [Notification: "Profile rejected"]
-  [Notification: "Approved!"]   │
-  │                             ▼
-  │                           [Tutor revises &amp; resubmits]
-  ▼
-  [Tutor visible in Browse Tutors]
-  │
-  ◉  END
-      </pre>
-    </div>
-
-    <h3>Activity 2 — Student Posts a Tuition &amp; Tutor Applies</h3>
-    <div class="diagram">
-      <pre>
-  ●  START
-  │
-  ▼
-  [Student creates Post: subject, location, budget, schedule]
-  │
-  ▼
-  [Post status = pending_approval; Admin notified]
-  │
-  ▼
-  ┌────────────────────┐
-  │  Admin reviews     │
-  └────────────────────┘
-  │
-  ┌──────┴────────┐
-  │ Approve       │ Reject
-  ▼               ▼
-  [status=active] [status=rejected; student notified]
-  │               │
-  ▼               ◉  END
-  [Tutors browse Browse Posts]
-  │
-  ▼
-  [Tutor clicks Apply → TuitionRequest created (status=pending)]
-  │
-  ▼
-  [Student notified; views request]
-  │
-  ┌──────┴───────────┐
-  │ Accept           │ Reject
-  ▼                  ▼
-  [status=accepted]  [status=rejected; tutor notified]
-  │                  │
-  ▼                  ◉  END
-  [Tuition record created]
-  [Chat between them UNLOCKED]
-  │
-  ▼
-  [Admin sets Salary → Commission calculated (30%)]
-  │
-  ◉  END
-      </pre>
-    </div>
-
-    <h3>Activity 3 — Contact Unlock Payment (bKash)</h3>
-    <div class="diagram">
-      <pre>
-  ●  START
-  │
-  ▼
-  [Student views tutor profile; contact is hidden]
-  │
-  ▼
-  [Student clicks "Unlock Contact" → Payment page]
-  │
-  ▼
-  [System creates Payment record (status=initiated)]
-  │
-  ▼
-  [System calls bKash API: createPayment]
-  │
-  ▼
-  [bKash returns payment URL → redirect student]
-  │
-  ▼
-  [Student completes payment on bKash]
-  │
-  ▼
-  [bKash sends callback to /payments/bkash/callback/]
-  │
-  ▼
-  ┌────────────────────────────────────┐
-  │ System verifies payment with bKash │
-  └────────────────────────────────────┘
-  │
-  ┌──────┴──────────────────┐
-  │ Success                  │ Failure / Cancel
-  ▼                          ▼
-  [Payment status = completed][Payment status = failed/cancelled]
-  [ContactUnlock record created][Student shown error message]
-  [Tutor contact revealed]   │
-  │                          ◉  END
-  ▼
-  [Student sees phone + address]
-  │
-  ◉  END
-      </pre>
-    </div>
-
-    <h3>Activity 4 — Admin Inbox Messaging (AJAX Flow)</h3>
-    <div class="diagram">
-      <pre>
-  ●  START
-  │
-  ▼
-  [Admin opens /admin-panel/inbox/]
-  │
-  ▼
-  [Page loads contact list with per-contact unread badges]
-  │
-  ▼
-  ┌─────────────────────────────────────────────┐
-  │  Has ?with=user_id in URL?                  │
-  └───────────┬─────────────────────────────────┘
-  │ YES                        │ NO
-  ▼                            ▼
-  [Auto-load conversation]    [Show "No conversation selected"]
-  │
-  ▼
-  [fetch /admin-panel/inbox/messages/{id}/]
-  │
-  ▼
-  [Render chat bubbles in scrollable area]
-  [Mark received messages as read]
-  │
-  ▼
-  [Set polling interval: every 3s fetch new msgs]
-  │
-  ▼
-  [Admin types message + clicks Send]
-  │
-  ▼
-  [AJAX POST to /admin-panel/inbox/send/]
-  │
-  ▼
-  [Server creates Message record; returns JSON]
-  │
-  ▼
-  [Append bubble instantly; no page reload]
-  │
-  ▼
-  [Every 8s: fetch /admin-panel/inbox/unread-counts/]
-  [Update sidebar badges + header total]
-  │
-  ◉  END (continuous loop while page open)
-      </pre>
+  <!-- ═══════════════ §9 ARCHITECTURE ═══════════════ -->
+  <section id="s9">
+    <h2><span class="section-num">9</span>System Architecture</h2>
+    <div class="dg-wrap">
+      <div class="dg-title">4-Layer Architecture</div>
+      <div style="position:relative;padding-left:60px">
+        <div class="arch-layer" style="background:#dbeafe;border:2px solid #93c5fd">
+          <div class="arch-label" style="color:var(--p1)">CLIENT</div>
+          <div class="arch-items">
+            <div class="arch-item" style="background:#fff;border:1.5px solid #93c5fd;color:var(--p2)">🌐 Browser (Django Templates)</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #93c5fd;color:var(--p2)">⚡ Vanilla JS + AJAX</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #93c5fd;color:var(--p2)">🔔 Service Worker (Push)</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:20px;color:var(--muted);margin:4px 0">↕</div>
+        <div class="arch-layer" style="background:#ede9fe;border:2px solid #c4b5fd">
+          <div class="arch-label" style="color:var(--p3)">PRESENTATION</div>
+          <div class="arch-items">
+            <div class="arch-item" style="background:#fff;border:1.5px solid #c4b5fd;color:var(--p3)">🐍 Gunicorn WSGI</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #c4b5fd;color:var(--p3)">🔀 Django URL Router</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #c4b5fd;color:var(--p3)">📄 Views → Templates</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #c4b5fd;color:var(--p3)">📦 WhiteNoise (static)</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:20px;color:var(--muted);margin:4px 0">↕</div>
+        <div class="arch-layer" style="background:#d1fae5;border:2px solid #6ee7b7">
+          <div class="arch-label" style="color:var(--g1)">BUSINESS</div>
+          <div class="arch-items">
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">👤 accounts</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">📋 posts</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">🎓 tuitions</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">💳 payments</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">💬 chat</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">🤖 guru</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">🛡️ admin_panel</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #6ee7b7;color:#065f46">🔌 REST API (DRF)</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:20px;color:var(--muted);margin:4px 0">↕</div>
+        <div class="arch-layer" style="background:#fef3c7;border:2px solid #fcd34d">
+          <div class="arch-label" style="color:var(--o1)">DATA</div>
+          <div class="arch-items">
+            <div class="arch-item" style="background:#fff;border:1.5px solid #fcd34d;color:#92400e">🐘 PostgreSQL 16</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #fcd34d;color:#92400e">Django ORM</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #fcd34d;color:#92400e">External: Gemini / Groq</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #fcd34d;color:#92400e">External: Payment Gateway</div>
+            <div class="arch-item" style="background:#fff;border:1.5px solid #fcd34d;color:#92400e">External: SMS Provider</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §9 ARCHITECTURE -->
-  <div class="page-break"></div>
-  <section id="arch">
-    <div class="section-label">Section 09</div>
-    <h2>System Architecture</h2>
+  <!-- ═══════════════ §10 SCENARIOS ═══════════════ -->
+  <section id="s10">
+    <h2><span class="section-num">10</span>Sample Usage Scenarios</h2>
 
-    <h3>🏗️ Application Layer Structure</h3>
-    <div class="diagram">
-      <pre>
-  ┌─────────────────────────────────────────────────────────────────────┐
-  │                         CLIENT LAYER                                │
-  │   Browser (Django Templates + Vanilla JS + Service Worker)          │
-  └───────────────────────────────┬─────────────────────────────────────┘
-                                  │ HTTPS
-  ┌───────────────────────────────▼─────────────────────────────────────┐
-  │                      PRESENTATION LAYER                             │
-  │   Gunicorn WSGI → Django URL Router → Views → Templates             │
-  │   WhiteNoise serves /static/ (CSS, JS, images)                      │
-  └───────────────────────────────┬─────────────────────────────────────┘
-                                  │
-  ┌───────────────────────────────▼─────────────────────────────────────┐
-  │                        BUSINESS LAYER                               │
-  │                                                                      │
-  │  ┌──────────┐ ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌───────────┐ │
-  │  │ accounts │ │  posts  │ │ tuitions │ │ payments │ │   chat    │ │
-  │  └──────────┘ └─────────┘ └──────────┘ └──────────┘ └───────────┘ │
-  │  ┌──────────┐ ┌──────────────┐                                      │
-  │  │   guru   │ │ admin_panel  │                                      │
-  │  └──────────┘ └──────────────┘                                      │
-  │                                                                      │
-  │  REST API Layer (DRF + SimpleJWT)                                   │
-  │  /api/auth/  /api/tuition/  /api/chat/  /api/payment/               │
-  └───────────────────────────────┬─────────────────────────────────────┘
-                                  │ Django ORM
-  ┌───────────────────────────────▼─────────────────────────────────────┐
-  │                         DATA LAYER                                  │
-  │                   PostgreSQL 16 Database                             │
-  │   Tables: users, posts, tuition_requests, tuitions, payments,       │
-  │           contact_unlocks, commissions, messages, chat_requests,    │
-  │           notifications, push_subscriptions, otp_verifications      │
-  └───────────────────────────────┬─────────────────────────────────────┘
-                                  │
-  ┌───────────────────────────────▼─────────────────────────────────────┐
-  │                      EXTERNAL SERVICES                              │
-  │                                                                      │
-  │   Google Gemini API      Groq API         bKash Tokenized API       │
-  │   Nagad Payment API      BulkSMSBD        Twilio (SMS)              │
-  │   VAPID Web Push                                                     │
-  └─────────────────────────────────────────────────────────────────────┘
-      </pre>
-    </div>
-
-    <h3>📁 Directory Structure</h3>
-    <div class="diagram">
-      <pre>
-  tuitionmedia/               ← Django project root
-  ├── tuitionmedia/
-  │   ├── settings.py         ← Configuration (DB, API keys, SMTP)
-  │   ├── urls.py             ← Root URL routing
-  │   ├── wsgi.py             ← WSGI entry point
-  │   └── context_processors.py ← VAPID key, unread notif count
-  │
-  ├── accounts/               ← User model, auth, OTP, notifications
-  ├── posts/                  ← Tuition post model + views
-  ├── tuitions/               ← Request + Tuition lifecycle
-  ├── payments/               ← bKash, Nagad, unlock, commission
-  ├── chat/                   ← Messaging + ChatRequest
-  ├── guru/                   ← AI assistant views
-  ├── admin_panel/            ← Admin-only dashboard + inbox
-  │
-  ├── templates/              ← Jinja2 / Django templates (global)
-  │   ├── base.html           ← Master layout (sidebar, nav, JS)
-  │   ├── admin_panel/        ← Admin-specific templates
-  │   ├── accounts/           ← Login, signup, profile, dashboard
-  │   ├── chat/               ← User inbox
-  │   ├── posts/, tuitions/   ← Domain templates
-  │   └── guru/               ← Guru chat templates
-  │
-  ├── static/
-  │   ├── css/main.css        ← Full design system (glass UI)
-  │   └── js/main.js          ← Theme switcher, push, Guru widget
-  │
-  ├── manage.py
-  ├── requirements.txt
-  └── Procfile                ← Gunicorn production command
-      </pre>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════ §10 SCENARIOS -->
-  <section id="scenario">
-    <div class="section-label">Section 10</div>
-    <h2>Sample Usage Scenarios</h2>
-
-    <h3>📖 Scenario 1 — Student Finds and Hires a Tutor</h3>
+    <h3>Scenario 1 — Student Finds and Hires a Tutor</h3>
     <div class="scenario">
-      <div class="scenario-step"><div class="step-num">1</div><div class="step-body"><strong>Registration</strong><span>Fatema (student) signs up with her phone number 01711XXXXXX and password. The system creates a Student-role user account.</span></div></div>
-      <div class="scenario-step"><div class="step-num">2</div><div class="step-body"><strong>Profile Complete</strong><span>Fatema fills her profile: class 10, school name, Dhaka location. profile_approved = True by default for students.</span></div></div>
-      <div class="scenario-step"><div class="step-num">3</div><div class="step-body"><strong>Create Post</strong><span>Fatema creates a tuition post: "Math &amp; Physics, Class 10, Mirpur, 3000 BDT/month". Post enters pending_approval status.</span></div></div>
-      <div class="scenario-step"><div class="step-num">4</div><div class="step-body"><strong>Admin Approves</strong><span>Admin reviews and approves the post. Fatema receives a notification. The post is now publicly visible to tutors.</span></div></div>
-      <div class="scenario-step"><div class="step-num">5</div><div class="step-body"><strong>Browse Tutors</strong><span>Fatema also browses available tutors and finds Karim (tutor), who has approved profile with Math &amp; Physics subjects.</span></div></div>
-      <div class="scenario-step"><div class="step-num">6</div><div class="step-body"><strong>Unlock Contact</strong><span>Fatema pays 100 BDT via bKash to unlock Karim's phone number and home address. ContactUnlock record is created.</span></div></div>
-      <div class="scenario-step"><div class="step-num">7</div><div class="step-body"><strong>Direct Request</strong><span>Fatema sends a TuitionRequest to Karim directly. Karim receives a notification.</span></div></div>
-      <div class="scenario-step"><div class="step-num">8</div><div class="step-body"><strong>Karim Accepts</strong><span>Karim accepts the request. A Tuition record is created. The chat between Fatema and Karim is now unlocked.</span></div></div>
-      <div class="scenario-step"><div class="step-num">9</div><div class="step-body"><strong>Tuition Begins</strong><span>Both parties communicate via in-platform chat. Admin sets salary = 3000 BDT. Commission = 900 BDT (30%) is calculated.</span></div></div>
-      <div class="scenario-step"><div class="step-num">10</div><div class="step-body"><strong>Commission Paid</strong><span>Karim pays 900 BDT commission via Nagad. The commission status changes to 'paid' and the tuition is marked active.</span></div></div>
+      <div class="sc-step"><div class="sn">1</div><div class="sb"><strong>Registration</strong><span>Fatema signs up with phone 01711XXXXXX. System creates a Student-role account.</span></div></div>
+      <div class="sc-step"><div class="sn">2</div><div class="sb"><strong>Profile Complete</strong><span>Fatema fills her profile: class 10, school name, Dhaka. profile_approved = True by default for students.</span></div></div>
+      <div class="sc-step"><div class="sn">3</div><div class="sb"><strong>Create Post</strong><span>Fatema creates a tuition post: "Math &amp; Physics, Class 10, Mirpur, 3000 BDT/month". Post enters pending_approval.</span></div></div>
+      <div class="sc-step"><div class="sn">4</div><div class="sb"><strong>Admin Approves</strong><span>Admin reviews and approves the post. Fatema receives a notification. The post is now visible to tutors.</span></div></div>
+      <div class="sc-step"><div class="sn">5</div><div class="sb"><strong>Browse Tutors</strong><span>Fatema finds Karim (tutor) with approved profile, Math &amp; Physics expertise.</span></div></div>
+      <div class="sc-step"><div class="sn">6</div><div class="sb"><strong>Unlock Contact</strong><span>Fatema pays a platform fee via digital payment to unlock Karim's phone and address. ContactUnlock record created.</span></div></div>
+      <div class="sc-step"><div class="sn">7</div><div class="sb"><strong>Tuition Request</strong><span>Fatema sends a TuitionRequest to Karim. Karim receives a notification and accepts.</span></div></div>
+      <div class="sc-step"><div class="sn">8</div><div class="sb"><strong>Tuition Begins</strong><span>A Tuition record is created. Chat between Fatema and Karim is unlocked. Admin sets salary = 3000 BDT, commission = 900 BDT (30%).</span></div></div>
+      <div class="sc-step"><div class="sn">9</div><div class="sb"><strong>Commission Paid</strong><span>Karim pays 900 BDT commission via payment gateway. Commission status changes to 'paid'. Tuition is active.</span></div></div>
     </div>
 
-    <h3>📖 Scenario 2 — Admin Manages Platform</h3>
+    <h3 style="margin-top:24px">Scenario 2 — Admin Manages Platform</h3>
     <div class="scenario">
-      <div class="scenario-step"><div class="step-num">1</div><div class="step-body"><strong>Login as Admin</strong><span>Admin logs in with admin credentials. Redirected to the Admin Overview dashboard showing platform statistics.</span></div></div>
-      <div class="scenario-step"><div class="step-num">2</div><div class="step-body"><strong>Profile Approvals</strong><span>Admin sees 3 pending profiles in the approval queue. Reviews ID documents and approves 2, rejects 1 (incomplete submission).</span></div></div>
-      <div class="scenario-step"><div class="step-num">3</div><div class="step-body"><strong>Post Approvals</strong><span>Admin reviews 2 pending tuition posts. Approves both after checking details are legitimate and not spam.</span></div></div>
-      <div class="scenario-step"><div class="step-num">4</div><div class="step-body"><strong>Inbox — User Message</strong><span>Admin opens Inbox, sees "2 unread" badge next to Fatema. Clicks her contact, conversation loads via AJAX instantly.</span></div></div>
-      <div class="scenario-step"><div class="step-num">5</div><div class="step-body"><strong>Reply &amp; Track</strong><span>Admin types a reply, clicks Send. Message appears in the bubble instantly (no reload). Unread badge clears.</span></div></div>
-      <div class="scenario-step"><div class="step-num">6</div><div class="step-body"><strong>Guru AI Analytics</strong><span>Admin opens Guru AI, asks "Show me this week's stats". Guru queries live DB and responds with user counts, revenue, pending commissions.</span></div></div>
+      <div class="sc-step"><div class="sn">1</div><div class="sb"><strong>Admin Login</strong><span>Admin logs in with admin credentials. Redirected to Overview dashboard with live statistics.</span></div></div>
+      <div class="sc-step"><div class="sn">2</div><div class="sb"><strong>Profile Approvals</strong><span>Admin sees 3 pending profiles. Reviews ID documents. Approves 2, rejects 1 (incomplete submission).</span></div></div>
+      <div class="sc-step"><div class="sn">3</div><div class="sb"><strong>Post Approvals</strong><span>Admin reviews 2 pending tuition posts. Approves both after verifying they are legitimate.</span></div></div>
+      <div class="sc-step"><div class="sn">4</div><div class="sb"><strong>Admin Inbox</strong><span>Admin opens Inbox. Sees "2 unread" badge next to Fatema. Clicks her name — conversation loads via AJAX instantly.</span></div></div>
+      <div class="sc-step"><div class="sn">5</div><div class="sb"><strong>Send Message</strong><span>Admin types a reply, clicks Send. Message bubble appears instantly without page reload. Unread badge clears.</span></div></div>
+      <div class="sc-step"><div class="sn">6</div><div class="sb"><strong>Guru AI Analytics</strong><span>Admin opens Guru AI, asks "Show me this week's stats". Guru queries live DB and responds with user counts, revenue, pending commissions.</span></div></div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════ §11 PAYMENT FLOW -->
-  <section id="payment">
-    <div class="section-label">Section 11</div>
-    <h2>Payment Flow Detail</h2>
-
-    <h3>bKash Tokenized Payment Flow</h3>
-    <div class="flow">
-      <div class="flow-box">User clicks Pay</div><div class="flow-arr">→</div>
-      <div class="flow-box">Create Payment record<br>(initiated)</div><div class="flow-arr">→</div>
-      <div class="flow-box orange">Call bKash<br>createPayment API</div><div class="flow-arr">→</div>
-      <div class="flow-box orange">Redirect to<br>bKash URL</div><div class="flow-arr">→</div>
-      <div class="flow-box green">User pays<br>on bKash</div><div class="flow-arr">→</div>
-      <div class="flow-box">bKash callback<br>to our server</div><div class="flow-arr">→</div>
-      <div class="flow-box green">Verify &amp; mark<br>completed</div>
+  <!-- ═══════════════ §11 PAYMENT FLOW ═══════════════ -->
+  <section id="s11">
+    <h2><span class="section-num">11</span>Payment Flow</h2>
+    <div class="grid-2">
+      <div class="card cl4">
+        <h4>Contact Unlock Flow</h4>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;font-size:12.5px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="background:#dbeafe;color:#1d4ed8;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0">1</span>Student clicks "Unlock Contact"</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="background:#dbeafe;color:#1d4ed8;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0">2</span>Payment record created (initiated)</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="background:#dbeafe;color:#1d4ed8;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0">3</span>Redirect to Payment Gateway</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="background:#dbeafe;color:#1d4ed8;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0">4</span>Student completes payment</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="background:#d1fae5;color:#065f46;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0">5</span>Callback verified → ContactUnlock created</div>
+        </div>
+      </div>
+      <div class="card cl3">
+        <h4>Commission Payment States</h4>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="badge b-gray">No Salary Set</span> → Admin sets salary</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="badge b-blue">pending</span> → Tutor pays / uploads proof</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="badge b-orange">proof_uploaded</span> → Admin reviews</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="badge b-green">paid</span> ✓ Commission confirmed</div>
+        </div>
+      </div>
     </div>
-
-    <h3>Commission Tracking States</h3>
-    <div class="flow">
-      <div class="flow-box gray">No Salary Set</div><div class="flow-arr">→</div>
-      <div class="flow-box">Salary Set<br>(pending)</div><div class="flow-arr">→</div>
-      <div class="flow-box orange">Proof Uploaded<br>(proof_uploaded)</div><div class="flow-arr">→</div>
-      <div class="flow-box green">Admin Confirms<br>(paid)</div>
-    </div>
-
-    <table style="margin-top:20px">
-      <thead><tr><th>Event</th><th>Trigger</th><th>Record Created / Updated</th></tr></thead>
-      <tbody>
-        <tr><td>Student unlocks contact</td><td>Completed bKash/Nagad payment</td><td>Payment (completed) + ContactUnlock</td></tr>
-        <tr><td>Tutor pays commission online</td><td>Completed bKash/Nagad payment</td><td>Payment (completed) + Commission.paid=True</td></tr>
-        <tr><td>Tutor uploads proof</td><td>Manual proof image upload</td><td>Tuition.commission_status = proof_uploaded</td></tr>
-        <tr><td>Admin confirms payment</td><td>Admin clicks "Confirm"</td><td>Tuition.commission_status = paid</td></tr>
-      </tbody>
-    </table>
   </section>
 
-  <!-- ════════════════════════════════ §12 SECURITY -->
-  <section id="security">
-    <div class="section-label">Section 12</div>
-    <h2>Security Design</h2>
+  <!-- ═══════════════ §12 SECURITY ═══════════════ -->
+  <section id="s12">
+    <h2><span class="section-num">12</span>Security Design</h2>
     <table>
       <thead><tr><th>Threat</th><th>Mechanism</th><th>Implementation</th></tr></thead>
       <tbody>
-        <tr><td>Cross-Site Request Forgery</td><td>CSRF Token</td><td>Django CsrfViewMiddleware; all AJAX POST requests include X-CSRFToken header</td></tr>
-        <tr><td>Unauthorised Access</td><td>Authentication Guard</td><td>@login_required decorator + admin_required wrapper on all protected views</td></tr>
-        <tr><td>Privilege Escalation</td><td>Role Enforcement</td><td>admin_required() checks request.user.role == 'admin' for all admin views</td></tr>
-        <tr><td>Password Theft</td><td>PBKDF2 Hashing</td><td>Django's built-in password hasher (PBKDF2-SHA256) with salt</td></tr>
-        <tr><td>Session Hijacking</td><td>Secure Cookies</td><td>SESSION_COOKIE_SECURE=True and CSRF_COOKIE_SECURE=True in production</td></tr>
-        <tr><td>Credential Leak</td><td>Environment Variables</td><td>All API keys loaded via os.getenv(); .env excluded from VCS</td></tr>
-        <tr><td>SQL Injection</td><td>ORM Parameterization</td><td>All DB access via Django ORM with parameterised queries</td></tr>
-        <tr><td>XSS</td><td>Template Auto-escaping</td><td>Django templates auto-escape all user content; escHtml() in JS for dynamic content</td></tr>
-        <tr><td>Fake Profiles</td><td>Admin Approval Gate</td><td>profile_approved flag; tutors invisible until manually verified by admin</td></tr>
+        <tr><td>CSRF Attack</td><td>CSRF Token</td><td>Django CsrfViewMiddleware; all AJAX POST requests include X-CSRFToken header</td></tr>
+        <tr><td>Unauthorised Access</td><td>Login Guard</td><td>@login_required decorator + admin_required() wrapper on all protected views</td></tr>
+        <tr><td>Privilege Escalation</td><td>Role Enforcement</td><td>admin_required() checks request.user.role == 'admin' for every admin view</td></tr>
+        <tr><td>Password Theft</td><td>PBKDF2 Hashing</td><td>Django's built-in password hasher (PBKDF2-SHA256 + random salt)</td></tr>
+        <tr><td>Session Hijacking</td><td>Secure Cookies</td><td>SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE = True in production</td></tr>
+        <tr><td>Credential Leak</td><td>Env Variables</td><td>All API keys loaded via os.getenv(); secrets never appear in source code</td></tr>
+        <tr><td>SQL Injection</td><td>ORM Queries</td><td>All DB access via Django ORM with parameterised queries; no raw SQL</td></tr>
+        <tr><td>XSS</td><td>Auto-escaping</td><td>Django templates auto-escape all user content; escHtml() in JS</td></tr>
+        <tr><td>Fake Profiles</td><td>Approval Gate</td><td>profile_approved flag; tutors hidden until manually verified by admin</td></tr>
         <tr><td>Banned User Access</td><td>Ban Flag Check</td><td>banned field on User; login blocked for banned accounts</td></tr>
       </tbody>
     </table>
   </section>
 
-  <!-- ════════════════════════════════ §13 REST API -->
-  <section id="api">
-    <div class="section-label">Section 13</div>
-    <h2>REST API Overview</h2>
-    <p>TuitionMedia exposes a versioned REST API under <code>/api/</code> secured with JWT Bearer tokens (SimpleJWT). This enables future mobile clients to consume the platform.</p>
+  <!-- ═══════════════ §13 API ═══════════════ -->
+  <section id="s13">
+    <h2><span class="section-num">13</span>REST API Overview</h2>
+    <p>TuitionMedia exposes a REST API under <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px">/api/</code> secured with JWT Bearer tokens (SimpleJWT) for future mobile client consumption.</p>
     <table>
       <thead><tr><th>Base Path</th><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td rowspan="5"><strong>/api/auth/</strong></td><td>send-otp/</td><td>POST</td><td>Send OTP to phone number</td></tr>
+        <tr><td rowspan="5"><span class="badge b-blue">/api/auth/</span></td><td>send-otp/</td><td>POST</td><td>Send OTP to phone number</td></tr>
         <tr><td>verify-otp/</td><td>POST</td><td>Verify OTP, return JWT tokens</td></tr>
-        <tr><td>login/</td><td>POST</td><td>Phone + password login, return JWT</td></tr>
-        <tr><td>me/</td><td>GET</td><td>Get current user profile</td></tr>
-        <tr><td>notifications/</td><td>GET</td><td>List notifications for current user</td></tr>
-        <tr><td rowspan="4"><strong>/api/tuition/</strong></td><td>list/</td><td>GET</td><td>List active tuitions</td></tr>
-        <tr><td>create/</td><td>POST</td><td>Create new tuition request</td></tr>
-        <tr><td>my/</td><td>GET</td><td>Get my active tuitions</td></tr>
+        <tr><td>login/</td><td>POST</td><td>Phone + password → JWT tokens</td></tr>
+        <tr><td>me/</td><td>GET</td><td>Current user profile</td></tr>
+        <tr><td>notifications/</td><td>GET</td><td>List user notifications</td></tr>
+        <tr><td rowspan="4"><span class="badge b-green">/api/tuition/</span></td><td>list/</td><td>GET</td><td>List active tuitions</td></tr>
+        <tr><td>create/</td><td>POST</td><td>Create tuition request</td></tr>
+        <tr><td>my/</td><td>GET</td><td>My active tuitions</td></tr>
         <tr><td>&lt;pk&gt;/</td><td>GET/PATCH</td><td>Retrieve or update a tuition</td></tr>
-        <tr><td rowspan="4"><strong>/api/chat/</strong></td><td>send/</td><td>POST</td><td>Send a message</td></tr>
+        <tr><td rowspan="4"><span class="badge b-cyan">/api/chat/</span></td><td>send/</td><td>POST</td><td>Send a message</td></tr>
         <tr><td>messages/</td><td>GET</td><td>Get messages with a user</td></tr>
-        <tr><td>inbox/</td><td>GET</td><td>Get contact list with last messages</td></tr>
+        <tr><td>inbox/</td><td>GET</td><td>Contact list with last messages</td></tr>
         <tr><td>requests/</td><td>GET/POST</td><td>Manage chat requests</td></tr>
-        <tr><td rowspan="4"><strong>/api/payment/</strong></td><td>create/</td><td>POST</td><td>Initiate a payment</td></tr>
+        <tr><td rowspan="4"><span class="badge b-orange">/api/payment/</span></td><td>create/</td><td>POST</td><td>Initiate a payment</td></tr>
         <tr><td>verify/</td><td>POST</td><td>Verify a payment transaction</td></tr>
-        <tr><td>history/</td><td>GET</td><td>Get payment history</td></tr>
-        <tr><td>commissions/</td><td>GET</td><td>Get commission records</td></tr>
+        <tr><td>history/</td><td>GET</td><td>Payment history</td></tr>
+        <tr><td>commissions/</td><td>GET</td><td>Commission records</td></tr>
       </tbody>
     </table>
   </section>
 
-  <!-- ════════════════════════════════ §14 CONCLUSION -->
-  <section id="conclusion">
-    <div class="section-label">Section 14</div>
-    <h2>Conclusion</h2>
-    <p>TuitionMedia successfully digitises one of Bangladesh's largest informal markets by bringing together students, tutors, and administrators in a single, verified, and transparent platform. The system addresses the core pain points of the industry:</p>
+  <!-- ═══════════════ §14 CONCLUSION ═══════════════ -->
+  <section id="s14">
+    <h2><span class="section-num">14</span>Conclusion</h2>
+    <p>TuitionMedia successfully digitises one of Bangladesh's largest informal markets by bringing students, tutors, and administrators together in a single, verified, and transparent platform.</p>
     <div class="grid-2">
-      <div class="card card-green">
+      <div class="card cl3">
         <h4>✅ Problems Solved</h4>
-        <ul>
+        <ul style="margin-top:8px">
           <li>Verified profiles eliminate fake tutors</li>
           <li>Structured posts accelerate discovery</li>
           <li>Digital payments create audit trails</li>
           <li>Permissioned chat ensures privacy</li>
-          <li>Admin panel ensures platform quality</li>
+          <li>Admin panel maintains platform quality</li>
           <li>Guru AI provides intelligent assistance</li>
         </ul>
       </div>
-      <div class="card card-blue">
+      <div class="card cl1">
         <h4>🔮 Future Enhancements</h4>
-        <ul>
+        <ul style="margin-top:8px">
           <li>Native mobile apps (Android / iOS)</li>
           <li>Video tutoring session integration</li>
           <li>Automated background verification</li>
           <li>Rating &amp; review system</li>
-          <li>Subscription tiers for premium access</li>
+          <li>Premium subscription tiers</li>
           <li>AI-powered auto-matching algorithm</li>
         </ul>
       </div>
     </div>
-    <p style="margin-top:20px">
-      The platform is built on a scalable Django + PostgreSQL architecture with a clean separation of concerns across 7 Django apps, a REST API layer for future mobile clients, and integration with real-world payment providers. With the existing foundation, TuitionMedia is positioned to grow into a fully-featured marketplace for the Bangladesh tutoring ecosystem.
-    </p>
   </section>
 
   <div class="doc-footer">
     <p><strong>TuitionMedia</strong> — Full Project Report · Version 1.0 · 2026</p>
-    <p style="margin-top:4px">Django 6.0.4 · PostgreSQL 16 · DRF · Gemini AI · bKash · Nagad</p>
+    <p style="margin-top:4px">Django 6.0.4 · PostgreSQL 16 · DRF + SimpleJWT · Gemini AI · Payment Gateway</p>
   </div>
 
 </div>
