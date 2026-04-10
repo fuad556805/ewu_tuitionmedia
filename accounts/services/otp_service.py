@@ -2,7 +2,7 @@
 OTP Service — generation, hashing, verification, rate limiting.
 Uses Django's cache backend (memory/Redis/memcached) for rate limiting.
 OTPs are stored hashed in the DB using PBKDF2.
-Twilio Verify backend হলে settings থেকে check করে — DB field লাগে না।
+Stytch / Twilio Verify backend হলে settings থেকে check করে — DB field লাগে না।
 """
 import hashlib
 import hmac
@@ -43,9 +43,10 @@ def _constant_time_compare(val1: str, val2: str) -> bool:
     return hmac.compare_digest(val1.encode(), val2.encode())
 
 
-def _is_twilio_verify() -> bool:
+def _is_external_verify() -> bool:
+    """stytch বা twilio_verify backend কিনা check করে।"""
     from django.conf import settings as dj_settings
-    return getattr(dj_settings, 'SMS_BACKEND', 'console').lower() == 'twilio_verify'
+    return getattr(dj_settings, 'SMS_BACKEND', 'console').lower() in ('stytch', 'twilio_verify')
 
 
 # ──────────────────── Rate limiting ────────────────────
@@ -107,7 +108,7 @@ class OTPError(Exception):
 def send_otp(phone: str, sms_sender) -> tuple:
     """
     Generate and send an OTP for the given phone number.
-    Twilio Verify backend এ dummy OTP তৈরি হয় — Twilio নিজেই real OTP পাঠায়।
+    Stytch / Twilio Verify backend এ dummy OTP তৈরি হয় — provider নিজেই real OTP পাঠায়।
     """
     if is_in_cooldown(phone):
         raise OTPError(
@@ -150,7 +151,7 @@ def send_otp(phone: str, sms_sender) -> tuple:
 def verify_otp(phone: str, otp: str) -> OTPVerification:
     """
     OTP verify করে।
-    Twilio Verify backend হলে Twilio API দিয়ে check করে।
+    Stytch / Twilio Verify backend হলে provider API দিয়ে check করে।
     অন্যথায় DB hash দিয়ে check করে।
     """
     if get_verify_attempts(phone) >= MAX_VERIFY_ATTEMPTS:
@@ -167,10 +168,20 @@ def verify_otp(phone: str, otp: str) -> OTPVerification:
     if timezone.now() > record.expires_at:
         raise OTPError("OTP has expired. Please request a new one.", code='expired')
 
-    if _is_twilio_verify():
-        from accounts.utils.sms_sender import twilio_verify_check, _normalize_bd_phone
+    if _is_external_verify():
+        from django.conf import settings as dj_settings
+        from accounts.utils.sms_sender import _normalize_bd_phone
+        backend    = getattr(dj_settings, 'SMS_BACKEND', '').lower()
         normalized = _normalize_bd_phone(phone)
-        if not twilio_verify_check(normalized, otp):
+
+        if backend == 'stytch':
+            from accounts.utils.sms_sender import stytch_verify_check
+            verified = stytch_verify_check(normalized, otp)
+        else:
+            from accounts.utils.sms_sender import twilio_verify_check
+            verified = twilio_verify_check(normalized, otp)
+
+        if not verified:
             record.attempts += 1
             record.save(update_fields=['attempts'])
             increment_verify_attempts(phone)
