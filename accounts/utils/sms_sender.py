@@ -204,6 +204,9 @@ def send_otp_sms(phone: str, otp: str):
                     "Primary backend '%s' failed — sent via fallback '%s'",
                     primary, backend_name
                 )
+            # Track which backend actually sent the OTP so verify can use the right method
+            from django.core.cache import cache
+            cache.set(f"otp:backend_used:{phone}", backend_name, timeout=300)
             return
         except Exception as exc:
             last_error = exc

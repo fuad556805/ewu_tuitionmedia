@@ -43,10 +43,26 @@ def _constant_time_compare(val1: str, val2: str) -> bool:
     return hmac.compare_digest(val1.encode(), val2.encode())
 
 
+EXTERNAL_VERIFY_BACKENDS = ('stytch', 'twilio_verify')
+
+
 def _is_external_verify() -> bool:
     """stytch বা twilio_verify backend কিনা check করে।"""
     from django.conf import settings as dj_settings
-    return getattr(dj_settings, 'SMS_BACKEND', 'console').lower() in ('stytch', 'twilio_verify')
+    return getattr(dj_settings, 'SMS_BACKEND', 'console').lower() in EXTERNAL_VERIFY_BACKENDS
+
+
+def _get_actual_backend(phone: str) -> str:
+    """
+    Return the backend that actually sent the OTP for this phone number.
+    Falls back to the configured SMS_BACKEND if no tracking entry is found.
+    """
+    from django.core.cache import cache
+    from django.conf import settings as dj_settings
+    from accounts.utils.sms_sender import _normalize_bd_phone
+    normalized = _normalize_bd_phone(phone)
+    configured = getattr(dj_settings, 'SMS_BACKEND', 'console').lower()
+    return cache.get(f"otp:backend_used:{normalized}", configured)
 
 
 # ──────────────────── Rate limiting ────────────────────
@@ -168,13 +184,15 @@ def verify_otp(phone: str, otp: str) -> OTPVerification:
     if timezone.now() > record.expires_at:
         raise OTPError("OTP has expired. Please request a new one.", code='expired')
 
-    if _is_external_verify():
-        from django.conf import settings as dj_settings
+    # Use the backend that *actually* sent the OTP (may differ from SMS_BACKEND
+    # if the primary backend failed and a fallback was used).
+    actual_backend = _get_actual_backend(phone)
+
+    if actual_backend in EXTERNAL_VERIFY_BACKENDS:
         from accounts.utils.sms_sender import _normalize_bd_phone
-        backend    = getattr(dj_settings, 'SMS_BACKEND', '').lower()
         normalized = _normalize_bd_phone(phone)
 
-        if backend == 'stytch':
+        if actual_backend == 'stytch':
             from accounts.utils.sms_sender import stytch_verify_check
             verified = stytch_verify_check(normalized, otp)
         else:
