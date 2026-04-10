@@ -6,14 +6,12 @@ class User(AbstractUser):
     ROLE_CHOICES = [('student', 'Student'), ('tutor', 'Tutor'), ('admin', 'Admin')]
     GENDER_CHOICES = [('male', 'Male'), ('female', 'Female'), ('other', 'Other')]
 
-    role     = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
-    phone    = models.CharField(max_length=15, unique=True)
-    gender   = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
+    role    = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
+    phone   = models.CharField(max_length=15, unique=True)
+    gender  = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
 
-    # Profile image
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
-    # Tutor-specific academic info
     school     = models.CharField(max_length=200, blank=True)
     college    = models.CharField(max_length=200, blank=True)
     university = models.CharField(max_length=200, blank=True)
@@ -21,16 +19,14 @@ class User(AbstractUser):
     subjects   = models.CharField(max_length=500, blank=True, help_text="Comma separated")
     location   = models.CharField(max_length=200, blank=True)
 
-    # ID document image (NID / Student ID)
     id_image = models.ImageField(upload_to='id_docs/', null=True, blank=True)
 
-    # Admin control
     profile_approved = models.BooleanField(default=True)
     banned           = models.BooleanField(default=False)
     theme            = models.CharField(max_length=20, default='dark')
 
-    USERNAME_FIELD   = 'phone'
-    REQUIRED_FIELDS  = ['username', 'email']
+    USERNAME_FIELD  = 'phone'
+    REQUIRED_FIELDS = ['username', 'email']
 
     def get_subjects_list(self):
         return [s.strip() for s in self.subjects.split(',') if s.strip()]
@@ -50,13 +46,14 @@ class OTPVerification(models.Model):
     One record per phone number; overwritten on each new OTP send.
     The actual user account is created only after OTP is verified.
     """
-    phone       = models.CharField(max_length=20, unique=True, db_index=True)
-    otp_hash    = models.CharField(max_length=128)
-    expires_at  = models.DateTimeField()
-    attempts    = models.PositiveSmallIntegerField(default=0)
-    is_verified = models.BooleanField(default=False)
-    created_at  = models.DateTimeField(auto_now_add=True)
-    updated_at  = models.DateTimeField(auto_now=True)
+    phone             = models.CharField(max_length=20, unique=True, db_index=True)
+    otp_hash          = models.CharField(max_length=128)
+    expires_at        = models.DateTimeField()
+    attempts          = models.PositiveSmallIntegerField(default=0)
+    is_verified       = models.BooleanField(default=False)
+    via_twilio_verify = models.BooleanField(default=False)  # Twilio Verify backend flag
+    created_at        = models.DateTimeField(auto_now_add=True)
+    updated_at        = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name        = 'OTP Verification'
@@ -83,9 +80,13 @@ class PushSubscription(models.Model):
 
 class Notification(models.Model):
     TYPE_CHOICES = [
-        ('success', 'success'), ('danger', 'danger'),
-        ('warn', 'warn'), ('accent', 'accent'), ('info', 'info'),
+        ('success', 'success'),
+        ('danger',  'danger'),
+        ('warn',    'warn'),
+        ('accent',  'accent'),
+        ('info',    'info'),
     ]
+
     user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     text       = models.TextField()
     notif_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='accent')
