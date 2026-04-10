@@ -1,11 +1,12 @@
 """
 SMS Sender Utility for Bangladesh
 Supports:
-  1. twilio_verify  — Twilio Verify API (any number, recommended)
-  2. twilio         — Twilio SMS (verified numbers only)
-  3. bulksmsbd      — local BD provider
-  4. sslwireless    — local BD provider
-  5. console        — development only
+  1. stytch         — Stytch OTP (any number, free tier, recommended)
+  2. twilio_verify  — Twilio Verify API (trial: verified numbers only)
+  3. twilio         — Twilio SMS (verified numbers only)
+  4. bulksmsbd      — local BD provider
+  5. sslwireless    — local BD provider
+  6. console        — development only
 
 Fallback chain: configured backend → fallback backends → console
 """
@@ -28,12 +29,29 @@ def _normalize_bd_phone(phone: str) -> str:
 
 # ──────────────────── Backends ────────────────────
 
+def _send_stytch(phone: str, otp: str):
+    import requests
+    resp = requests.post(
+        f"https://api.stytch.com/v1/otps/sms/send",
+        json={
+            'phone_number': phone,
+            'expiration_minutes': 2,
+        },
+        auth=(
+            settings.STYTCH_PROJECT_ID,
+            settings.STYTCH_SECRET,
+        ),
+        timeout=10,
+    )
+    data = resp.json()
+    if resp.status_code != 200:
+        raise RuntimeError(f"Stytch error: {data}")
+    from django.core.cache import cache
+    cache.set(f"stytch:phone_id:{phone}", data['phone_id'], timeout=300)
+    logger.info("Stytch OTP sent to %s", phone)
+
+
 def _send_twilio_verify(phone: str, otp: str):
-    """
-    Twilio Verify — যেকোনো নম্বরে কাজ করে।
-    OTP টা ignore করে — Twilio নিজেই OTP পাঠায়।
-    verify করার সময় twilio_verify_check() call করতে হবে।
-    """
     from twilio.rest import Client
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     verification = client.verify \
@@ -98,14 +116,35 @@ def _send_console(phone: str, message: str):
     print(f"\n{'='*50}\n[OTP SMS] To: {phone}\n{message}\n{'='*50}\n")
 
 
-# ──────────────────── Twilio Verify Check ────────────────────
+# ──────────────────── Verify Check Functions ────────────────────
+
+def stytch_verify_check(phone: str, otp: str) -> bool:
+    try:
+        import requests
+        from django.core.cache import cache
+        phone_id = cache.get(f"stytch:phone_id:{phone}")
+        if not phone_id:
+            logger.error("Stytch phone_id not found for %s", phone)
+            return False
+        resp = requests.post(
+            "https://api.stytch.com/v1/otps/authenticate",
+            json={
+                'method_id': phone_id,
+                'code':      otp,
+            },
+            auth=(
+                settings.STYTCH_PROJECT_ID,
+                settings.STYTCH_SECRET,
+            ),
+            timeout=10,
+        )
+        return resp.status_code == 200
+    except Exception as e:
+        logger.error("Stytch verify check failed: %s", e)
+        return False
+
 
 def twilio_verify_check(phone: str, otp: str) -> bool:
-    """
-    Twilio Verify দিয়ে OTP verify করে।
-    True = সঠিক, False = ভুল।
-    শুধু SMS_BACKEND=twilio_verify হলে call করতে হবে।
-    """
     try:
         from twilio.rest import Client
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -118,11 +157,6 @@ def twilio_verify_check(phone: str, otp: str) -> bool:
     except Exception as e:
         logger.error("Twilio Verify check failed: %s", e)
         return False
-
-
-def is_twilio_verify_active() -> bool:
-    """Primary backend twilio_verify কিনা check করে।"""
-    return getattr(settings, 'SMS_BACKEND', 'console').lower() == 'twilio_verify'
 
 
 # ──────────────────── Fallback chain ────────────────────
@@ -138,10 +172,6 @@ def _get_fallback_chain(primary: str) -> list:
 # ──────────────────── Public interface ────────────────────
 
 def send_otp_sms(phone: str, otp: str):
-    """
-    OTP SMS পাঠায়।
-    Primary backend fail হলে fallback chain try করে।
-    """
     phone = _normalize_bd_phone(phone)
     message = (
         f"Your TuitionMedia OTP is: {otp}\n"
@@ -152,6 +182,7 @@ def send_otp_sms(phone: str, otp: str):
     chain   = _get_fallback_chain(primary)
 
     _backend_map = {
+        'stytch':        lambda p, m: _send_stytch(p, otp),
         'twilio_verify': lambda p, m: _send_twilio_verify(p, otp),
         'twilio':        _send_twilio,
         'bulksmsbd':     _send_bulksmsbd,
