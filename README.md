@@ -146,8 +146,8 @@ Created automatically on every `migrate` run via data migration:
 
 | Field | Value |
 |---|---|
-| Phone | `01609227183` |
-| Password | `fuad1234@` |
+| Phone | `01609******` |
+| Password | `********` |
 | Username | `fuad_admin` |
 
 > ⚠️ Change this immediately in any production deployment.
