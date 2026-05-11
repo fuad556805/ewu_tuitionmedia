@@ -185,6 +185,7 @@
   var pollTimer       = null;
   var unreadPollTimer = null;
   var activeConnected = true;
+  var renderedMsgIds  = new Set();
 
   // ── Contact search ──────────────────────────────────────────────────────
   window.filterContacts = function(q) {
@@ -236,6 +237,7 @@
     if (activeUserId === userId) return;
     activeUserId = userId;
     lastMsgId    = 0;
+    renderedMsgIds.clear();
 
     // Highlight contact
     document.querySelectorAll('#contactsList .chat-contact').forEach(function(el) {
@@ -319,6 +321,8 @@
     }
 
     msgs.forEach(function(m) {
+      if (m.id && renderedMsgIds.has(m.id)) return;
+      if (m.id) renderedMsgIds.add(m.id);
       var isMine = m.sender_id === MY_ID;
       var bubble = document.createElement('div');
       bubble.className = 'msg-bubble ' + (isMine ? 'mine' : 'theirs');
@@ -361,6 +365,7 @@
         var ph = msgsEl.querySelector('div[style*="Say hello"]');
         if (ph) ph.remove();
 
+        if (data.id) renderedMsgIds.add(data.id);
         var bubble = document.createElement('div');
         bubble.className = 'msg-bubble mine';
         bubble.innerHTML = escHtml(data.text) +
