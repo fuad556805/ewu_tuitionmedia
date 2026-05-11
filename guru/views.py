@@ -158,9 +158,10 @@ def guru_ask(request):
         'generationConfig': {'maxOutputTokens': 512, 'temperature': 0.7},
     }
 
+    gemini_base = getattr(settings, 'GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com')
     for gemini_key in gemini_keys:
         for model in gemini_models:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+            url = f"{gemini_base}/v1beta/models/{model}:generateContent?key={gemini_key}"
             try:
                 response = requests.post(url, json=gemini_payload, timeout=30)
                 result = response.json()
@@ -343,9 +344,10 @@ def admin_guru_ask(request):
         contents.append({'role': role, 'parts': [{'text': h['content']}]})
     contents.append({'role': 'user', 'parts': [{'text': user_message}]})
 
+    gemini_base = getattr(settings, 'GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com')
     for gemini_key in gemini_keys:
         for model in gemini_models:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+            url = f"{gemini_base}/v1beta/models/{model}:generateContent?key={gemini_key}"
             try:
                 response = requests.post(
                     url,

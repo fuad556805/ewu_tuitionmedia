@@ -141,7 +141,9 @@ LOGOUT_REDIRECT_URL = '/'
 
 # ================= API KEYS =================
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
-GEMINI_API_KEY    = os.getenv('GEMINI_API_KEY', '')
+# Replit AI Integrations provides Gemini — use AI_INTEGRATIONS_GEMINI_API_KEY if available
+GEMINI_API_KEY    = os.getenv('AI_INTEGRATIONS_GEMINI_API_KEY', '') or os.getenv('GEMINI_API_KEY', '')
+GEMINI_BASE_URL   = os.getenv('AI_INTEGRATIONS_GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com')
 GEMINI_API_KEY_2  = os.getenv('GEMINI_API_KEY_2', '')
 GROQ_API_KEY      = os.getenv('GROQ_API_KEY', '')
 GROQ_API_KEY_2    = os.getenv('GROQ_API_KEY_2', '')
